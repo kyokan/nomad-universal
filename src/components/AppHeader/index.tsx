@@ -1,4 +1,4 @@
-import React, {ReactElement, ReactNode, useCallback, MouseEvent} from "react";
+import React, {ReactElement, ReactNode, useCallback, MouseEvent, MouseEventHandler} from "react";
 import {RouteComponentProps, withRouter, Switch, Route} from "react-router-dom";
 import "./app-header.scss";
 import {useDispatch} from "react-redux";
@@ -9,7 +9,11 @@ import Avatar from "../Avatar";
 import Menuable from "../Menuable";
 import {parseUsername} from "../../utils/user";
 
-type Props = { logoUrl: string } & RouteComponentProps;
+type Props = {
+  logoUrl: string;
+  login?: MouseEventHandler | boolean;
+  signup?: MouseEventHandler | boolean;
+} & RouteComponentProps;
 function AppHeader(props: Props): ReactElement {
   const dispatch = useDispatch();
 
@@ -45,10 +49,7 @@ function renderLeft(props: Props): ReactNode {
         <UserHeader />
       </Route>
       <Route>
-        {(
-          // @ts-ignore
-          <Icon className="app-logo" url={props.logoUrl} width={28} />
-        )}
+        <Icon className="app-logo" url={props.logoUrl} width={28} />
       </Route>
     </Switch>
   )
@@ -57,7 +58,6 @@ function renderLeft(props: Props): ReactNode {
 const Back = withRouter(_Back);
 function _Back(props: RouteComponentProps): ReactElement {
   return (
-    // @ts-ignore
     <Icon
       className="app-header__content__l__back"
       material="keyboard_backspace"
@@ -81,26 +81,22 @@ function _UserHeader(props: RouteComponentProps<{username: string}>): ReactEleme
 
   return (
     <div className="user-header__wrapper">
-      {(
-        // @ts-ignore
-        <Icon
-          className="app-header__content__l__back"
-          material="keyboard_backspace"
-          onClick={() => {
-            if (props.history.length > 1) {
-              props.history.goBack();
-            } else {
-              props.history.push('/home');
-            }
-          }}
-          width={28}
-        />
-      )}
+      <Icon
+        className="app-header__content__l__back"
+        material="keyboard_backspace"
+        onClick={() => {
+          if (props.history.length > 1) {
+            props.history.goBack();
+          } else {
+            props.history.push('/home');
+          }
+        }}
+        width={28}
+      />
       <div
         className="user-header"
         onClick={() => props.history.push(`/users/${username}/timeline`)}
       >
-        {/*<Avatar username={username} />*/}
         <div className="user-header__info">
           <div className="user-header__info__name">
             <div className="user-header__info__display-name">
@@ -127,7 +123,7 @@ function _UserHeader(props: RouteComponentProps<{username: string}>): ReactEleme
   );
 }
 
-function renderRight(props: RouteComponentProps): ReactNode {
+function renderRight(props: Props): ReactNode {
   const dispatch = useDispatch();
   const onSetting = useCallback(() => props.history.push(`/settings`), []);
 
@@ -156,11 +152,11 @@ function renderRight(props: RouteComponentProps): ReactNode {
 
   return (
     <div className="app-header__content__r">
-      {/*<Icon*/}
-      {/*  material="home"*/}
-      {/*  width={28}*/}
-      {/*  onClick={() => props.history.push('/home')}*/}
-      {/*/>*/}
+      <Icon
+        material="home"
+        width={28}
+        onClick={() => props.history.push('/home')}
+      />
       <Icon
         material="public"
         width={28}
@@ -197,7 +193,7 @@ function renderRight(props: RouteComponentProps): ReactNode {
   );
 }
 
-function renderMainAccount(props: RouteComponentProps, username: string, isLoggedIn: boolean, closeModal?: () => void, onLogout?: () => void): ReactNode {
+function renderMainAccount(props: Props, username: string, isLoggedIn: boolean, closeModal?: () => void, onLogout?: () => void): ReactNode {
   const { tld, subdomain } = parseUsername(username);
   const user = useUser(username);
 
@@ -232,7 +228,7 @@ function renderMainAccount(props: RouteComponentProps, username: string, isLogge
   )
 }
 
-function renderSwitchAccount(props: RouteComponentProps, username: string): ReactNode {
+function renderSwitchAccount(props: Props, username: string): ReactNode {
   const { tld, subdomain } = parseUsername(username);
   const user = useUser(username);
 
@@ -254,7 +250,7 @@ function renderSwitchAccount(props: RouteComponentProps, username: string): Reac
   )
 }
 
-function renderAddAnother(props: RouteComponentProps): ReactNode {
+function renderAddAnother(props: Props): ReactNode {
   return (
     <div className="add-account" onClick={() => props.history.push('/signup')}>
       {(
@@ -268,7 +264,7 @@ function renderAddAnother(props: RouteComponentProps): ReactNode {
   )
 }
 
-function renderNoKnownUsers(props: RouteComponentProps, onSetting: () => void) {
+function renderNoKnownUsers(props: Props, onSetting: () => void) {
   return (
     <div className="app-header__content__r">
       <Icon
@@ -281,23 +277,43 @@ function renderNoKnownUsers(props: RouteComponentProps, onSetting: () => void) {
       {/*  width={28}*/}
       {/*  onClick={onSetting}*/}
       {/*/>*/}
-      {/*<Button*/}
-      {/*  className="header-button"*/}
-      {/*  onClick={() => props.history.push('/login')}*/}
-      {/*>*/}
-      {/*  Login*/}
-      {/*</Button>*/}
-      {/*<Button*/}
-      {/*  className="header-button"*/}
-      {/*  onClick={() => props.history.push('/signup')}*/}
-      {/*>*/}
-      {/*  Sign Up*/}
-      {/*</Button>*/}
+      {
+        props.login && (
+          <Button
+            className="header-button"
+            onClick={(e) => {
+              if (typeof props.login === "function") {
+                props.login(e);
+              } else {
+                props.history.push('/login');
+              }
+            }}
+          >
+            Login
+          </Button>
+        )
+      }
+      {
+        props.signup && (
+          <Button
+            className="header-button"
+            onClick={(e) => {
+              if (typeof props.signup === "function") {
+                props.signup(e);
+              } else {
+                props.history.push('/signup');
+              }
+            }}
+          >
+            Sign Up
+          </Button>
+        )
+      }
     </div>
   );
 }
 
-function renderUnauthenticatedKnownUsers(props: RouteComponentProps, onSetting: () => void, identities: string[]) {
+function renderUnauthenticatedKnownUsers(props: Props, onSetting: () => void, identities: string[]) {
   const currentUsername = identities[0];
   return (
     <div className="app-header__content__r">
@@ -319,7 +335,6 @@ function renderUnauthenticatedKnownUsers(props: RouteComponentProps, onSetting: 
       />
       <Menuable
         className="app-header__content__r__account-circle"
-
         items={[
           {
             forceRender: (closeModal) => {
@@ -336,7 +351,7 @@ function renderUnauthenticatedKnownUsers(props: RouteComponentProps, onSetting: 
           ...identities.slice(1).map(username => ({
             forceRender: () => renderSwitchAccount(props, username),
           })),
-          // {forceRender: () => renderAddAnother(props)},
+          {forceRender: () => renderAddAnother(props)},
           {divider: true},
           {
             text: 'Download Keystore',

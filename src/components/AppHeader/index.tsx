@@ -13,6 +13,8 @@ type Props = {
   logoUrl: string;
   login?: MouseEventHandler | boolean;
   signup?: MouseEventHandler | boolean;
+  signupText?: string;
+  multiAccount?: boolean;
 } & RouteComponentProps;
 function AppHeader(props: Props): ReactElement {
   const dispatch = useDispatch();
@@ -305,7 +307,7 @@ function renderNoKnownUsers(props: Props, onSetting: () => void) {
               }
             }}
           >
-            Sign Up
+            {props.signupText || 'Sign Up'}
           </Button>
         )
       }
@@ -351,8 +353,8 @@ function renderUnauthenticatedKnownUsers(props: Props, onSetting: () => void, id
           ...identities.slice(1).map(username => ({
             forceRender: () => renderSwitchAccount(props, username),
           })),
-          {forceRender: () => renderAddAnother(props)},
-          {divider: true},
+          props.multiAccount ? {forceRender: () => renderAddAnother(props)} : null,
+          props.multiAccount ? {divider: true} : null,
           {
             text: 'Download Keystore',
             onClick: (e: any) => {

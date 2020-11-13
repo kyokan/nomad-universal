@@ -43,7 +43,7 @@ function FindADomain(props: FindADomainProps): ReactElement {
           Welcome to Nomad! ✌️
         </div>
         <div className="onboarding__panel__subtitle">
-          First, let's find you a domain name! (It's free)
+          First, please enter your Handshake name.
         </div>
         <Input
           className={c('onboarding__input', {
@@ -53,7 +53,7 @@ function FindADomain(props: FindADomainProps): ReactElement {
           onChange={e => onUsernameChange(e.target.value.replace(/\./g, ''))}
           value={username}
           onKeyDown={onKeydown}
-          placeholder="Find your domain name"
+          placeholder="Enter your name"
           iconFn={() => {
             return (
               <Icon

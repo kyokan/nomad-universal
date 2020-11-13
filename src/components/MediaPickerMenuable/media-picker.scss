@@ -1,4 +1,4 @@
-@import "../../variables";
+@import "../../styles/variable";
 
 .media-picker {
   @extend %col-nowrap;
@@ -12,7 +12,7 @@
   }
 
   &__view-container {
-    box-shadow: 0 2px 2px 1px $dark-border-gray;
+    box-shadow: 0 2px 2px 1px $gray-300;
     border-radius: .125rem;
     z-index: 200;
 
@@ -21,14 +21,14 @@
       width: 16rem;
       height: 16rem;
       grid-auto-rows: 4rem;
-      background-color: $menu-bg-gray;
+      background-color: $gray-100;
       border-radius: .25rem;
       padding: .5rem;
       grid-column-gap: 0;
       grid-row-gap: 0;
 
       &__image {
-        box-shadow: 0 0 0 1px $dark-border-gray;
+        box-shadow: 0 0 0 1px $gray-300;
         border-radius: 0;
       }
 
@@ -37,7 +37,7 @@
         align-items: center;
         justify-content: center;
         padding: 0;
-        background-color: $menu-bg-gray;
+        background-color: $gray-100;
         width: 17rem;
         height: 17rem;
       }
@@ -51,19 +51,19 @@
     top: 100%;
     position: absolute;
     border-radius: 3px;
-    background-color: $menu-bg-gray;
+    background-color: $gray-100;
     box-shadow: 2px 4px 8px 0px rgba(#000, 0.125);
-    border: 1px solid $menu-border-gray;
-    border-bottom-color: darken($menu-border-gray, 15);
-    border-right-color: darken($menu-border-gray, 15);
-    border-top-color: darken($menu-border-gray, 5);
-    border-left-color: darken($menu-border-gray, 5);
+    border: 1px solid $gray-150;
+    border-bottom-color: darken($gray-150, 15);
+    border-right-color: darken($gray-150, 15);
+    border-top-color: darken($gray-150, 5);
+    border-left-color: darken($gray-150, 5);
     padding: .25rem .5rem;
     z-index: 200;
     width: max-content;
 
     &__text {
-      color: $dark-text-gray;
+      color: $dark-primary-text;
       font-size: .8125rem;
       line-height: 1.125rem;
       font-weight: 500;

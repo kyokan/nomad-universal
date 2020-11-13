@@ -1,4 +1,4 @@
-@import "../../../../src/ui/variables";
+@import "../../styles/variable";
 
 .resizable {
   @extend %col-nowrap;
@@ -47,6 +47,6 @@
 
 body.blur {
   .nav {
-    background: $header-inactive-gray !important;
+    background: $gray-50 !important;
   }
 }

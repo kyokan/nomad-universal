@@ -1,4 +1,4 @@
-@import "../../../../src/ui/variables";
+@import "../../styles/variable";
 
 .media-view {
   padding: .5rem;
@@ -17,9 +17,9 @@
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
-    background-color: $pure-black;
+    background-color: $black;
     border-radius: .125rem;
-    box-shadow: 0 2px 2px 1px rgba($pure-black, .25);
+    box-shadow: 0 2px 2px 1px rgba($black, .25);
     cursor: pointer;
   }
 
@@ -29,7 +29,7 @@
     border-radius: .25rem;
     font-size: .8125rem;
     line-height: 1.3125;
-    color: rgba($pure-black, .15);
+    color: rgba($black, .15);
     padding: 1rem;
     font-weight: 500;
     user-select: none;

@@ -1,8 +1,6 @@
-// @ts-ignore
-import React, {ReactElement, useCallback, useState, MouseEvent} from "react";
+import React, {ReactElement, useCallback, useState, MouseEvent, MouseEventHandler} from "react";
 import {markup} from "../../utils/rte";
 import {MenuPortal} from "../Menuable/menu-portal";
-// @ts-ignore
 import copy from "copy-to-clipboard";
 import { withRouter, RouteComponentProps } from "react-router";
 import './markup.scss';
@@ -12,6 +10,7 @@ type Props = {
   html?: string;
   handleOpenDiscuss?: () => void;
   customRenderer?: marked.Renderer;
+  onClick?: MouseEventHandler;
 } & RouteComponentProps;
 
 function Markup(props: Props): ReactElement {
@@ -63,9 +62,8 @@ function Markup(props: Props): ReactElement {
     if (tagName === 'A') {
       e.stopPropagation();
       e.preventDefault();
-      if (typeof global !== "undefined") {
-        const {shell} = require('electron');
-        shell.openExternal(href);
+      if (props.onClick) {
+        props.onClick(href);
       } else if (typeof window !== "undefined") {
         window.open(href, '_blank');
       }

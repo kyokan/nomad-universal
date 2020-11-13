@@ -1,9 +1,9 @@
 import React, {MouseEvent, ReactElement, useCallback, useState} from "react";
 import Menuable, {MenuProps} from "../Menuable";
-import UserIcon from "../../../../static/assets/icons/user.svg";
-import TickIcon from "../../../../static/assets/icons/tick.svg";
-import PlusIcon from "../../../../static/assets/icons/plus.svg";
-import UploadIcon from "../../../../static/assets/icons/upload.svg";
+import UserIcon from "../../static/assets/icons/user.svg";
+import TickIcon from "../../static/assets/icons/tick.svg";
+import PlusIcon from "../../static/assets/icons/plus.svg";
+import UploadIcon from "../../static/assets/icons/upload.svg";
 import {useDispatch} from "react-redux";
 import {RouteComponentProps, withRouter} from "react-router";
 import {useCurrentUsername, useUser, setCurrentUser, useIdentities, useIdentity} from "../../ducks/users";

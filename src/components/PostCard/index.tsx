@@ -2,9 +2,9 @@ import React, {MouseEvent, ReactElement, ReactNode, useCallback, useState} from 
 import './post-card.scss';
 import Markup from "../Markup";
 import PostButton from "../PostButton";
-import CommentBlackIcon from "../../../../static/assets/icons/reply-black.svg";
-import HeartIcon from "../../../../static/assets/icons/heart.svg";
-import MoreSmallIcon from "../../../../static/assets/icons/more.svg";
+import CommentBlackIcon from "../../static/assets/icons/reply-black.svg";
+import HeartIcon from "../../static/assets/icons/heart.svg";
+import MoreSmallIcon from "../../static/assets/icons/more.svg";
 import classNames from "classnames";
 import {PostMeta, usePostId} from "../../ducks/posts";
 import {

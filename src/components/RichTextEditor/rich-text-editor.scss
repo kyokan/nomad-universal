@@ -1,4 +1,4 @@
-@import "../../../../src/ui/variables";
+@import "../../styles/variable";
 
 .rich-text-editor {
   @extend %col-nowrap;
@@ -8,7 +8,7 @@
     @extend %row-nowrap;
     flex: 0 0 auto;
     font-size: .75rem;
-    color: $light-text-gray;
+    color: $light-primary-text;
     padding: .5rem .75rem;
     user-select: none;
     height: 1rem;
@@ -18,7 +18,7 @@
       @extend %row-nowrap;
       align-items: center;
       font-weight: 900;
-      color: $dark-text-gray;
+      color: $dark-primary-text;
       cursor: pointer;
       border-radius: 4px;
       background-color: rgba(black, .05);
@@ -57,7 +57,7 @@
     &__divider {
       height: 2px;
       width: 2px;
-      background-color: rgba($dark-border-gray, .5);
+      background-color: rgba($gray-300, .5);
       border-radius: 50%;
       margin: 0 .25rem;
     }
@@ -84,7 +84,7 @@
 
     &::placeholder {
       font-weight: 500 !important;
-      color: rgba($light-text-gray, .5);
+      color: rgba($light-primary-text, .5);
     }
 
     &:active,
@@ -111,7 +111,7 @@
   .public-DraftEditorPlaceholder-root {
     position: relative;
     z-index: 100;
-    color: rgba($light-text-gray, .5);
+    color: rgba($light-primary-text, .5);
   }
 
   .public-DraftEditorPlaceholder-inner {
@@ -132,7 +132,7 @@
     @extend %col-nowrap;
     flex: 0 0 auto;
     margin: 0 .75rem .75rem;
-    border: 1px solid $menu-border-gray;
+    border: 1px solid $gray-150;
     border-radius: 4px;
     overflow: hidden;
     box-shadow: 0 2px 2px 0 rgba(#000, .1);
@@ -166,7 +166,7 @@
           white-space: nowrap;
           text-overflow: ellipsis;
           font-size: .75rem;
-          color: $dark-text-gray;
+          color: $dark-primary-text;
         }
 
         .icon {
@@ -186,7 +186,7 @@
   &__controls {
     @extend %row-nowrap;
     margin: 0 .75rem .75rem;
-    border: 1px solid $menu-border-gray;
+    border: 1px solid $gray-150;
     border-radius: 2px;
     box-shadow: 0 1px 1px 0 rgba(#000, .1);
 
@@ -265,12 +265,12 @@
 
   &--embedded {
     background-color: darken($pure-white, 2.5);
-    border: 1px solid $dark-border-gray;
+    border: 1px solid $gray-300;
     border-radius: .125rem;
     box-sizing: border-box;
 
     &:focus-within {
-      border: 1px solid darken($dark-border-gray, 20);
+      border: 1px solid darken($gray-300, 20);
     }
 
     .rich-text-editor {

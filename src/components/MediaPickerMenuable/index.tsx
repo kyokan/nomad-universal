@@ -7,8 +7,8 @@ import {Action} from "redux";
 import MediaView from "../UserView/MediaView";
 import "./media-picker.scss";
 import Icon from "../Icon";
-import CloseIcon from "../../../../static/assets/icons/close-red.svg";
-import TickIcon from "../../../../static/assets/icons/tick-green.svg";
+import CloseIcon from "../../static/assets/icons/close-red.svg";
+import TickIcon from "../../static/assets/icons/tick-green.svg";
 import {isTLD} from "../../utils/user";
 import {useCurrentUser} from "../../ducks/users";
 

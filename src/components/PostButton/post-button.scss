@@ -1,4 +1,4 @@
-@import "../../../../src/ui/variables";
+@import "../../styles/variable";
 
 .post-button {
   @extend %row-nowrap;
@@ -23,7 +23,7 @@
     font-weight: 700;
     font-size: .75rem;
     line-height: 1rem;
-    color: $light-text-gray;
+    color: $light-primary-text;
     padding-left: .375rem;
     transition: color 100ms ease-in-out;
   }
@@ -31,7 +31,7 @@
   &:hover {
     .post-button {
       &__text {
-        color: darken($light-text-gray, 25);
+        color: darken($light-primary-text, 25);
       }
     }
     .icon {
@@ -44,7 +44,7 @@
       opacity: .75 !important;
     }
     &:hover {
-      background-color: rgba($highlight-blue, .1) !important;
+      background-color: rgba($blue, .1) !important;
       .icon {
         opacity: 1 !important;
       }
@@ -54,7 +54,7 @@
   &--active {
     .post-button {
       &__text {
-        color: darken($light-text-gray, 35);
+        color: darken($light-primary-text, 35);
       }
     }
     .icon {

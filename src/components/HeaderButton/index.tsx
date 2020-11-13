@@ -1,7 +1,7 @@
 import React, {Component, MouseEvent, MouseEventHandler, ReactNode} from 'react';
 import c from 'classnames';
 import Icon from '../Icon';
-import CaretDownIcon from '../../../../static/assets/icons/arrow-down.svg';
+import CaretDownIcon from '../../static/assets/icons/arrow-down.svg';
 import './header-button.scss';
 
 type Props = {

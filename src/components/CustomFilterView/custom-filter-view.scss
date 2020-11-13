@@ -1,4 +1,4 @@
-@import "../../../../src/ui/variables";
+@import "../../styles/variable";
 
 .custom-filter-view {
 
@@ -6,7 +6,7 @@
 
 .custom-view-container {
   .more-btn {
-    border: 1px solid rgba($pure-black, .3);
+    border: 1px solid rgba($black, .3);
     &__menu {
       .menu {
         left: auto;

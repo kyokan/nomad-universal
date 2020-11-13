@@ -1,6 +1,6 @@
 import React, {ReactElement, useCallback, useState} from 'react';
-import AddIcon from '../../../../static/assets/icons/add.svg';
-import MinusIcon from '../../../../static/assets/icons/minus.svg';
+import AddIcon from '../../static/assets/icons/add.svg';
+import MinusIcon from '../../static/assets/icons/minus.svg';
 import c from 'classnames';
 import './thread.scss';
 import {useCommentsFromParentId, useFetchMoreComments, usePostId} from "../../ducks/posts";

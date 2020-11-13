@@ -1,11 +1,11 @@
-@import "../../../../src/ui/variables";
+@import "../../styles/variable";
 
 .topic {
   flex: 0 0 auto;
   white-space: nowrap;
   @extend %row-nowrap;
   align-items: center;
-  color: $dark-text-gray;
+  color: $dark-primary-text;
   cursor: pointer;
   border-radius: .1875rem;
   border: none;
@@ -34,20 +34,20 @@
   }
 
   &--favorite {
-    background-color: $menu-highlight-blue !important;
-    color: $pure-white;
+    background-color: $blue !important;
+    color: $white;
 
     &:hover {
-      background-color: lighten($menu-highlight-blue, 5) !important;
+      background-color: lighten($blue, 5) !important;
     }
 
     &:active {
-      background-color: darken($menu-highlight-blue, 5) !important;
+      background-color: darken($blue, 5) !important;
     }
   }
 
   &--hidden {
-    color: $header-inactive-text;
+    color: $light-primary-text;
     font-weight: 400;
   }
 }

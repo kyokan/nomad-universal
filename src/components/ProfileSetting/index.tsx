@@ -5,12 +5,11 @@ import {useCurrentUsername, useFetchUser, useUser} from "../../ducks/users";
 import {RawUserCard} from "../UserCard";
 import {parseUsername} from "../../utils/user";
 import Button from "../Button";
-import {useQueryMediaForName, useSendPost} from "../../ducks/posts";
+import {useSendPost} from "../../ducks/posts";
 import {createNewDraft} from "../../ducks/drafts/type";
-import MediaPickerMenuable from "../MediaPickerMenuable";
-type Props = {
+import Menuable from "../Menuable";
 
-} & RouteComponentProps;
+type Props = RouteComponentProps;
 
 function ProfileSetting(props: Props): ReactElement {
   const currentUsername = useCurrentUsername();
@@ -138,8 +137,6 @@ function ProfileSetting(props: Props): ReactElement {
     setAvatarType(type)
   }, [profilePicture]);
 
-  const queryMediaForName = useQueryMediaForName();
-
   return (
     <div className="profile-setting">
       <div className="setting__group">
@@ -185,10 +182,7 @@ function ProfileSetting(props: Props): ReactElement {
               <div className="profile-setting__images">
                 <div className="profile-setting__images__group">
                   <div className="profile-setting__images__group__actions">
-                    <MediaPickerMenuable
-                      onMediaUploadClick={async () => ''}
-                      queryMediaByName={queryMediaForName}
-                      onMediaHashUpdate={setProfilePicture}
+                    <Menuable
                       items={[
                         {
                           text: 'Choose from Avatars',
@@ -210,7 +204,7 @@ function ProfileSetting(props: Props): ReactElement {
                       ]}
                     >
                       <Button>Choose File</Button>
-                    </MediaPickerMenuable>
+                    </Menuable>
                   </div>
                 </div>
               </div>
@@ -245,17 +239,3 @@ function ProfileSetting(props: Props): ReactElement {
 }
 
 export default withRouter(ProfileSetting);
-
-function download(filename: string, fileType: string, text: string) {
-  const blob = new Blob([text], { type: fileType });
-
-  const a = document.createElement('a');
-  a.download = filename;
-  a.href = URL.createObjectURL(blob);
-  a.dataset.downloadurl = [fileType, a.download, a.href].join(':');
-  a.style.display = "none";
-  document.body.appendChild(a);
-  a.click();
-  document.body.removeChild(a);
-  setTimeout(function() { URL.revokeObjectURL(a.href); }, 1500);
-}

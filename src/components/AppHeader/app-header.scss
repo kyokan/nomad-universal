@@ -249,6 +249,10 @@
 .user-header__wrapper {
   @extend %row-nowrap;
   flex: 1 0 auto;
+
+  .menu__row {
+    padding: .5rem;
+  }
 }
 
 .user-header {

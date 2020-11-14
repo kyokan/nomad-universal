@@ -69,7 +69,7 @@
           top: calc(100% + .5rem);
 
           .menu--children {
-            left: -6.375rem;
+            left: calc(-100% + 5.625rem);
           }
         }
 

@@ -15,12 +15,11 @@ type Props = {
   signup?: MouseEventHandler | boolean;
   signupText?: string;
   multiAccount?: boolean;
+  onLogout?: () => void;
+  onSetting?: () => void;
+  onDownloadKeystore?: () => void;
 } & RouteComponentProps;
 function AppHeader(props: Props): ReactElement {
-  const dispatch = useDispatch();
-
-  // useEffect(() => dispatch(fetchIdentity()), []);
-
   return (
     <div className="app-header">
       <div className="app-header__content">
@@ -127,14 +126,13 @@ function _UserHeader(props: RouteComponentProps<{username: string}>): ReactEleme
 
 function renderRight(props: Props): ReactNode {
   const dispatch = useDispatch();
-  const onSetting = useCallback(() => props.history.push(`/settings`), []);
 
   const onCreate = useCallback(() => {
     props.history.push(`/write`);
   }, []);
 
   const onLogout = useCallback(async () => {
-    // localStorage.removeItem('nomad_token');
+    props.onLogout && props.onLogout();
     dispatch(setCurrentUser(''));
   }, [dispatch]);
 
@@ -143,11 +141,10 @@ function renderRight(props: Props): ReactNode {
   const currentUsername = useCurrentUsername();
 
   if (!identities.length && !currentUsername) {
-    return renderNoKnownUsers(props, onSetting);
+    return renderNoKnownUsers(props);
   } else if (identities.length && !currentUsername) {
     return renderUnauthenticatedKnownUsers(
       props,
-      onSetting,
       identities,
     );
   }
@@ -173,7 +170,13 @@ function renderRight(props: Props): ReactNode {
         className="app-header__content__r__account-circle"
         items={[
           {
-            forceRender: (closeModal) => renderMainAccount(props, currentUsername, true, closeModal, onLogout),
+            forceRender: (closeModal) => renderMainAccount(
+              props,
+              currentUsername,
+              true,
+              closeModal,
+              onLogout,
+            ),
           },
           {divider: true,},
           ...identities
@@ -181,12 +184,20 @@ function renderRight(props: Props): ReactNode {
             .map(username => ({
               forceRender: () => renderSwitchAccount(props, username),
             })),
-          { forceRender: () => renderAddAnother(props) },
-          {divider: true,},
-          {
-            text: 'Settings',
-            onClick: onSetting,
-          },
+          props.multiAccount ? {forceRender: () => renderAddAnother(props)} : null,
+          props.multiAccount ? {divider: true} : null,
+          props.onDownloadKeystore
+            ? {
+              text: 'Download Keystore',
+              onClick: props.onDownloadKeystore,
+            }
+            : null,
+          props.onSetting
+            ? {
+              text: 'Setting',
+              onClick: props.onSetting,
+            }
+            : null,
         ]}
       >
         <Avatar username={currentUsername} />
@@ -255,10 +266,7 @@ function renderSwitchAccount(props: Props, username: string): ReactNode {
 function renderAddAnother(props: Props): ReactNode {
   return (
     <div className="add-account" onClick={() => props.history.push('/signup')}>
-      {(
-        // @ts-ignore
-        <Icon material="person_add" width={18} />
-      )}
+      <Icon material="person_add" width={18} />
       <div className="add-account__info">
         Add another domain name
       </div>
@@ -266,7 +274,7 @@ function renderAddAnother(props: Props): ReactNode {
   )
 }
 
-function renderNoKnownUsers(props: Props, onSetting: () => void) {
+function renderNoKnownUsers(props: Props) {
   return (
     <div className="app-header__content__r">
       <Icon
@@ -315,7 +323,7 @@ function renderNoKnownUsers(props: Props, onSetting: () => void) {
   );
 }
 
-function renderUnauthenticatedKnownUsers(props: Props, onSetting: () => void, identities: string[]) {
+function renderUnauthenticatedKnownUsers(props: Props, identities: string[]) {
   const currentUsername = identities[0];
   return (
     <div className="app-header__content__r">
@@ -355,35 +363,18 @@ function renderUnauthenticatedKnownUsers(props: Props, onSetting: () => void, id
           })),
           props.multiAccount ? {forceRender: () => renderAddAnother(props)} : null,
           props.multiAccount ? {divider: true} : null,
-          {
-            text: 'Download Keystore',
-            onClick: (e: any) => {
-              if (e.stopPropagation) e.stopPropagation();
-              // postIPCMain({
-              //   type: IPCMessageRequestType.GET_USER_KEYSTORE,
-              //   payload: currentUsername,
-              // }, true)
-              //   .then(resp => {
-              //     const element = document.createElement('a');
-              //     element.setAttribute(
-              //       'href',
-              //       'data:text/plain;charset=utf-8,' + encodeURIComponent(resp.payload)
-              //     );
-              //     element.setAttribute('download', currentUsername);
-              //
-              //     element.style.display = 'none';
-              //     document.body.appendChild(element);
-              //
-              //     element.click();
-              //
-              //     document.body.removeChild(element);
-              //   });
-            },
-          },
-          {
-            text: 'Settings',
-            onClick: onSetting,
-          },
+          props.onDownloadKeystore
+            ? {
+              text: 'Download Keystore',
+              onClick: props.onDownloadKeystore,
+            }
+            : null,
+          props.onSetting
+            ? {
+              text: 'Setting',
+              onClick: props.onSetting,
+            }
+            : null,
         ]}
       >
         <Avatar username={currentUsername} />

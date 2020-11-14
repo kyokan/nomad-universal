@@ -1,14 +1,5 @@
 @import "../../styles/variable";
 
-button {
-  cursor: pointer;
-
-  &:disabled {
-    opacity: .5;
-    cursor: default;
-  }
-}
-
 .button {
   @extend %row-nowrap;
   @extend %regular-font;
@@ -75,6 +66,15 @@ button {
       background-color: $white !important;
       color: $dark-primary-text !important;
     }
+  }
+}
+
+button {
+  cursor: pointer;
+
+  &:disabled {
+    opacity: .5;
+    cursor: default;
   }
 }
 

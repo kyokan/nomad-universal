@@ -2,6 +2,7 @@ import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {ThunkDispatch} from "redux-thunk";
 import {createRefhash} from 'fn-client/lib/wire/refhash';
 import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
+import {BlobInfo} from 'fn-client/lib/fnd/BlobInfo';
 import {CustomViewProps, UserData, NapiResponse} from "../utils/types";
 
 import {useCallback} from "react";
@@ -13,6 +14,7 @@ import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
 import {Connection as DomainConnection} from 'fn-client/lib/application/Connection';
 import {extendFilter} from "../utils/filter";
+
 
 export type User = {
   name: string;
@@ -39,6 +41,7 @@ export type User = {
   channels: {
     [channelHash: string]: string;
   };
+  currentBlobOffset: number;
 }
 
 type UserOpts = {
@@ -66,6 +69,7 @@ type UserOpts = {
     followers: number;
     followings: number;
   };
+  currentBlobOffset?: number;
 }
 
 export type UsersState = {
@@ -403,7 +407,13 @@ function reducerSetUserLikes(state: UsersState = initialState, action: UsersActi
   };
 }
 
-function reducerSetUserProfile(state: UsersState = initialState, action: UsersAction<{username: string} & UserProfile>): UsersState {
+function reducerSetUserProfile(
+  state: UsersState = initialState,
+  action: UsersAction<{
+    username: string,
+    offset: number,
+  } & UserProfile>
+): UsersState {
   const {
     username,
     profilePicture,
@@ -415,6 +425,7 @@ function reducerSetUserProfile(state: UsersState = initialState, action: UsersAc
     followings,
     blockers,
     blockings,
+    offset,
   } = action.payload;
   const user = state.map[username] || {};
 
@@ -435,6 +446,7 @@ function reducerSetUserProfile(state: UsersState = initialState, action: UsersAc
           blockers,
           blockings,
         },
+        currentBlobOffset: offset,
       }),
     },
   };
@@ -863,7 +875,11 @@ export const useFetchUser = () => {
 
     USER_FETCHED_STATUS[username] = true;
     const resp = await fetch(`${INDEXER_API}/users/${username}/profile`);
+    const resp2 = await fetch(`${INDEXER_API}/blob/${username}/info`);
     const json: NapiResponse<UserProfile> = await resp.json();
+    const json2: NapiResponse<BlobInfo & {
+      offset: number;
+    }> = await resp2.json();
 
     dispatch({
       type: UsersActionType.SET_USER_PROFILE,
@@ -878,6 +894,7 @@ export const useFetchUser = () => {
         blockings: json.payload?.blockings,
         followings: json.payload?.followings,
         displayName: json.payload?.displayName,
+        offset: json2.payload?.offset,
       },
     });
 
@@ -907,6 +924,7 @@ function makeUser(userOpts: UserOpts): User {
       followings: 0,
     },
     channels = {},
+    currentBlobOffset = 0,
   } = userOpts;
 
   return {
@@ -921,6 +939,7 @@ function makeUser(userOpts: UserOpts): User {
     displayName,
     stats,
     channels,
+    currentBlobOffset,
   };
 }
 
@@ -931,8 +950,7 @@ export const useDisplayName = (username: string): string => {
 };
 
 export const useIdentities = (): string[] => {
-  return useSelector(() => {
-    const identities: string[] = [];
-    return identities;
-  }, (a: any, b: any) => a.join('') === b.join(''));
+  return useSelector((state: { users: UsersState}) => {
+    return Object.keys(state.users.identities);
+  }, shallowEqual);
 };

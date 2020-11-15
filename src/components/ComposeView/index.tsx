@@ -102,6 +102,10 @@ function ComposeView(props: Props): ReactElement {
               <ReactRTE
                 value={draftState}
                 onChange={onDraftChange}
+                disabled={isSending || success || truncate}
+                editorStyle={{
+                  background: truncate ? '#f2f2f2' : '#fff',
+                }}
                 toolbarConfig={{
                   // Optionally specify the groups to display (displayed in the order listed).
                   display: [
@@ -161,7 +165,7 @@ function ComposeView(props: Props): ReactElement {
                 isShowingMarkdownPreview={!isPreviewing}
                 rows={Math.max(rows, 12)}
                 attachments={[]}
-                disabled={isSending || success}
+                disabled={isSending || success || truncate}
               />
             )
         }
@@ -187,7 +191,7 @@ function ComposeView(props: Props): ReactElement {
               color={success ? "green" : undefined}
               onClick={send}
               loading={isSending}
-              disabled={isSending || !draftState.getEditorState().getCurrentContent().hasText()}
+              disabled={isSending || (!draftState.getEditorState().getCurrentContent().hasText() && !truncate)}
             >
               { success ? "Posted" : "Post" }
             </Button>

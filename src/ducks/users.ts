@@ -91,6 +91,7 @@ export enum UsersActionType {
   ADD_USER = 'app/users/addUser',
   ADD_IDENTITY = 'app/users/addIdentity',
   SET_CURRENT_USER = 'app/users/setCurrentUser',
+  SET_BLOB_OFFSET = 'app/users/setBlobOffset',
   SET_USER_PROFILE = 'app/users/setUserProfile',
   SET_CURRENT_LIKES = 'app/users/setCurrentLikes',
   ADD_CURRENT_LIKES = 'app/users/addCurrentLikes',
@@ -340,6 +341,8 @@ export default function usersReducer(state: UsersState = initialState, action: U
       return reducerAddUserChannels(state, action);
     case UsersActionType.SET_USER_LIKES:
       return reducerSetUserLikes(state, action);
+    case UsersActionType.SET_BLOB_OFFSET:
+      return reducerSetBlobInfo(state, action);
     case UsersActionType.SET_USER_PROFILE:
       return reducerSetUserProfile(state, action);
     case UsersActionType.ADD_USER_LIKES:
@@ -366,6 +369,31 @@ function reducerAddUser(state: UsersState = initialState, action: UsersAction<st
         followings: {},
         likes: {},
         blocks: {},
+      }),
+    },
+  };
+}
+
+function reducerSetBlobInfo(
+  state: UsersState = initialState,
+  action: UsersAction<{
+    name: string,
+    offset: number,
+  }>
+): UsersState {
+  const {
+    name,
+    offset,
+  } = action.payload;
+  const user = state.map[name] || {};
+
+  return {
+    ...state,
+    map: {
+      ...state.map,
+      [name]: makeUser({
+        ...user,
+        currentBlobOffset: offset,
       }),
     },
   };
@@ -865,6 +893,24 @@ export const useRemoveUserFromViewIndex = () => {
 const USER_FETCHED_STATUS: {
   [username: string]: boolean,
 } = {};
+
+export const useFetchBlobInfo = () => {
+  const dispatch = useDispatch();
+  return useCallback(async (username: string) => {
+    const resp = await fetch(`${INDEXER_API}/blob/${username}/info`);
+    const json: NapiResponse<BlobInfo & {
+      offset: number;
+    }> = await resp.json();
+
+    dispatch({
+      type: UsersActionType.SET_BLOB_OFFSET,
+      payload: {
+        name: username,
+        offset: json.payload.offset,
+      },
+    })
+  }, [dispatch]);
+}
 
 export const useFetchUser = () => {
   const dispatch = useDispatch();

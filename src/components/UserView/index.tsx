@@ -272,8 +272,8 @@ function UserView(props: Props): ReactElement {
             ? 'Followed'
             : 'Follow',
       className: isUserSilienced || currentFollowings[username]
-          ? 'follow-btn follow-btn--followed'
-          : 'follow-btn',
+          ? 'follow--btn follow--btn--followed'
+          : 'follow--btn',
       onClick: followUser,
     })
   }
@@ -284,8 +284,8 @@ function UserView(props: Props): ReactElement {
     className: 'more-btn',
     render: useCallback((): ReactNode => {
       return (!isCurrentUser && !!currentUser && !currentBlockedMap[username]) && (
-        // @ts-ignore
         <Menuable
+          key="more-btn"
           className="more-btn__menu"
           items={[
             // {
@@ -372,7 +372,12 @@ function UserView(props: Props): ReactElement {
           </button>
         </Menuable>
       );
-    }, [isCurrentUser, currentUser, isUserSilienced]),
+    }, [
+      isCurrentUser,
+      currentUser,
+      isUserSilienced,
+      currentBlockedMap[username]],
+    ),
     onClick: () => null,
   });
 

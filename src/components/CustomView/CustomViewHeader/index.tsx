@@ -68,7 +68,11 @@ function CustomViewHeader(props: Props): ReactElement {
         actions && (
           <div className="custom-view-header__actions">
             {actions.map(({ text, render, onClick, className = '' }, i) => render ? render() : (
-              <button key={'header-action-btn' + text + i} className={`button ${className}`} onClick={onClick}>
+              <button
+                key={'header-action-btn' + text + i}
+                className={`button ${className}`}
+                onClick={onClick}
+              >
                 {text}
               </button>
             ))}

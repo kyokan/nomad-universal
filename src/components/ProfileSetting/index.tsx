@@ -6,17 +6,21 @@ import {RawUserCard} from "../UserCard";
 import {parseUsername} from "../../utils/user";
 import Button from "../Button";
 import {useSendPost} from "../../ducks/posts";
-import {createNewDraft} from "../../ducks/drafts/type";
+import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import Menuable from "../Menuable";
+import {RelayerNewPostResponse} from "../../utils/types";
 
-type Props = RouteComponentProps;
+type Props = {
+  sendPost?: (post: DraftPost) => Promise<RelayerNewPostResponse>
+} & RouteComponentProps;
 
 function ProfileSetting(props: Props): ReactElement {
   const currentUsername = useCurrentUsername();
   const fetchUser = useFetchUser();
   const user = useUser(currentUsername);
   const { tld, subdomain } = parseUsername(currentUsername);
-  const sendPost = useSendPost();
+  const _sendPost = useSendPost();
+  const sendPost = props.sendPost || _sendPost;
   const [sending, setSending] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [success, setSuccess] = useState(false);

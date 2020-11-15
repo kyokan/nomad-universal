@@ -60,7 +60,11 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
     const newList = reset ? uniq(hashes) : uniq(list.concat(hashes));
     setList(newList);
     setNext(payload.next);
-  }, [list, next, Object.keys(muted).join(',')]);
+  }, [
+    list,
+    next,
+    Object.keys(muted).join(','),
+  ]);
 
   const onSelectPost = useCallback((hash: string) => {
     props.history.push(`/posts/${hash}`);
@@ -107,7 +111,11 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
 
 export default withRouter(DiscoverView);
 
-async function queryNext(next: number | null, list: DomainEnvelope<DomainPost>[] = [], muted: {[u: string]: string} = {}): Promise<Pageable<DomainEnvelope<DomainPost>, number>> {
+async function queryNext(
+  next: number | null,
+  list: DomainEnvelope<DomainPost>[] = [],
+  muted: {[u: string]: string} = {},
+): Promise<Pageable<DomainEnvelope<DomainPost>, number>> {
   if (next !== null &&  next < 0) {
     return {
       items: [],

@@ -214,6 +214,23 @@ export const fetchUserFollowings = (name: string, limit = 20, offset?: number) =
   }
 };
 
+export const fetchUserBlocks = (name: string, limit = 20, offset?: number) => async (dispatch: ThunkDispatch<any, any, any>, getState: () => { users: UsersState }) => {
+  dispatch(setUserBlocks(name, {}));
+
+  const resp = await fetch(`${INDEXER_API}/users/${name}/blockees?order=ASC&limit=${limit}${offset ? '&offset=' + offset : ''}`);
+  const json: NapiResponse<Pageable<DomainConnection, number>> = await resp.json();
+
+  if (!json.error) {
+    const newBlocks = json.payload.items
+      .reduce((acc: {[h: string]: string}, { tld, subdomain }) => {
+        const username = serializeUsername(subdomain, tld);
+        acc[username] = username;
+        return acc;
+      }, {});
+    dispatch(setUserBlocks(name, newBlocks));
+  }
+};
+
 export const setCurrentLikes = (likes: {[postHash: string]: string}) => ({
   type: UsersActionType.SET_CURRENT_LIKES,
   payload: likes,

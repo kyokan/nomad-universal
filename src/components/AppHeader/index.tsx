@@ -194,7 +194,7 @@ function renderRight(props: Props): ReactNode {
             : null,
           props.onSetting
             ? {
-              text: 'Setting',
+              text: 'Settings',
               onClick: props.onSetting,
             }
             : null,
@@ -371,7 +371,7 @@ function renderUnauthenticatedKnownUsers(props: Props, identities: string[]) {
             : null,
           props.onSetting
             ? {
-              text: 'Setting',
+              text: 'Settings',
               onClick: props.onSetting,
             }
             : null,

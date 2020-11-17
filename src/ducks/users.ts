@@ -423,6 +423,7 @@ function reducerAddIdentity(state: UsersState = initialState, action: UsersActio
     map: {
       ...state.map,
       [action.payload]: makeUser({
+        ...state.map[action.payload],
         name: action.payload,
         followings: user?.followings || {},
         likes: user?.likes || {},
@@ -703,6 +704,7 @@ export const useUser = (name: string): User | undefined => {
     return a.name === b.name
       && a.coverImage === b.coverImage
       && a.profilePicture === b.profilePicture
+      && a.avatarType === b.avatarType
       && Object.keys(a.followings).join(',') === Object.keys(b.followings).join(',')
       && Object.keys(a.likes).join(',') === Object.keys(b.likes).join(',')
       && Object.keys(a.blocks).join(',') === Object.keys(b.blocks).join(',')
@@ -938,11 +940,7 @@ export const useFetchUser = () => {
 
     USER_FETCHED_STATUS[username] = true;
     const resp = await fetch(`${INDEXER_API}/users/${username}/profile`);
-    const resp2 = await fetch(`${INDEXER_API}/blob/${username}/info`);
     const json: NapiResponse<UserProfile> = await resp.json();
-    const json2: NapiResponse<BlobInfo & {
-      offset: number;
-    }> = await resp2.json();
 
     dispatch({
       type: UsersActionType.SET_USER_PROFILE,
@@ -957,7 +955,6 @@ export const useFetchUser = () => {
         blockings: json.payload?.blockings,
         followings: json.payload?.followings,
         displayName: json.payload?.displayName,
-        offset: json2.payload?.offset,
       },
     });
 

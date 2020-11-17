@@ -8,7 +8,7 @@ import CustomView from "../CustomView";
 import {
   useCurrentBlocks,
   useCurrentFollowings,
-  useCurrentUsername, useFetchUser, userCurrentMutedNames,
+  useCurrentUsername, useFetchUser, userCurrentMutedNames, useUser,
   useUsersMap
 } from "../../ducks/users";
 import {dotName, parseUsername, serializeUsername, undotName} from "../../utils/user";
@@ -66,10 +66,9 @@ function UserView(props: Props): ReactElement {
     acc[name] = name;
     return acc;
   }, {});
-  const userMap = useUsersMap();
   const postMap = usePostsMap();
   const fetchUser = useFetchUser();
-  const user = userMap[username];
+  const user = useUser(username);
   const silenced = { ...blockedMap, ...mutedMap };
   const isUserSilienced = !!silenced[username];
 

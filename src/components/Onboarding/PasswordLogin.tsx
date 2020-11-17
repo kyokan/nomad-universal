@@ -16,7 +16,6 @@ type PasswordLoginProps = {
 function PasswordLogin(props: PasswordLoginProps): ReactElement {
   const {
     username,
-    onSubdomainLogin,
     onTLDLogin,
     history,
   } = props;
@@ -31,10 +30,7 @@ function PasswordLogin(props: PasswordLoginProps): ReactElement {
     setErrorMessage('');
 
     try {
-      if (subdomain && RELAYER_TLDS[tld]) {
-        await onSubdomainLogin(tld, subdomain, password);
-        history.push('/discover');
-      } else if (tld && !subdomain) {
+      if (tld && !subdomain) {
         await onTLDLogin(tld, password);
         history.push('/discover');
       }
@@ -43,7 +39,7 @@ function PasswordLogin(props: PasswordLoginProps): ReactElement {
       setLoading(false);
     }
 
-  }, [username, password, onSubdomainLogin, history.push]);
+  }, [username, password, history.push]);
 
   const onChange = useCallback((e) => {
     setPassword(e.target.value);

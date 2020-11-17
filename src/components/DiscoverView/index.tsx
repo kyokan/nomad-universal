@@ -82,12 +82,6 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
     }())
   }, [Object.keys(muted).join(',')]);
 
-  useEffect(() => {
-    return () => {
-      stop();
-    }
-  }, []);
-
   return (
     <CustomView
       loading={loading}

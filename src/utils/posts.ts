@@ -10,22 +10,24 @@ export function getCSSImageURLFromPostHash (hash: string): string {
   return `url(${INDEXER_API}/media/${hash})`;
 }
 
-export function getCSSImageURLFromAvatarType (avatarType: string, username: string) {
+export function getCSSImageURLFromAvatarType (_avatarType: string, username: string) {
+  const avatarType = _avatarType.trim().replace(/\u21b5/g,'') || 'identicon';
   if (avatarType === '_') {
     return `url('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVAAAAEYAQMAAAAwLTybAAAAA1BMVEXy8vJkA4prAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAI0lEQVRoge3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAA4McALwgAAQoNfCUAAAAASUVORK5CYII=')`;
   }
-  return `url(${INDEXER_API}/avatars/${avatarType || 'identicon'}/${username}.svg)`
+  return `url(${INDEXER_API}/avatars/${avatarType}/${username}.svg)`
 }
 
 export function getImageURLFromPostHash (hash: string): string {
   return `${INDEXER_API}/media/${hash}`;
 }
 
-export function getImageURLFromAvatarType (avatarType: string, username: string): string {
+export function getImageURLFromAvatarType (_avatarType: string, username: string): string {
+  const avatarType = _avatarType.trim().replace(/\u21b5/g,'') || 'identicon';
   if (avatarType === '_') {
     return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVAAAAEYAQMAAAAwLTybAAAAA1BMVEXy8vJkA4prAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAI0lEQVRoge3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAA4McALwgAAQoNfCUAAAAASUVORK5CYII=';
   }
-  return `${INDEXER_API}/avatars/${avatarType || 'identicon'}/${username}.svg`;
+  return `${INDEXER_API}/avatars/${avatarType}/${username}.svg`;
 }
 
 export const mapDomainEnvelopeToPost = (env: DomainEnvelope<DomainPost>): ResponsePost => {

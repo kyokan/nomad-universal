@@ -70,7 +70,6 @@ function Login(props: LoginProps): ReactElement {
           placeholder="Enter your domain name"
           iconFn={() => {
             return (
-              // @ts-ignore
               <Icon
                 material="arrow_right_alt"
                 width={18}

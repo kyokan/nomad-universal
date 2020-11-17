@@ -6,16 +6,17 @@ import {
 } from "../../utils/posts";
 import "./avatar.scss";
 
-export default function Avatar(props: {username: string, className?: string}): ReactElement {
+export default function Avatar(props: {
+  username: string,
+  className?: string,
+}): ReactElement {
   const user = useUser(props.username);
 
   const fetchUser = useFetchUser();
 
   useEffect(() => {
-    if (!user) {
-      fetchUser(props.username);
-    }
-  }, [user, props.username]);
+    fetchUser(props.username);
+  }, [props.username, user?.profilePicture, user?.avatarType]);
 
   return (
     <img

@@ -92,6 +92,7 @@ function Card(props: Props): ReactElement {
   const { replyCount = 0, likeCount = 0 } = meta || {};
   const [isContentOverflow, setContentOverflow] = useState(false);
   const [isShowingReply, setShowingReply] = useState<boolean>(false);
+  const [isSendingLike, setSeningLike] = useState(false);
   const currentLikes = useCurrentLikes();
   // const onMuteUser = useMuteUser();
   // const onUnmuteUser = useUnmuteUser();
@@ -105,19 +106,20 @@ function Card(props: Props): ReactElement {
   //   return acc;
   // }, {});
 
-  const likePost = useCallback((e: MouseEvent) => {
+  const likePost = useCallback(async (e: MouseEvent) => {
     e.stopPropagation();
-    if (onLikePost) {
-      onLikePost(hash);
+    if (!isSendingLike && onLikePost) {
+      setSeningLike(true);
+      await onLikePost(hash);
+      setSeningLike(false);
     }
-  }, [hash, onLikePost]);
+  }, [hash, onLikePost, isSendingLike]);
   const openPost = useOpenPost(props);
 
   return (
     <div
       tabIndex={onSelectPost ? 1 : undefined}
-      // @ts-ignore
-      ref={el => setContentOverflow(el?.clientHeight >= 445)}
+      ref={el => setContentOverflow((el?.clientHeight || 0) >= 445)}
       className={classNames('post-card', className, {
         'post-card--selectable': onSelectPost,
         'post-card--avatarless': !avatar,
@@ -157,19 +159,17 @@ function Card(props: Props): ReactElement {
       <div className="post-card__footer">
         {
           !!onLikePost && (
-            // @ts-ignore
             <PostButton
               iconUrl={HeartIcon}
               text={`${likeCount}`}
               onClick={likePost}
               active={!!currentLikes[hash]}
-              disabled={!currentUser}
+              disabled={!currentUser || isSendingLike}
             />
           )
         }
         {
           !!canReply && (
-            // @ts-ignore
             <PostButton
               className={classNames({
                 'post-card__footer__reply-btn--opened': isShowingReply,

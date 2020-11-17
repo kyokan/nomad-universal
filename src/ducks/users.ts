@@ -931,6 +931,14 @@ export const useFetchBlobInfo = () => {
   }, [dispatch]);
 }
 
+export const fetchBlobOffset = async (username: string) => {
+  const resp = await fetch(`${INDEXER_API}/blob/${username}/info`);
+  const json: NapiResponse<BlobInfo & {
+    offset: number;
+  }> = await resp.json();
+  return json.payload.offset;
+}
+
 export const useFetchUser = () => {
   const dispatch = useDispatch();
   return useCallback(async (username: string) => {

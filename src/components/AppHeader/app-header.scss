@@ -5,6 +5,11 @@
   height: 3rem;
   border-bottom: 1px solid $gray-150;
 
+  &__title {
+    @extend %lite-font;
+    font-weight: bold;
+  }
+
   &__content {
     @extend %row-nowrap;
     margin: 0 auto;
@@ -213,6 +218,24 @@
               &__username {
                 @extend %small-font;
                 color: $light-primary-text;
+              }
+            }
+
+            &__status {
+              font-size: .6875rem;
+              font-weight: 600;
+              padding: .125rem .3125rem;
+              border-radius: .125rem;
+              margin: .125rem 0;
+
+              &--pending {
+                background-color: $orange-200;
+                color: $orange;
+              }
+
+              &--not-registered {
+                background-color: $red-200;
+                color: $red;
               }
             }
           }

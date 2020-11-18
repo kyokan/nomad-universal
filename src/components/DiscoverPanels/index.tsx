@@ -8,13 +8,13 @@ import {INDEXER_API} from "../../utils/api";
 import {addTag} from "../../ducks/search";
 
 function DiscoverPanels(props: RouteComponentProps): ReactElement {
-  const [trendingPeople, setPeople] = useState<string[]>([]);
+  const [people, setPeople] = useState<string[]>([]);
   const [trendingTags, setTags] = useState<{name: string; count: number}[]>([]);
 
   useEffect(() => {
     (async function () {
       const tags = await fetchTrendingTags();
-      const users = await fetchTrendingUsers();
+      const users = await fetchRegisteredDomains();
       setTags(tags.map(({ name, count, posterCount }: any) => ({
         name,
         count,
@@ -27,18 +27,28 @@ function DiscoverPanels(props: RouteComponentProps): ReactElement {
   return (
     <div className="discover-panels">
       <div className="trending-users">
-        <div className="trending-users__title">Trending People</div>
+        <div className="trending-users__title">Registered Domains</div>
         {
-          trendingPeople.length
+          people.length
             ? (
-              trendingPeople.map((username: string) => (
+              people.map((username: string) => (
                 <UserFollowingRow
                   key={username}
                   username={username}
                 />
               ))
             )
-            : <div className="user-panel__empty">No Trending People</div>
+            : <div className="user-panel__empty">No Registered Domains</div>
+        }
+        {
+          !!people.length && (
+            <div
+              className="trending-view-all"
+              onClick={() => props.history.push(`/directory`)}
+            >
+              View All
+            </div>
+          )
         }
       </div>
     </div>
@@ -100,6 +110,17 @@ async function fetchTrendingTags() {
 
 async function fetchTrendingUsers() {
   const resp = await fetch(`${INDEXER_API}/trending/users?limit=5`);
+  const json = await resp.json();
+
+  if (json.error) {
+    return Promise.reject(json.error);
+  }
+
+  return json.payload.items;
+}
+
+async function fetchRegisteredDomains() {
+  const resp = await fetch(`${INDEXER_API}/tlds?limit=25`);
   const json = await resp.json();
 
   if (json.error) {

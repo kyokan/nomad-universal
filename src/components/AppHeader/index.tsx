@@ -8,6 +8,8 @@ import Button from "../Button";
 import Avatar from "../Avatar";
 import Menuable from "../Menuable";
 import {parseUsername} from "../../utils/user";
+import {useCurrentUser} from "../../ducks/users";
+import classNames = require("classnames");
 
 type Props = {
   logoUrl: string;
@@ -39,6 +41,10 @@ function renderLeft(props: Props): ReactNode {
     <Switch>
       <Route path="/posts/:postHash">
         <Back />
+      </Route>
+      <Route path="/directory">
+        <Back />
+        <div className="app-header__title">Domain Directory</div>
       </Route>
       <Route path="/search">
         <Back />
@@ -206,6 +212,23 @@ function renderRight(props: Props): ReactNode {
   );
 }
 
+function renderUserStatus(props: Props, username: string): ReactNode {
+  const user = useUser(username);
+
+  if (user?.confirmed) {
+    return <></>;
+  }
+
+  return (
+    <div className={classNames("main-account__status", {
+      "main-account__status--pending": !user?.registered,
+      "main-account__status--not-registered": !user?.registered,
+    })}>
+      {user?.registered ? 'Pending Confirmation' : 'Not Registered'}
+    </div>
+  )
+}
+
 function renderMainAccount(props: Props, username: string, isLoggedIn: boolean, closeModal?: () => void, onLogout?: () => void): ReactNode {
   const { tld, subdomain } = parseUsername(username);
   const user = useUser(username);
@@ -217,6 +240,7 @@ function renderMainAccount(props: Props, username: string, isLoggedIn: boolean, 
     >
       <Avatar username={username} />
       <div className="main-account__info">
+        {renderUserStatus(props, username)}
         <div className="main-account__info__display-name">
           { user?.displayName || subdomain || tld }
         </div>

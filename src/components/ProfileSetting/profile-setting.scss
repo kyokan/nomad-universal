@@ -97,3 +97,22 @@
     }
   }
 }
+
+.name-status {
+  font-weight: 600 !important;
+  font-size: .875rem !important;
+  font-family: "Open Sans", sans-serif !important;
+  cursor: default;
+
+  &--not-registered {
+    color: $red;
+  }
+
+  &--confirmed {
+    color: $green;
+  }
+
+  &--pending {
+    color: $orange;
+  }
+}

@@ -42,6 +42,10 @@ export type User = {
     [channelHash: string]: string;
   };
   currentBlobOffset: number;
+  publicKey: string;
+  registerHeight: number;
+  registered: boolean;
+  confirmed: boolean;
 }
 
 type UserOpts = {
@@ -70,6 +74,10 @@ type UserOpts = {
     followings: number;
   };
   currentBlobOffset?: number;
+  publicKey?: string;
+  registerHeight?: number;
+  registered?: boolean;
+  confirmed?: boolean;
 }
 
 export type UsersState = {
@@ -92,6 +100,8 @@ export enum UsersActionType {
   ADD_IDENTITY = 'app/users/addIdentity',
   SET_CURRENT_USER = 'app/users/setCurrentUser',
   SET_BLOB_OFFSET = 'app/users/setBlobOffset',
+  SET_USER_PUBLIC_KEY = 'app/users/setUserPublicKey',
+  SET_USER_REGISTER_HEIGHT = 'app/users/setUserRegisterHeight',
   SET_USER_PROFILE = 'app/users/setUserProfile',
   SET_CURRENT_LIKES = 'app/users/setCurrentLikes',
   ADD_CURRENT_LIKES = 'app/users/addCurrentLikes',
@@ -360,6 +370,10 @@ export default function usersReducer(state: UsersState = initialState, action: U
       return reducerSetUserLikes(state, action);
     case UsersActionType.SET_BLOB_OFFSET:
       return reducerSetBlobInfo(state, action);
+    case UsersActionType.SET_USER_REGISTER_HEIGHT:
+      return reducerSetBlobInfo(state, action);
+    case UsersActionType.SET_USER_PUBLIC_KEY:
+      return reducerSetBlobInfo(state, action);
     case UsersActionType.SET_USER_PROFILE:
       return reducerSetUserProfile(state, action);
     case UsersActionType.ADD_USER_LIKES:
@@ -395,14 +409,23 @@ function reducerSetBlobInfo(
   state: UsersState = initialState,
   action: UsersAction<{
     name: string,
-    offset: number,
+    offset?: number,
+    publicKey?: string,
+    registerHeight?: number,
   }>
 ): UsersState {
   const {
     name,
     offset,
+    publicKey,
+    registerHeight,
   } = action.payload;
   const user = state.map[name] || {};
+  const opts: UserOpts = {};
+
+  if (offset) opts.currentBlobOffset = offset;
+  if (publicKey) opts.publicKey = publicKey;
+  if (registerHeight) opts.registerHeight = registerHeight;
 
   return {
     ...state,
@@ -410,7 +433,7 @@ function reducerSetBlobInfo(
       ...state.map,
       [name]: makeUser({
         ...user,
-        currentBlobOffset: offset,
+        ...opts,
       }),
     },
   };
@@ -472,6 +495,8 @@ function reducerSetUserProfile(
     blockers,
     blockings,
     offset,
+    registered,
+    confirmed,
   } = action.payload;
   const user = state.map[username] || {};
 
@@ -493,6 +518,8 @@ function reducerSetUserProfile(
           blockings,
         },
         currentBlobOffset: offset,
+        registered,
+        confirmed,
       }),
     },
   };
@@ -705,10 +732,19 @@ export const useUser = (name: string): User | undefined => {
       && a.coverImage === b.coverImage
       && a.profilePicture === b.profilePicture
       && a.avatarType === b.avatarType
+      && a.publicKey === b.publicKey
+      && a.currentBlobOffset === b.currentBlobOffset
+      && a.registerHeight === b.registerHeight
+      && a.bio === b.bio
+      && a.displayName === b.displayName
+      && a.stats.blockings === b.stats.blockings
+      && a.stats.blockers === b.stats.blockers
+      && a.stats.followers === b.stats.followers
+      && a.stats.followings === b.stats.followings
       && Object.keys(a.followings).join(',') === Object.keys(b.followings).join(',')
       && Object.keys(a.likes).join(',') === Object.keys(b.likes).join(',')
       && Object.keys(a.blocks).join(',') === Object.keys(b.blocks).join(',')
-      && Object.keys(a.channels).join(',') === Object.keys(b.channels).join(',')
+      && JSON.stringify(a.channels) === JSON.stringify(b.channels)
   });
 };
 
@@ -917,7 +953,13 @@ export const useFetchBlobInfo = () => {
   const dispatch = useDispatch();
   return useCallback(async (username: string) => {
     const resp = await fetch(`${INDEXER_API}/blob/${username}/info`);
-    const json: NapiResponse<BlobInfo & {
+    const {
+      payload: {
+        offset,
+        publicKey,
+        importHeight,
+      }
+    }: NapiResponse<BlobInfo & {
       offset: number;
     }> = await resp.json();
 
@@ -925,9 +967,25 @@ export const useFetchBlobInfo = () => {
       type: UsersActionType.SET_BLOB_OFFSET,
       payload: {
         name: username,
-        offset: json.payload.offset,
+        offset,
       },
-    })
+    });
+
+    dispatch({
+      type: UsersActionType.SET_USER_PUBLIC_KEY,
+      payload: {
+        name: username,
+        publicKey,
+      },
+    });
+
+    dispatch({
+      type: UsersActionType.SET_USER_REGISTER_HEIGHT,
+      payload: {
+        name: username,
+        registerHeight: importHeight,
+      },
+    });
   }, [dispatch]);
 }
 
@@ -963,6 +1021,8 @@ export const useFetchUser = () => {
         blockings: json.payload?.blockings,
         followings: json.payload?.followings,
         displayName: json.payload?.displayName,
+        confirmed: json.payload?.confirmed,
+        registered: json.payload?.registered,
       },
     });
 
@@ -970,7 +1030,7 @@ export const useFetchUser = () => {
     // USER_FETCHED_STATUS[username] = false;
     setTimeout(() => {
       USER_FETCHED_STATUS[username] = false;
-    }, 5000);
+    }, 60000);
   }, [dispatch]);
 };
 
@@ -993,6 +1053,10 @@ function makeUser(userOpts: UserOpts): User {
     },
     channels = {},
     currentBlobOffset = 0,
+    publicKey = '',
+    registerHeight = -1,
+    registered = false,
+    confirmed = false,
   } = userOpts;
 
   return {
@@ -1008,6 +1072,10 @@ function makeUser(userOpts: UserOpts): User {
     stats,
     channels,
     currentBlobOffset,
+    publicKey,
+    registerHeight,
+    registered,
+    confirmed,
   };
 }
 

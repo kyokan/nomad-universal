@@ -8,7 +8,6 @@ import Button from "../Button";
 import Avatar from "../Avatar";
 import Menuable from "../Menuable";
 import {parseUsername} from "../../utils/user";
-import {useCurrentUser} from "../../ducks/users";
 import classNames = require("classnames");
 
 type Props = {
@@ -173,7 +172,7 @@ function renderRight(props: Props): ReactNode {
         material="edit"
         width={28}
         onClick={onCreate}
-        disabled={!user?.confirmed}
+        // disabled={!user?.confirmed}
       />
       <Menuable
         className="app-header__content__r__account-circle"

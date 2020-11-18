@@ -1,6 +1,5 @@
-import React, {ReactElement, ReactNode, useCallback, useEffect, useState} from "react";
+import React, {ReactElement, useCallback, useEffect, useState} from "react";
 import {RouteComponentProps, withRouter} from "react-router-dom";
-import copy from "copy-to-clipboard";
 import "./profile-setting.scss";
 import {useCurrentUsername, useFetchUser, useUser} from "../../ducks/users";
 import {RawUserCard} from "../UserCard";
@@ -10,9 +9,6 @@ import {useSendPost} from "../../ducks/posts";
 import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import Menuable from "../Menuable";
 import {RelayerNewPostResponse} from "../../utils/types";
-import {useCurrentUser} from "../../ducks/users";
-import Icon from "../../components/Icon";
-import classNames = require("classnames");
 
 type Props = {
   sendPost?: (post: DraftPost) => Promise<RelayerNewPostResponse>
@@ -149,8 +145,6 @@ function ProfileSetting(props: Props): ReactElement {
     <div className="profile-setting">
       <div className="setting__group">
         <div className="setting__group__content">
-          {renderRegistrationStatus(props)}
-          {renderFootnotePublicKey(props)}
           <div className="setting__group__content__row">
             <div className="setting__group__content__row__label">
               Display Name:
@@ -253,57 +247,3 @@ function ProfileSetting(props: Props): ReactElement {
 }
 
 export default withRouter(ProfileSetting);
-
-function renderFootnotePublicKey(props: Props): ReactNode {
-  const user = useCurrentUser();
-  const {publicKey} = user;
-
-  return (
-    <div className="setting__group__content__row">
-      <div className="setting__group__content__row__label">
-        Footnote Record:
-      </div>
-      <div
-        className="setting__group__content__row__value"
-      >
-        <Button
-          onClick={() => {
-            copy('f' + Buffer.from(publicKey, 'hex').toString('base64'));
-          }}
-          disabled={!publicKey}
-        >
-          Copy Record
-        </Button>
-      </div>
-    </div>
-  )
-}
-
-
-function renderRegistrationStatus(props: Props): ReactNode {
-  const user = useCurrentUser();
-  const {registered, confirmed} = user;
-
-  return (
-    <div className="setting__group__content__row">
-      <div className="setting__group__content__row__label">
-        Name Status:
-      </div>
-      <div
-        className={classNames("setting__group__content__row__value name-status", {
-          'name-status--not-registered': !registered && !confirmed,
-          'name-status--pending': registered && !confirmed,
-          'name-status--confirmed': confirmed,
-        })}
-      >
-        {
-          confirmed
-            ? 'Confirmed'
-            : registered
-              ? 'Pending Confirmation'
-              : 'Not Registered'
-        }
-      </div>
-    </div>
-  )
-}

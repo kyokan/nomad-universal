@@ -11,8 +11,11 @@ import SetAPassword from "./SetAPassword";
 import Signup from "./Signup";
 import ImportKeystore from "./ImportKeystore";
 import ImportPrivateKey from "./ImportPrivateKey";
+import Welcome from "./Welcome";
 
 export enum OnboardingViewType {
+  WELCOME_TO_NOMAD,
+  TERMS,
   LOGIN,
   FIND_A_DOMAIN,
   RELAYER_SUBDOMAIN_PASSWORD,
@@ -56,6 +59,14 @@ function Onboarding(props: Props): ReactElement {
   }, [props.type, params?.username]);
 
   switch (viewType) {
+    case OnboardingViewType.WELCOME_TO_NOMAD:
+      return (
+        <Welcome
+          onNext={() => setViewType(OnboardingViewType.TERMS)}
+        />
+      );
+    case OnboardingViewType.TERMS:
+
     case OnboardingViewType.LOGIN:
       return (
         <Login

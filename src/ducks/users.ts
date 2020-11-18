@@ -369,9 +369,7 @@ export default function usersReducer(state: UsersState = initialState, action: U
     case UsersActionType.SET_USER_LIKES:
       return reducerSetUserLikes(state, action);
     case UsersActionType.SET_BLOB_OFFSET:
-      return reducerSetBlobInfo(state, action);
     case UsersActionType.SET_USER_REGISTER_HEIGHT:
-      return reducerSetBlobInfo(state, action);
     case UsersActionType.SET_USER_PUBLIC_KEY:
       return reducerSetBlobInfo(state, action);
     case UsersActionType.SET_USER_PROFILE:

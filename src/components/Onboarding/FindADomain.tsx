@@ -1,8 +1,5 @@
-// @ts-ignore
 import React, {ReactElement, ReactNode, useCallback, useState} from "react";
-// @ts-ignore
-import {withRouter, RouteComponentProps, Redirect} from "react-router";
-// @ts-ignore
+import {withRouter, RouteComponentProps} from "react-router";
 import c from 'classnames';
 import Input from "../Input";
 import Icon from "../Icon";

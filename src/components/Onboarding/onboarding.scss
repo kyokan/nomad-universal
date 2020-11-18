@@ -13,6 +13,7 @@
     border: 1px solid $gray-100;
     border-radius: .25rem;
     padding: 1.25rem;
+    cursor: default;
 
     &__title {
       @extend %bold;

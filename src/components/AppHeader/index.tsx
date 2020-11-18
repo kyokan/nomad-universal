@@ -51,6 +51,7 @@ function renderLeft(props: Props): ReactNode {
       </Route>
       <Route path="/write">
         <Back />
+        <div className="app-header__title">Write a post</div>
       </Route>
       <Route path="/users/:username/:viewType?">
         <UserHeader />
@@ -145,6 +146,7 @@ function renderRight(props: Props): ReactNode {
   const identities = useIdentities();
 
   const currentUsername = useCurrentUsername();
+  const user = useUser(currentUsername);
 
   if (!identities.length && !currentUsername) {
     return renderNoKnownUsers(props);
@@ -171,6 +173,7 @@ function renderRight(props: Props): ReactNode {
         material="edit"
         width={28}
         onClick={onCreate}
+        disabled={!user?.confirmed}
       />
       <Menuable
         className="app-header__content__r__account-circle"

@@ -136,13 +136,13 @@ export function RegularPost(props: RegularPostProps): ReactElement {
         {...post}
         className={props.className}
         avatar={user?.profilePicture || ''}
-        onSelectPost={post.pending ? undefined : props.onSelectPost}
-        onLikePost={post.pending ? undefined : props.onLikePost}
-        onBlockUser={post.pending ? undefined : props.onBlockUser}
-        onSendReply={post.pending ? undefined : props.onSendReply}
-        onFollowUser={post.pending ? undefined : props.onFollowUser}
+        onSelectPost={(post.pending || !user?.confirmed) ? undefined : props.onSelectPost}
+        onLikePost={(post.pending || !user?.confirmed) ? undefined : props.onLikePost}
+        onBlockUser={(post.pending || !user?.confirmed) ? undefined : props.onBlockUser}
+        onSendReply={(post.pending || !user?.confirmed) ? undefined : props.onSendReply}
+        onFollowUser={(post.pending || !user?.confirmed) ? undefined : props.onFollowUser}
         onNameClick={props.onNameClick}
-        canReply={post.pending ? undefined : props.canReply}
+        canReply={(post.pending || !user?.confirmed) ? undefined : props.canReply}
         onTagClick={props.onTagClick}
         selected={props.selected}
       />

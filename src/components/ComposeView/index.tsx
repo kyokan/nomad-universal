@@ -92,9 +92,6 @@ function ComposeView(props: Props): ReactElement {
     <div className="compose-container">
       <div className="compose">
         <div className="compose__header">
-          <div className="compose__header__title">
-            Create Post
-          </div>
         </div>
         {
           !isPreviewing

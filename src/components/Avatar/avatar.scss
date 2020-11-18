@@ -3,4 +3,12 @@
 .avatar {
   background-color: $white;
   object-fit: cover;
+
+  &__pending {
+    opacity: .5;
+  }
+
+  &__not-registered {
+    opacity: .5;
+  }
 }

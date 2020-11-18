@@ -5,6 +5,7 @@ import {
   getImageURLFromPostHash
 } from "../../utils/posts";
 import "./avatar.scss";
+import classNames = require("classnames");
 
 export default function Avatar(props: {
   username: string,
@@ -16,11 +17,20 @@ export default function Avatar(props: {
 
   useEffect(() => {
     fetchUser(props.username);
-  }, [props.username, user?.profilePicture, user?.avatarType]);
+  }, [
+    props.username,
+    user?.profilePicture,
+    user?.avatarType,
+    user?.registered,
+    user?.confirmed,
+  ]);
 
   return (
     <img
-      className={`avatar ${props.className}`}
+      className={classNames(`avatar ${props.className}`, {
+        'avatar__pending': user?.registered && !user?.confirmed,
+        'avatar__not-registered': !user?.registered && !user?.confirmed,
+      })}
       src={user?.profilePicture
         ? getImageURLFromPostHash(user.profilePicture)
         : getImageURLFromAvatarType(user?.avatarType || '', props.username)}

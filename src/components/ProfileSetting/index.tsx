@@ -163,6 +163,7 @@ function ProfileSetting(props: Props): ReactElement {
                   setDisplayName(e.target.value);
                   setErrorMessage('');
                 }}
+                disabled={!user?.confirmed}
               />
             </div>
           </div>
@@ -178,6 +179,7 @@ function ProfileSetting(props: Props): ReactElement {
                   setBio(e.target.value);
                   setErrorMessage('');
                 }}
+                disabled={!user?.confirmed}
               />
             </div>
           </div>
@@ -210,7 +212,11 @@ function ProfileSetting(props: Props): ReactElement {
                         },
                       ]}
                     >
-                      <Button>Choose File</Button>
+                      <Button
+                        disabled={!user?.confirmed}
+                      >
+                        Choose File
+                      </Button>
                     </Menuable>
                   </div>
                 </div>
@@ -234,7 +240,7 @@ function ProfileSetting(props: Props): ReactElement {
       </div>
       <div className="profile-setting__footer">
         <Button
-          disabled={!hasChanged || sending || success}
+          disabled={!hasChanged || sending || success || !user?.confirmed}
           loading={sending}
           onClick={submit}
           color={success ? 'green' : 'default'}

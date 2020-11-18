@@ -256,6 +256,17 @@
     &:active {
       color: $blue-800;
     }
+
+    &:disabled {
+      &:hover,
+      &:focus {
+        color: $dark-primary-text;
+      }
+
+      &:active {
+        color: $dark-primary-text;
+      }
+    }
   }
 }
 

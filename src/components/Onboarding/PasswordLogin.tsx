@@ -59,9 +59,7 @@ function PasswordLogin(props: PasswordLoginProps): ReactElement {
           <Icon
             material="arrow_back"
             width={18}
-            onClick={() => {
-              props.setViewType(OnboardingViewType.LOGIN);
-            }}
+            onClick={() => props.history.goBack()}
           />
           {`Login to ${username}`}
         </div>

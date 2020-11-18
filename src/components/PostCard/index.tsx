@@ -10,7 +10,7 @@ import {PostMeta, usePostId} from "../../ducks/posts";
 import {
   useCurrentBlocks,
   useCurrentFollowings,
-  useCurrentLikes, useCurrentUsername, useIdentity, userCurrentMutedNames,
+  useCurrentLikes, useCurrentUsername, useIdentity, userCurrentMutedNames, useUser,
   useUsersMap
 } from "../../ducks/users";
 import {updateReplies, useReplies, useReplyId} from "../../ducks/drafts/replies";
@@ -99,6 +99,7 @@ function Card(props: Props): ReactElement {
   // const blockedMap = useCurrentBlocks();
   const mutedNames = userCurrentMutedNames();
   const currentUser = useCurrentUsername();
+  const user = useUser(currentUser);
   // const isCurrentUser = creator === currentUser;
 
   // const mutedMap = (mutedNames || []).reduce((acc: {[n: string]: string}, name) => {
@@ -164,7 +165,7 @@ function Card(props: Props): ReactElement {
               text={`${likeCount}`}
               onClick={likePost}
               active={!!currentLikes[hash]}
-              disabled={!currentUser || isSendingLike}
+              disabled={!user?.confirmed || isSendingLike}
             />
           )
         }
@@ -181,7 +182,7 @@ function Card(props: Props): ReactElement {
                 setShowingReply(!isShowingReply)
               }}
               title={`Reply`}
-              disabled={!currentUser}
+              disabled={!user?.confirmed || isShowingReply}
             />
           )
         }
@@ -206,6 +207,7 @@ function renderPostMenu(props: Props): ReactNode {
   const currentUsername = useCurrentUsername();
   const currentBlocks = useCurrentBlocks();
   const currentFollowings = useCurrentFollowings();
+  const user = useUser(currentUsername);
 
   let items: MenuProps[] = [];
 
@@ -216,7 +218,7 @@ function renderPostMenu(props: Props): ReactNode {
     });
   }
 
-  if (onBlockUser && currentUsername !== creator && !currentBlocks[creator]) {
+  if (onBlockUser && currentUsername !== creator && !currentBlocks[creator] && user?.confirmed) {
     userItems.push({
       text: `Block @${undotName(creator)}`,
       onClick: () => {
@@ -229,7 +231,7 @@ function renderPostMenu(props: Props): ReactNode {
     });
   }
 
-  if (onFollowUser && currentUsername !== creator && !currentFollowings[creator]) {
+  if (onFollowUser && currentUsername !== creator && !currentFollowings[creator] && user?.confirmed) {
     userItems.push({
       text: `Follow @${undotName(creator)}`,
       onClick: () => {

@@ -59,7 +59,8 @@ function UserView(props: Props): ReactElement {
     onBlockUser,
   } = props;
   const username = dotName(_username);
-  const currentUser = useCurrentUsername();
+  const currentUsername = useCurrentUsername();
+  const currentUser = useUser(currentUsername);
   const blockedMap = useCurrentBlocks();
   const mutedNames = userCurrentMutedNames();
   const mutedMap = mutedNames.reduce((acc: {[n: string]: string}, name: string) => {
@@ -73,7 +74,7 @@ function UserView(props: Props): ReactElement {
   const isUserSilienced = !!silenced[username];
 
   const dispatch = useDispatch();
-  const isCurrentUser = username === currentUser;
+  const isCurrentUser = username === currentUsername;
   const { tld, subdomain } = parseUsername(username);
 
   useEffect(() => {
@@ -261,7 +262,7 @@ function UserView(props: Props): ReactElement {
 
   const headerActions = [];
 
-  if (!isCurrentUser && !!currentUser) {
+  if (!isCurrentUser && !!currentUsername && currentUser?.confirmed) {
     headerActions.push({
       text: blockedMap[username]
         ? 'Blocked'
@@ -282,7 +283,7 @@ function UserView(props: Props): ReactElement {
     text: 'more',
     className: 'more-btn',
     render: useCallback((): ReactNode => {
-      return (!isCurrentUser && !!currentUser && !currentBlockedMap[username]) && (
+      return (!isCurrentUser && !!currentUsername && !currentBlockedMap[username] && currentUser?.confirmed) && (
         <Menuable
           key="more-btn"
           className="more-btn__menu"
@@ -355,7 +356,7 @@ function UserView(props: Props): ReactElement {
             //     },
             //   },
 
-            (isCurrentUser || !currentUser || currentBlockedMap[username])
+            (isCurrentUser || !currentUsername || currentBlockedMap[username] || !currentUser?.confirmed)
               ? null
               : {
                 text: `Block @${undotName(username)}`,
@@ -373,7 +374,7 @@ function UserView(props: Props): ReactElement {
       );
     }, [
       isCurrentUser,
-      currentUser,
+      currentUsername,
       isUserSilienced,
       currentBlockedMap[username]],
     ),

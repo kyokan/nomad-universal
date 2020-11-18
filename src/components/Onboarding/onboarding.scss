@@ -34,6 +34,36 @@
       }
     }
 
+    &__row {
+      @extend %row-nowrap;
+      align-items: center;
+      justify-content: center;
+    }
+
+    &__paragraph {
+      @extend %lite-font;
+      color: $regular-primary-text;
+      padding: .5rem 1rem;
+
+      &__list {
+        margin: .25rem 0 .25rem .5rem;
+      }
+    }
+
+    &__content {
+      flex: 1 0 auto;
+      padding: .5rem 0;
+    }
+
+    &__checkbox {
+      margin-right: .5rem;
+    }
+
+    &__checkbox-label {
+      @extend %tiny-font;
+      color: $regular-primary-text;
+    }
+
     a.onboarding__panel__subtitle {
       width: 100%;
       text-align: right;

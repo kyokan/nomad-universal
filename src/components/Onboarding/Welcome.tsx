@@ -5,6 +5,7 @@ import {parseUsername, RELAYER_TLDS} from "../../utils/user";
 import Icon from "../Icon";
 import Input from "../Input";
 import {OnboardingViewType} from "./index";
+import Button from "../Button";
 
 type PasswordLoginProps = {
   onNext: () => void;
@@ -26,7 +27,15 @@ function Welcome(props: PasswordLoginProps): ReactElement {
         <div className="onboarding__panel__subtitle">
           Nomad is a peer-to-peer, ownerless social network built on top of Handshake and Footnote. It allows you to view and interact with content from owners of Handshake names.
         </div>
+        <div className="onboarding__panel__footer">
+          <Button
+            onClick={props.onNext}
+          >
+            Next
+          </Button>
+        </div>
       </div>
+
     </div>
   );
 }

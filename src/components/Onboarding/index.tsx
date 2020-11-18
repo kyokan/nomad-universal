@@ -12,6 +12,7 @@ import Signup from "./Signup";
 import ImportKeystore from "./ImportKeystore";
 import ImportPrivateKey from "./ImportPrivateKey";
 import Welcome from "./Welcome";
+import Terms from "./Terms";
 
 export enum OnboardingViewType {
   WELCOME_TO_NOMAD,
@@ -66,7 +67,11 @@ function Onboarding(props: Props): ReactElement {
         />
       );
     case OnboardingViewType.TERMS:
-
+      return (
+        <Terms
+          onNext={() => setViewType(OnboardingViewType.LOGIN)}
+        />
+      );
     case OnboardingViewType.LOGIN:
       return (
         <Login

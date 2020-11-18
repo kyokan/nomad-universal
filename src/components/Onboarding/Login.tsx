@@ -41,7 +41,7 @@ function Login(props: LoginProps): ReactElement {
 
   const onChange = useCallback((e) => {
     setErrorMessage('');
-    onUsernameChange(e.target.value);
+    onUsernameChange(e.target.value.toLowerCase());
   }, [onUsernameChange]);
 
   const onKeydown = useCallback((e) => {

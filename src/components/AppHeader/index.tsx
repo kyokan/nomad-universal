@@ -224,7 +224,7 @@ function renderUserStatus(props: Props, username: string): ReactNode {
 
   return (
     <div className={classNames("main-account__status", {
-      "main-account__status--pending": !user?.registered,
+      "main-account__status--pending": user?.registered && !user?.confirmed,
       "main-account__status--not-registered": !user?.registered,
     })}>
       {user?.registered ? 'Pending Confirmation' : 'Not Registered'}

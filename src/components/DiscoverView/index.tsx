@@ -2,7 +2,6 @@ import React, {ReactElement, useCallback, useEffect, useState} from "react";
 import {withRouter, RouteComponentProps} from "react-router";
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
 import CustomView from "../CustomView";
 import {useDispatch} from "react-redux";
 import {updateRawPost, usePostsMap} from "../../ducks/posts";
@@ -12,6 +11,7 @@ import {mapDomainEnvelopeToPost} from "../../utils/posts";
 import {serializeUsername} from "../../utils/user";
 import {INDEXER_API} from "../../utils/api";
 import {addTag, addUser} from "../../ducks/search";
+import {Pageable} from "../../types/Pageable";
 
 type DiscoverViewProps = {
  onLikePost: (postHash: string) => void;

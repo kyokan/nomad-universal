@@ -1,6 +1,5 @@
 import React, {ReactElement, MouseEvent, useCallback, useEffect, useState} from 'react';
 import {RouteComponentProps, withRouter} from 'react-router';
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
 import {updateRawPost} from "../../ducks/posts";
 import uniq from "lodash.uniq";
 import {useDispatch} from "react-redux";
@@ -8,6 +7,7 @@ import { Envelope as DomainEnvelope } from "fn-client/lib/application/Envelope"
 import { Post as DomainPost } from "fn-client/lib/application/Post"
 import './media-view.scss';
 import {getCSSImageURLFromPostHash, mapDomainEnvelopeToPost} from "../../utils/posts";
+import {Pageable} from "../../types/Pageable";
 type Props = {
   queryNext: (username: string, next: number | null, list: DomainEnvelope<DomainPost>[]) => (
     Promise<Pageable<DomainEnvelope<DomainPost>, number>>

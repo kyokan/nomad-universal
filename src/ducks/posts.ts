@@ -1,7 +1,6 @@
 import {ThunkDispatch} from "redux-thunk";
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {Dispatch} from "redux";
 import {useCallback} from "react";
@@ -10,13 +9,14 @@ import uniq from "lodash.uniq";
 import {addUserBlocks, addUserFollowings, addUserLikes, useCurrentUser, useCurrentUsername} from "./users";
 import {INDEXER_API} from "../utils/api";
 import {dotName, parseUsername, serializeUsername} from "../utils/user";
-import {createNewDraft, DraftPost} from "./drafts/type";
+import {DraftPost} from "./drafts/type";
 import {mapDomainEnvelopeToPost, mapDraftToPostPayload} from "../utils/posts";
 import {
   NapiResponse, RelayerNewBlockResponse, RelayerNewFollowResponse,
   RelayerNewPostResponse,
   RelayerNewReactionResponse, ResponsePost,
 } from "../utils/types";
+import {Pageable} from "../types/Pageable";
 
 type TopicMeta = {
   postOrder: {

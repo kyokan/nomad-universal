@@ -1,6 +1,5 @@
 import React, {CSSProperties, MouseEventHandler, ReactElement, ReactNode, useState} from "react";
 import Menuable, {MenuProps} from "../Menuable";
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
 import {useDispatch} from "react-redux";
 import {ThunkDispatch} from "redux-thunk";
 import {Action} from "redux";
@@ -11,6 +10,7 @@ import CloseIcon from "../../static/assets/icons/close-red.svg";
 import TickIcon from "../../static/assets/icons/tick-green.svg";
 import {isTLD} from "../../utils/user";
 import {useCurrentUser} from "../../ducks/users";
+import {Pageable} from "../../types/Pageable";
 
 type Props = {
   children?: ReactNode;

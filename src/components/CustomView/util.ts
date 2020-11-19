@@ -1,5 +1,4 @@
 import {useCallback, useState} from "react";
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
 import {updateRawPost, usePostsMap} from "../../ducks/posts";
 import uniq from "lodash.uniq";
 import {useCurrentUser, userCurrentUserData} from "../../ducks/users";
@@ -9,7 +8,8 @@ import {mapDomainEnvelopeToPost} from "../../utils/posts";
 import {INDEXER_API} from "../../utils/api";
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
-import {Filter} from "nomad-api/lib/src/util/filter";
+import {Pageable} from "../../types/Pageable";
+import {Filter} from "../../utils/filter";
 
 export type QueryCustomFilterRetType = {
   loading: boolean;

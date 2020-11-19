@@ -2,12 +2,12 @@ import React, {ReactElement, ReactNode, useCallback, useEffect, useState, UIEven
 import {withRouter, RouteComponentProps} from "react-router";
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Connection as DomainConnection} from 'fn-client/lib/application/Connection';
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
 import "./following-view.scss";
 import UserCard from "../UserCard";
 import {INDEXER_API} from "../../utils/api";
 import {serializeUsername} from "../../utils/user";
 import debounce from "lodash.debounce";
+import {Pageable} from "../../types/Pageable";
 
 type Props = {
   onFollowUser: (postHash: string) => void;

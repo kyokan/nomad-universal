@@ -1,19 +1,19 @@
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {ThunkDispatch} from "redux-thunk";
 import {createRefhash} from 'fn-client/lib/wire/refhash';
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
 import {BlobInfo} from 'fn-client/lib/fnd/BlobInfo';
 import {CustomViewProps, UserData, NapiResponse} from "../utils/types";
 
 import {useCallback} from "react";
 import {INDEXER_API} from "../utils/api";
 import {mapDomainEnvelopeToPost} from "../utils/posts";
-import {UserProfile} from "nomad-api/lib/src/constants";
 import {parseUsername, serializeUsername} from "../utils/user";
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
 import {Connection as DomainConnection} from 'fn-client/lib/application/Connection';
 import {extendFilter} from "../utils/filter";
+import {Pageable} from "../types/Pageable";
+import {UserProfile} from "../types/user-profile";
 
 
 export type User = {

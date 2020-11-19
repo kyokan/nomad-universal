@@ -7,8 +7,8 @@ import {parseUsername, serializeUsername} from "../../utils/user";
 import Avatar from "../Avatar";
 import {INDEXER_API} from "../../utils/api";
 import {NapiResponse} from "../../utils/types";
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
 import {Connection as DomainConnection} from 'fn-client/lib/application/Connection';
+import {Pageable} from "../../types/Pageable";
 
 function UserPanels(props: RouteComponentProps<{username: string}>): ReactElement {
   const username = props.match.params.username;

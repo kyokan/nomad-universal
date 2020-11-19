@@ -3,8 +3,8 @@ import {withRouter, RouteComponentProps} from "react-router";
 import "./user-dir.scss";
 import {INDEXER_API} from "../../utils/api";
 import {UserFollowingRow} from "../UserPanels";
-import {Pageable} from "nomad-api/lib/src/services/indexer/Pageable";
 import debounce from "lodash.debounce";
+import {Pageable} from "../../types/Pageable";
 
 export default withRouter(UserDirectoryView);
 function UserDirectoryView(props: RouteComponentProps): ReactElement {

@@ -2,14 +2,11 @@ import React, {ReactElement, ReactNode, useCallback, useEffect, useState} from '
 import {withRouter, RouteComponentProps} from "react-router";
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
-import {Pageable} from 'nomad-api/lib/src/services/indexer/Pageable';
-
 import CustomView from "../CustomView";
 import {
   useCurrentBlocks,
   useCurrentFollowings,
   useCurrentUsername, useFetchUser, userCurrentMutedNames, useUser,
-  useUsersMap
 } from "../../ducks/users";
 import {dotName, parseUsername, serializeUsername, undotName} from "../../utils/user";
 import {
@@ -31,6 +28,7 @@ import {mapDomainEnvelopeToPost} from "../../utils/posts";
 import {INDEXER_API} from "../../utils/api";
 import {NapiResponse} from "../../utils/types";
 import Avatar from "../Avatar";
+import {Pageable} from "../../types/Pageable";
 
 
 const postIPCMain = async (a: any, b?: any): Promise<NapiResponse<any>> => {

@@ -2,7 +2,6 @@ import React, {ReactElement, useCallback, useEffect, useState} from 'react';
 import {RouteComponentProps, withRouter} from 'react-router';
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
-import {Pageable} from  'nomad-api/lib/src/services/indexer/Pageable';
 import CustomView from "../CustomView";
 import {
   useCurrentFollowings,
@@ -17,6 +16,7 @@ import {INDEXER_API} from "../../utils/api";
 import {Filter} from "../../utils/filter";
 import {serializeUsername} from "../../utils/user";
 import {addTag} from "../../ducks/search";
+import {Pageable} from "../../types/Pageable";
 type Props = {
   onLikePost: (hash: string) => void;
   onSendReply: (hash: string) => void;

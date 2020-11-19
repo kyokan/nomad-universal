@@ -1,5 +1,6 @@
 #!/bin/bash
 
+cp ./src/components/Setting/settings.scss ./lib/components/Setting/settings.scss
 cp ./src/components/DomainSetting/domain-setting.scss ./lib/components/DomainSetting/domain-setting.scss
 cp ./src/components/UserDirectoryView/user-dir.scss ./lib/components/UserDirectoryView/user-dir.scss
 cp ./src/components/ComposeViewPanels/index.scss ./lib/components/ComposeViewPanels/index.scss

@@ -1026,9 +1026,7 @@ export const useFetchUser = () => {
 
     // dispatch(fetchUserFollowings(username));
     // USER_FETCHED_STATUS[username] = false;
-    setTimeout(() => {
-      USER_FETCHED_STATUS[username] = false;
-    }, 60000);
+    USER_FETCHED_STATUS[username] = false;
   }, [dispatch]);
 };
 

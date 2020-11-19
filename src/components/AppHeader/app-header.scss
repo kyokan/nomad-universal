@@ -8,6 +8,9 @@
   &__title {
     @extend %lite-font;
     font-weight: bold;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__content {
@@ -20,6 +23,7 @@
       @extend %row-nowrap;
       align-items: center;
       flex: 1 1 auto;
+      width: 0;
 
       &__back {
         color: $blue;
@@ -52,6 +56,7 @@
       align-items: center;
       justify-content: flex-end;
       flex: 1 1 auto;
+      background-color: $white;
 
       button {
         width: 36px;
@@ -354,6 +359,23 @@
       }
     }
   }
+}
+
+@media only screen and (max-width: 768px) {
+  .app-header {
+    .icon {
+      margin: 0 .5rem;
+    }
+  }
+
+  .app-header__content__l {
+    margin-left: .75rem;
+  }
+
+  .app-header__content__l {
+    margin-right: .75rem;
+  }
+
 }
 
 

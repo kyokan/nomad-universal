@@ -1,10 +1,5 @@
-import React, {ReactElement, useCallback, useState} from "react";
-import {withRouter, RouteComponentProps, Redirect} from "react-router";
-import c from 'classnames';
-import {parseUsername, RELAYER_TLDS} from "../../utils/user";
-import Icon from "../Icon";
-import Input from "../Input";
-import {OnboardingViewType} from "./index";
+import React, {ReactElement, useCallback} from "react";
+import {withRouter, RouteComponentProps} from "react-router";
 import Button from "../Button";
 
 type PasswordLoginProps = {
@@ -24,8 +19,11 @@ function Welcome(props: PasswordLoginProps): ReactElement {
         <div className="onboarding__panel__title">
           {`Welcome to Nomad ✌️`}
         </div>
-        <div className="onboarding__panel__subtitle">
+        <div className="onboarding__panel__paragraph">
           Nomad is a peer-to-peer, ownerless social network built on top of Handshake and Footnote. It allows you to view and interact with content from owners of Handshake names.
+        </div>
+        <div className="onboarding__panel__paragraph">
+          Let's get started!
         </div>
         <div className="onboarding__panel__footer">
           <Button

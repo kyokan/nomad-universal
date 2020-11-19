@@ -116,3 +116,9 @@
     color: $orange;
   }
 }
+
+@media only screen and (max-width: 768px) {
+  .profile-setting__preview-row .user-card {
+    width: 100%;
+  }
+}

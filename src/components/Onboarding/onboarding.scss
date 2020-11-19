@@ -43,10 +43,10 @@
     &__paragraph {
       @extend %lite-font;
       color: $regular-primary-text;
-      padding: .5rem 1rem;
+      padding: .25rem 0;
 
       &__list {
-        margin: .25rem 0 .25rem .5rem;
+        margin: .25rem 0;
       }
     }
 
@@ -403,4 +403,14 @@
     cursor: pointer;
   }
 
+}
+
+@media only screen and (max-width: 768px) {
+  .onboarding__panel {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    border: 0;
+    border-bottom: 1px solid $gray-200;
+  }
 }

@@ -41,7 +41,7 @@ function renderFootnotePublicKey(props: Props): ReactNode {
         className="setting__group__content__row__value"
       >
         <FootnoteRecordInput
-          pubkey={user?.publicKey}
+          pubkey={Buffer.from(user?.publicKey, 'hex').toString('base64')}
         />
       </div>
     </div>

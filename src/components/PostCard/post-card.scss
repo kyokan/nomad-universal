@@ -413,26 +413,21 @@
   .post-card__header__username,
   .post-card__content .marked,
   .post-card__content__title {
-    font-size: 1rem;
+    font-size: .8125rem;
   }
 
   .post-card__header__creator {
-    margin: .25rem .25rem .25rem 0;
+    //margin: .25rem .25rem .25rem 0;
   }
 
   .post-card__header__timestamp,
   .post-card--selected .post-card__header__timestamp {
-    font-size: .9125rem;
+    //font-size: .9125rem;
   }
 
   .post-card__header__info {
     flex-direction: column;
     align-items: flex-start;
-  }
-
-  .post-button .icon {
-    width: 1.25rem !important;
-    height: 1.25rem !important;
   }
 
   .post-button__text {

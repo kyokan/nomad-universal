@@ -68,9 +68,9 @@ button.follow--btn {
     background-color: $white;
     font-weight: 500;
     overflow: hidden;
-    user-select: none;
     padding: 1rem;
     min-height: 4.5rem;
+    cursor: default;
 
     &__nickname {
       @extend %regular-font;
@@ -165,5 +165,25 @@ button.follow--btn {
   .custom-view-header__cover-img__title {
     padding: 0;
     margin-left: 1rem;
+  }
+}
+
+@media only screen and (max-width: 768px) {
+  .user-view__title-row {
+    display: flex;
+    flex-flow: column nowrap;
+  }
+
+  .user-view__avatar {
+    height: 4rem;
+    width: 4rem;
+    border-radius: 4px;
+    margin: .8125rem .5rem 0rem 1rem;
+  }
+
+  .user-view__name {
+    padding-top: .6125rem;
+    margin-top: 1rem;
+    border-top: 1px solid $gray-100;
   }
 }

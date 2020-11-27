@@ -120,7 +120,7 @@ async function fetchTrendingUsers() {
 }
 
 async function fetchRegisteredDomains() {
-  const resp = await fetch(`${INDEXER_API}/tlds?limit=25`);
+  const resp = await fetch(`${INDEXER_API}/tlds?limit=5`);
   const json = await resp.json();
 
   if (json.error) {

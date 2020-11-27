@@ -78,7 +78,7 @@ async function queryNext(next = 0): Promise<Pageable<{
   public_key: string;
   import_height: number;
 }, number>> {
-  const resp = await fetch(`${INDEXER_API}/tlds?limit=20&offset=${next}`);
+  const resp = await fetch(`${INDEXER_API}/tlds?limit=50&offset=${next}`);
   const json = await resp.json();
 
   if (json.error) {

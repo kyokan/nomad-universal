@@ -1,26 +1,16 @@
-// @ts-ignore
-import React, {ReactElement, useCallback, useEffect} from "react";
-// @ts-ignore
+import React, {ReactElement, useCallback} from "react";
 import { withRouter, RouteComponentProps } from "react-router";
 import {
   addUserFollowings,
-  fetchUserFollowings,
   useCurrentFollowings,
-  useCurrentUser, useCurrentUsername,
+  useCurrentUsername,
   useUser,
 } from "../../ducks/users";
-// @ts-ignore
 import {useDispatch} from "react-redux";
-import {useFollowUser} from "../../ducks/posts";
 import "./user-card.scss";
 import {parseUsername, undotName} from "../../utils/user";
-// @ts-ignore
 import classNames from "classnames";
-// @ts-ignore
-import moment from "moment";
 import {
-  getCSSImageURLFromAvatarType,
-  getCSSImageURLFromPostHash,
   getImageURLFromAvatarType,
   getImageURLFromPostHash
 } from "../../utils/posts";

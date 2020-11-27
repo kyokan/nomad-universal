@@ -5,9 +5,13 @@ import {INDEXER_API} from "../../utils/api";
 import {UserFollowingRow} from "../UserPanels";
 import debounce from "lodash.debounce";
 import {Pageable} from "../../types/Pageable";
+import UserCard from "../UserCard";
 
+type Props = {
+  onFollowUser: (postHash: string) => void;
+} & RouteComponentProps;
 export default withRouter(UserDirectoryView);
-function UserDirectoryView(props: RouteComponentProps): ReactElement {
+function UserDirectoryView(props: Props): ReactElement {
   const [domains, setDomains] = useState<{
     tld: string;
     public_key: string;
@@ -58,7 +62,11 @@ function UserDirectoryView(props: RouteComponentProps): ReactElement {
     >
       {domains.map((blobInfo) => {
         return (
-          <UserFollowingRow username={blobInfo.tld} />
+          <UserCard
+            key={blobInfo.tld}
+            onFollowUser={props.onFollowUser}
+            username={blobInfo.tld}
+          />
         );
       })}
     </div>

@@ -3,22 +3,15 @@
 .user-directory {
   @extend %col-nowrap;
   align-items: center;
-  flex: 1 1 auto;
-  width: 0;
+  flex: 0 0 auto;
+  width: 37.5rem;
   border-left: 1px solid $gray-100;
   border-right: 1px solid $gray-100;
   overflow-y: auto;
 
-  .user-panel__row {
+  .user-card {
     width: 100%;
     box-sizing: border-box;
-
-    &:first-of-type {
-      border-top: none;
-    }
-
-    &:last-of-type {
-      border-bottom: 1px solid $gray-100;
-    }
+    border-bottom: 1px solid $gray-100;
   }
 }

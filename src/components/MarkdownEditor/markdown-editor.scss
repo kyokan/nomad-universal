@@ -2,9 +2,7 @@
 
 .markdown-editor {
   @extend %col-nowrap;
-  height: 8rem;
-  padding: .75rem 0 0;
-  border-top: 1px solid $gray-100;
+  margin: 1rem;
 
   .post-card__header {
     @extend %row-nowrap;

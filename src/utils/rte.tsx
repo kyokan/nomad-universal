@@ -169,46 +169,50 @@ export const mapDraftToEditorState = (draft?: DraftPost): EditorState => {
     return EditorState.createEmpty(decorator);
   }
 
-  return EditorState.createWithContent(convertFromRaw(markdownToDraft(draft.content, {
-    preserveNewlines: true,
-    blockTypes: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      table_open: function (item: any) {
-        return {
-          type: "table",
-          mutability: "IMMUTABLE",
-          data: {
-            table: {
-              ...item,
-            },
-          },
-        };
-      }
-    },
-    remarkableOptions: {
-      html: false,
-      xhtmlOut: false,
-      breaks: true,
-      enable: {
-        block: 'table',
-      },
-      highlight: function (str: string, lang: string) {
-        if (lang && hljs.getLanguage(lang)) {
-          try {
-            return hljs.highlight(lang, str).value;
-          } catch (err) {
-            //
-          }
-        }
+  return EditorState.createWithContent(
+    convertFromRaw(markdownToDraft(draft.content, markdownConvertOptions)),
+    decorator,
+  );
+};
 
+export const markdownConvertOptions = {
+  preserveNewlines: true,
+  blockTypes: {
+    table_open: function (item: any) {
+      return {
+        type: "table",
+        mutability: "IMMUTABLE",
+        data: {
+          table: {
+            ...item,
+          },
+        },
+      };
+    }
+  },
+  remarkableOptions: {
+    html: false,
+    xhtmlOut: false,
+    breaks: true,
+    enable: {
+      block: 'table',
+    },
+    highlight: function (str: string, lang: string) {
+      if (lang && hljs.getLanguage(lang)) {
         try {
-          return hljs.highlightAuto(str).value;
+          return hljs.highlight(lang, str).value;
         } catch (err) {
           //
         }
-
-        return ''; // use external default escaping
       }
+
+      try {
+        return hljs.highlightAuto(str).value;
+      } catch (err) {
+        //
+      }
+
+      return ''; // use external default escaping
     }
-  })), decorator);
+  }
 };

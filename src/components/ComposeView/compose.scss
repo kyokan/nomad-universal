@@ -15,8 +15,6 @@
   background-color: $white;
   border: 1px solid $gray-100;
   height: fit-content;
-  padding: 1rem 1.75rem;
-  border-radius: .125rem;
   margin-top: 2rem;
   margin-bottom: 4rem;
   max-width: 40rem;
@@ -28,6 +26,40 @@
       line-height: 1.3125;
       padding-bottom: 1.5rem;
     }
+  }
+
+  &__selectors {
+    @extend %row-nowrap;
+    cursor: default;
+    align-items: center;
+    border-bottom: 1px solid $gray-150;
+  }
+
+  &__selector {
+    @extend %row-nowrap;
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    padding: .5rem;
+    width: 0;
+    color: $gray-600;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      color: $gray-500;
+    }
+
+    &:active {
+      color: $gray-800;
+    }
+  }
+
+  &__selector + &__selector {
+    border-left: 1px solid $gray-150;
   }
 
   &__group {
@@ -258,13 +290,14 @@
 }
 
 .rte {
-  margin-bottom: 1rem;
+  margin: 1rem;
 
   .public-DraftEditor-content {
     font-family: 'Open Sans', Roboto, Helvetica, Arial, sans-serif;
     min-height: 8.375rem;
+    max-height: 70vh;
     font-size: .875rem;
-    line-height: 1.3125;
+    line-height: 1.4;
     color: $dark-primary-text;
   }
 

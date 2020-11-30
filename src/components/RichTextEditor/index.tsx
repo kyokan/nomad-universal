@@ -12,7 +12,7 @@ import {
   Editor,
   EditorState,
   RichUtils,
-  DefaultDraftBlockRenderMap,
+  DefaultDraftBlockRenderMap, convertFromRaw,
 } from "draft-js";
 import c from "classnames";
 import Icon from "../Icon";
@@ -28,7 +28,8 @@ import './rich-text-editor.scss';
 import {DraftPost} from "../../ducks/drafts/type";
 import {useDraftPost} from "../../ducks/drafts";
 import {PostType} from "../../types/posts";
-import {customStyleMap, mapDraftToEditorState} from "../../utils/rte";
+import {customStyleMap, mapDraftToEditorState, markdownConvertOptions} from "../../utils/rte";
+import {markdownToDraft} from "markdown-draft-js";
 
 const hljs = require('highlight.js');
 const TableUtils = require('draft-js-table');
@@ -58,41 +59,14 @@ function RichTextEditor(props: Props): ReactElement {
 
   const draftPost = useDraftPost();
 
+  const [ref, setRef] = useState<Editor|null>(null);
   const [editorState, _setEditorState] = useState<EditorState>(mapDraftToEditorState(draftPost));
   const [title, setTitle] = useState<string>(draftPost?.title || '');
 
-  const setEditorState = useCallback((editorState: EditorState) => {
-    _setEditorState(editorState);
-    const currentContent = editorState.getCurrentContent();
-    const markdown = draftToMarkdown(convertToRaw(currentContent), {
-      preserveNewlines: true,
-      remarkableOptions: {
-        html: false,
-        xhtmlOut: false,
-        breaks: true,
-        enable: {
-          block: 'table',
-        },
-
-        highlight: function (str: string, lang: string) {
-          if (lang && hljs.getLanguage(lang)) {
-            try {
-              return hljs.highlight(lang, str).value;
-            } catch (err) {
-              //
-            }
-          }
-
-          try {
-            return hljs.highlightAuto(str).value;
-          } catch (err) {
-            //
-          }
-
-          return ''; // use external default escaping
-        }
-      },
-    });
+  const setEditorState = useCallback((newEditorState: EditorState) => {
+    _setEditorState(newEditorState);
+    const currentContent = newEditorState.getCurrentContent();
+    const markdown = draftToMarkdown(convertToRaw(currentContent), markdownConvertOptions);
 
     onChange({
       type: PostType.ORIGINAL,
@@ -105,7 +79,7 @@ function RichTextEditor(props: Props): ReactElement {
       tags: [],
       attachments: [],
     });
-  }, [editorState, onChange]);
+  }, [onChange, editorState]);
 
   const handleKeyCommand: (command: string) => DraftHandleValue = useCallback((command: string): DraftHandleValue => {
     const newState = RichUtils.handleKeyCommand(editorState, command);
@@ -116,15 +90,71 @@ function RichTextEditor(props: Props): ReactElement {
     return 'not-handled';
   }, [editorState]);
 
-  const onBoldClick = useRTEInlineStyleCallback(editorState, 'BOLD', setEditorState, [editorState]);
-  const onItalicClick = useRTEInlineStyleCallback(editorState, 'ITALIC', setEditorState, [editorState]);
-  const onUnderlineClick = useRTEInlineStyleCallback(editorState, 'UNDERLINE', setEditorState, [editorState]);
-  const onStrikethroughClick = useRTEInlineStyleCallback(editorState, 'STRIKETHROUGH', setEditorState, [editorState]);
-  const onCodeClick = useRTEInlineStyleCallback(editorState, 'CODE', setEditorState, [editorState]);
-  const onCodeBlockClick = useRTEInBlockTypeCallback(editorState, 'code-block', setEditorState, [editorState]);
-  const onOrderedListClick = useRTEInBlockTypeCallback(editorState, 'ordered-list-item', setEditorState, [editorState]);
-  const onUnorderedListClick = useRTEInBlockTypeCallback(editorState, 'unordered-list-item', setEditorState, [editorState]);
-  const onBlockquoteClick = useRTEInBlockTypeCallback(editorState, 'blockquote', setEditorState, [editorState]);
+  const onBoldClick = useRTEInlineStyleCallback(
+    editorState,
+    ref,
+    'BOLD',
+    setEditorState,
+    [editorState, ref],
+  );
+  const onItalicClick = useRTEInlineStyleCallback(
+    editorState,
+    ref,
+    'ITALIC',
+    setEditorState,
+    [editorState],
+    );
+  const onUnderlineClick = useRTEInlineStyleCallback(
+    editorState,
+    ref,
+    'UNDERLINE',
+    setEditorState,
+    [editorState, ref],
+    );
+  const onStrikethroughClick = useRTEInlineStyleCallback(
+    editorState,
+    ref,
+    'STRIKETHROUGH',
+    setEditorState,
+    [editorState, ref],
+    );
+  const onCodeClick = useRTEInlineStyleCallback(
+    editorState,
+    ref,
+    'CODE',
+    setEditorState,
+    [editorState, ref],
+    );
+
+  const onCodeBlockClick = useRTEInBlockTypeCallback(
+    editorState,
+    ref,
+    'code-block',
+    setEditorState,
+    [editorState, ref],
+    );
+  const onOrderedListClick = useRTEInBlockTypeCallback(
+    editorState,
+    ref,
+    'ordered-list-item',
+    setEditorState,
+    [editorState, ref],
+    );
+  const onUnorderedListClick = useRTEInBlockTypeCallback(
+    editorState,
+    ref,
+    'unordered-list-item',
+    setEditorState,
+    [editorState, ref],
+    );
+  const onBlockquoteClick = useRTEInBlockTypeCallback(
+    editorState,
+    ref,
+    'blockquote',
+    setEditorState,
+    [editorState, ref],
+    );
+
 
   return (
     <div
@@ -133,15 +163,8 @@ function RichTextEditor(props: Props): ReactElement {
         'rich-text-editor--embedded': embedded,
       })}
     >
-      <Editor
-        editorState={editorState}
-        onChange={setEditorState}
-        handleKeyCommand={handleKeyCommand}
-        customStyleMap={customStyleMap}
-        blockRenderMap={DefaultDraftBlockRenderMap.merge(TableUtils.DraftBlockRenderMap)}
-        placeholder="Write here..."
-      />
       <RTEControls
+        editorState={editorState}
         onBoldClick={onBoldClick}
         onItalicClick={onItalicClick}
         onUnderlineClick={onUnderlineClick}
@@ -156,6 +179,15 @@ function RichTextEditor(props: Props): ReactElement {
         embedded={embedded}
         primaryBtnProps={primaryBtnProps}
       />
+      <Editor
+        ref={setRef}
+        editorState={editorState}
+        onChange={setEditorState}
+        handleKeyCommand={handleKeyCommand}
+        customStyleMap={customStyleMap}
+        blockRenderMap={DefaultDraftBlockRenderMap.merge(TableUtils.DraftBlockRenderMap)}
+        placeholder="Write here..."
+      />
     </div>
   );
 }
@@ -163,23 +195,30 @@ function RichTextEditor(props: Props): ReactElement {
 export default memo(RichTextEditor);
 
 type RTEButtonProps = {
-  iconUrl: string;
+  material: string;
   onClick: MouseEventHandler;
   width?: number;
+  active?: boolean;
 }
 
 function RTEButton(props: RTEButtonProps): ReactElement {
   return (
     <button
-      className="rich-text-editor__controls__button"
+      className={c("rich-text-editor__controls__button", {
+        "rich-text-editor__controls__button--active": props.active,
+      })}
       onClick={props.onClick}
     >
-      <Icon url={props.iconUrl} width={props.width} />
+      <Icon
+        material={props.material}
+        width={props.width}
+      />
     </button>
   )
 }
 
 type RETControlsProps = {
+  editorState: EditorState;
   onBoldClick: () => void;
   onItalicClick: () => void;
   onUnderlineClick: () => void;
@@ -210,49 +249,57 @@ function RTEControls(props: RETControlsProps): ReactElement {
     onPrimaryClick,
     embedded,
     primaryBtnProps = {},
+    editorState,
   } = props;
+
+  const currentInlineStyle = editorState.getCurrentInlineStyle()?.toJS();
+  const selection = editorState.getSelection();
+  const currentType = editorState
+    .getCurrentContent()
+    .getBlockForKey(selection.getStartKey())
+    .getType();
+
+  console.log(currentInlineStyle, currentType);
 
   return (
     <div className="rich-text-editor__controls">
       <RTEButton
-        iconUrl={BoldIcon}
+        material="format_bold"
         onClick={onBoldClick}
+        active={currentInlineStyle.includes('BOLD')}
       />
       <RTEButton
-        iconUrl={ItalicIcon}
+        material="format_italic"
         onClick={onItalicClick}
+        active={currentInlineStyle.includes('ITALIC')}
       />
       <RTEButton
-        iconUrl={UnderlineIcon}
+        material="format_underline"
         onClick={onUnderlineClick}
+        active={currentInlineStyle.includes('UNDERLINE')}
       />
       <RTEButton
-        iconUrl={StrikethroughIcon}
+        material="format_strikethrough"
         onClick={onStrikethroughClick}
+        active={currentInlineStyle.includes('STRIKETHROUGH')}
       />
       <RTEButton
-        iconUrl={CodeIcon}
-        onClick={onCodeClick}
-      />
-      <RTEButton
-        iconUrl={CodeBlockIcon}
-        onClick={onCodeBlockClick}
-        width={16}
-      />
-      <RTEButton
-        iconUrl={OrderedListIcon}
+        material="format_list_numbered"
         onClick={onOrderedListClick}
         width={16}
+        active={currentType === "ordered-list-item"}
       />
       <RTEButton
-        iconUrl={UnorderedListIcon}
+        material="format_list_bulleted"
         onClick={onUnorderedListClick}
         width={16}
+        active={currentType === "unordered-list-item"}
       />
       <RTEButton
-        iconUrl={UnorderedListIcon}
+        material="format_quote"
         onClick={onBlockquoteClick}
         width={16}
+        active={currentType === "blockquote"}
       />
       {
         embedded && (
@@ -272,16 +319,30 @@ function RTEControls(props: RETControlsProps): ReactElement {
   );
 }
 
-function useRTEInlineStyleCallback(editorState: EditorState, cmd: string, cb?: (s: EditorState) => void, dep?: any[]): () => void {
+function useRTEInlineStyleCallback(
+  editorState: EditorState,
+  editor: Editor|null,
+  cmd: string,
+  cb?: (s: EditorState) => void,
+  dep?: any[],
+): () => void {
   return useCallback(() => {
     const newState = RichUtils.toggleInlineStyle(editorState, cmd);
     if (cb) cb(newState);
+    // if (editor) editor.focus();
   }, dep || []);
 }
 
-function useRTEInBlockTypeCallback(editorState: EditorState, cmd: string, cb?: (s: EditorState) => void, dep?: any[]): () => void {
+function useRTEInBlockTypeCallback(
+  editorState: EditorState,
+  editor: Editor|null,
+  cmd: string,
+  cb?: (s: EditorState) => void,
+  dep?: any[],
+): () => void {
   return useCallback(() => {
     const newState = RichUtils.toggleBlockType(editorState, cmd);
     if (cb) cb(newState);
+    // if (editor) editor.focus();
   }, dep || []);
 }

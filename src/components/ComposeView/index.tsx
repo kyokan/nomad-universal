@@ -1,4 +1,4 @@
-import React, {ChangeEvent, ReactElement, useCallback, useState} from "react";
+import React, {ChangeEvent, ReactElement, useCallback, useEffect, useState} from "react";
 import {withRouter, RouteComponentProps} from "react-router";
 import MarkdownEditor from "../../components/MarkdownEditor";
 import "./compose.scss";
@@ -6,66 +6,65 @@ import {addTag, useDraftPost, useUpdateDraft} from "../../ducks/drafts";
 import Button from "../../components/Button";
 import RTE from "../../components/RichTextEditor";
 import {useDispatch} from "react-redux";
-import ReactRTE from "react-rte";
 import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import {RelayerNewPostResponse} from "../../utils/types";
 import {INDEXER_API} from "../../utils/api";
 import { markdownToDraft, draftToMarkdown } from 'markdown-draft-js';
 import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils} from 'draft-js';
 import "./drafts.scss";
+import classNames from "classnames";
+import {markup} from "../../utils/rte";
+import LinkPreview from "../LinkPreview";
 
 type Props = {
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
   onFileUpload: (file: File) => Promise<string>;
   onFileUploadButtonClick?: () => any;
+  onOpenLink: (url: string) => void;
 } & RouteComponentProps;
 
 function ComposeView(props: Props): ReactElement {
-  const dispatch = useDispatch();
   const updateDraft = useUpdateDraft();
 
   const draft = useDraftPost();
   const rows = draft.content.split('\n').length;
 
-  const markdownString = draft.content;
-  const rawData = markdownToDraft(markdownString);
-  const contentState = convertFromRaw(rawData);
-  const editorState = EditorState.createWithContent(contentState);
-
   const [isPreviewing, setPreviewing] = useState(false);
   const [isSending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [draftState, setDraftState] = useState(editorState);
   const [truncate, setTruncate] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  useEffect(() => {
+    const parser = new DOMParser();
+    const html = markup(draft.content);
+    const doc = parser.parseFromString(html, 'text/html');
+    const links = doc.querySelectorAll('a');
+    const link = links && links[0];
+
+    if (link?.href !== previewUrl) {
+      setPreviewUrl(link?.href);
+    }
+  }, [draft, previewUrl]);
 
   const togglePreview = useCallback(() => {
     setPreviewing(!isPreviewing)
   }, [isPreviewing]);
 
   const onDraftChange = useCallback(async (draftPost: DraftPost ) => {
-    const markdownString = draftPost.content;
-    const rawData = markdownToDraft(markdownString);
-    const contentState = convertFromRaw(rawData);
-    const editorState = EditorState.createWithContent(contentState);
-    setDraftState(editorState);
     updateDraft(draftPost);
     setErrorMessage('');
   }, []);
 
   const onMarkdownChangeChange = useCallback(async (e: ChangeEvent<HTMLTextAreaElement> ) => {
     const markdownString = e.target.value;
-    const rawData = markdownToDraft(markdownString);
-    const contentState = convertFromRaw(rawData);
-    const newEditorState = EditorState.createWithContent(contentState);
-
-    setDraftState(newEditorState);
     updateDraft({
       ...draft,
       content: markdownString,
     });
     setErrorMessage('');
-  }, [draft, draftState]);
+  }, [draft]);
 
   const send = useCallback(async () => {
     if (isSending || success) return;
@@ -98,18 +97,6 @@ function ComposeView(props: Props): ReactElement {
     <div className="compose-container">
       <div className="compose">
         <div className="compose__header">
-          <div className="compose__selectors">
-            <div
-              className="compose__selector"
-            >
-              <div>Post</div>
-            </div>
-            <div
-              className="compose__selector"
-            >
-              <div>Link</div>
-            </div>
-          </div>
 
         </div>
         {
@@ -131,6 +118,15 @@ function ComposeView(props: Props): ReactElement {
                 disabled={isSending || success || truncate}
               />
             )
+        }
+        {
+          previewUrl && (
+            <LinkPreview
+              onOpenLink={props.onOpenLink}
+              className="compose__preview"
+              url={previewUrl}
+            />
+          )
         }
         <div className="compose__error-message">{errorMessage}</div>
         <div className="compose__actions">
@@ -154,7 +150,7 @@ function ComposeView(props: Props): ReactElement {
               color={success ? "green" : undefined}
               onClick={send}
               loading={isSending}
-              disabled={isSending || (!draftState.getCurrentContent().hasText() && !truncate)}
+              disabled={isSending || (!draft.content && !truncate)}
             >
               { success ? "Posted" : "Post" }
             </Button>

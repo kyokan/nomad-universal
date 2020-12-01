@@ -37,6 +37,7 @@
 
   &__selector {
     @extend %row-nowrap;
+    transition: box-shadow 150ms ease-in-out;
     flex: 1 1 auto;
     display: flex;
     flex-flow: row nowrap;
@@ -50,11 +51,25 @@
     user-select: none;
 
     &:hover {
-      color: $gray-500;
+      color: $blue-500;
     }
 
     &:active {
-      color: $gray-800;
+      color: $blue-800;
+    }
+
+    .icon {
+      margin-right: .5rem;
+    }
+
+    &--active {
+      cursor: default;
+      color: $blue !important;
+      box-shadow: 0 2px 0 0 #0084de;
+
+      .icon {
+        color: $blue !important;
+      }
     }
   }
 
@@ -111,6 +126,10 @@
     font-size: .875rem;
     line-height: 1.3125;
     color: $dark-primary-text;
+  }
+
+  &__preview {
+    margin: 0 1rem;
   }
 
   .custom-rte-btn {
@@ -292,7 +311,7 @@
 }
 
 .rte {
-  margin: 1rem;
+  margin: 1.5rem 1rem 1rem 1rem;
 
   .public-DraftEditor-content {
     font-family: 'Open Sans', Roboto, Helvetica, Arial, sans-serif;

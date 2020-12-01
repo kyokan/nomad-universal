@@ -37,6 +37,7 @@ type Props = {
   onSendReply?: (hash: string) => void;
   onBlockUser?: (hash: string) => void;
   onFollowUser?: (hash: string) => void;
+  onOpenLink: (url: string) => void;
   onScrolledToBottom?: () => void;
   onTagClick?: (tagName: string) => void;
   loading: boolean;
@@ -132,6 +133,7 @@ function CustomView(props: Props): ReactElement {
         onFollowUser={onFollowUser}
         onScrolledToBottom={onScrolledToBottom}
         onTagClick={onTagClick}
+        onOpenLink={props.onOpenLink}
       >
         {children}
       </CustomViewPosts>
@@ -154,6 +156,7 @@ function CustomView(props: Props): ReactElement {
                 onSendReply={onSendReply}
                 onBlockUser={onBlockUser}
                 onFollowUser={onFollowUser}
+                onOpenLink={props.onOpenLink}
               />
             </div>
           </>

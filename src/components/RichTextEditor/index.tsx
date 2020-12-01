@@ -24,6 +24,8 @@ import {customStyleMap, mapDraftToEditorState, markdownConvertOptions} from "../
 import {addLinkPlugin} from "./plugins/addLinkPlugin";
 import Input from "../Input";
 import {draftToMarkdown} from "markdown-draft-js";
+const { stateFromMarkdown } = require('draft-js-import-markdown');
+const { stateToMarkdown } = require('draft-js-export-markdown');
 
 const hljs = require('highlight.js');
 const TableUtils = require('draft-js-table');
@@ -58,6 +60,7 @@ function RichTextEditor(props: Props): ReactElement {
   const setEditorState = useCallback((newEditorState: EditorState) => {
     _setEditorState(newEditorState);
     const currentContent = newEditorState.getCurrentContent();
+    // const markdown = stateToMarkdown(currentContent, { gfm: true });
     const markdown = draftToMarkdown(convertToRaw(currentContent), markdownConvertOptions);
 
     onChange({
@@ -216,7 +219,7 @@ function RichTextEditor(props: Props): ReactElement {
         onChange={setEditorState}
         handleKeyCommand={handleKeyCommand}
         customStyleMap={customStyleMap}
-        blockRenderMap={TableUtils.DefaultBlockRenderMap.merge(TableUtils.DraftBlockRenderMap)}
+        blockRenderMap={DefaultDraftBlockRenderMap.merge(TableUtils.DraftBlockRenderMap)}
         placeholder="Write here..."
         plugins={[
           addLinkPlugin as any,

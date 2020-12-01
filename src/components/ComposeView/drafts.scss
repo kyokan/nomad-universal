@@ -72,8 +72,8 @@ blockquote {
 /**
  * Default spacing for list container elements. Override with CSS as needed.
  */
-.public-DraftStyleDefault-ul,
-.public-DraftStyleDefault-ol {
+.public/DraftStyleDefault/ul,
+.public/DraftStyleDefault/ol {
   margin: .125rem 0;
   padding: 0;
 }
@@ -273,6 +273,7 @@ a {
 a:hover {
   outline: 0 none;
   color: #739544;
+  text-decoration: underline;
 }
 
 p, pre {
@@ -393,9 +394,9 @@ ul > li, ol > li {
   position: relative;
 }
 
-li {
-  list-style: none outside none;
-}
+//li {
+//  list-style: none outside none;
+//}
 
 figure > figcaption {
   margin-top: 0.5em;

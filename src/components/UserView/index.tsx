@@ -43,6 +43,7 @@ type Props = {
   onSendReply: (postHash: string) => void;
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
+  onOpenLink: (postHash: string) => void;
 } & RouteComponentProps<{username: string; viewType?: string; postHash?: string}>;
 
 function UserView(props: Props): ReactElement {
@@ -420,6 +421,7 @@ function UserView(props: Props): ReactElement {
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}
+      onOpenLink={props.onOpenLink}
       onSelectPost={onSelectPost}
       onScrolledToBottom={typeof next === 'number' ? query : undefined}
       onUpdateAvatarUrl={onUpdateAvatarUrl}

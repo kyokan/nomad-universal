@@ -29,6 +29,7 @@ export type CustomFilterViewProps = {
   onSendReply: (postHash: string) => void;
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
+  onOpenLink: (url: string) => void;
   onTagClick?: (tagName: string) => void;
   canUploadHero?: boolean;
   canUploadAvatar?: boolean;
@@ -122,6 +123,7 @@ function _CustomFilterView(props: CustomFilterViewProps): ReactElement {
       onCoverImageChange={onCoverImageChange}
       onUpdateCoverImage={onUpdateCoverImage}
       onTagClick={onTagClick}
+      onOpenLink={props.onOpenLink}
     />
   );
 }
@@ -130,6 +132,7 @@ const CustomFilterView = withRouter(_CustomFilterView);
 export default CustomFilterView;
 
 type CustomViewContainerProps = {
+  onOpenLink: (postHash: string) => void;
   onLikePost: (postHash: string) => void;
   onSendReply: (postHash: string) => void;
   onBlockUser: (postHash: string) => void;
@@ -200,6 +203,7 @@ function _CustomViewContainer(props: CustomViewContainerProps): ReactElement {
         ...view.filter,
       }}
       titleEditable={isEditingTitle}
+      onOpenLink={props.onOpenLink}
       onLikePost={props.onLikePost}
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}

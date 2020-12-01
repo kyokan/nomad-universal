@@ -19,6 +19,7 @@ type Props = {
   onSendReply?: (hash: string) => void;
   onBlockUser?: (hash: string) => void;
   onFollowUser?: (hash: string) => void;
+  onOpenLink: (url: string) => void;
 } & RouteComponentProps<{ username?: string; postHash: string }>;
 
 function DetailPane (props: Props): ReactElement {
@@ -73,6 +74,7 @@ function DetailPane (props: Props): ReactElement {
                   onSelectPost={onSelectPost}
                   onNameClick={onNameClick}
                   onTagClick={onTagClick}
+                  onOpenLink={props.onOpenLink}
                   canReply
                 />
               ))}
@@ -91,6 +93,7 @@ function DetailPane (props: Props): ReactElement {
               onSelectPost={onSelectPost}
               onNameClick={onNameClick}
               onTagClick={onTagClick}
+              onOpenLink={props.onOpenLink}
               shouldFetchCommentsOnMount
               canReply
               selected

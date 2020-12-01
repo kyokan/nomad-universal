@@ -1,4 +1,4 @@
-import React, {MouseEvent, ReactElement, ReactNode, useCallback, useState} from "react";
+import React, {MouseEvent, ReactElement, ReactNode, useCallback, useEffect, useState} from "react";
 import './post-card.scss';
 import Markup from "../Markup";
 import PostButton from "../PostButton";
@@ -23,6 +23,8 @@ import {parseUsername, undotName} from "../../utils/user";
 import Button from "../Button";
 import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import {RichTextEditor} from "../ComposeView";
+import {markup} from "../../utils/rte";
+import LinkPreview from "../LinkPreview";
 
 type Props = {
   type: 'card' | 'compact' | 'title';
@@ -45,6 +47,7 @@ type Props = {
   onSendReply?: (hash: string) => void;
   onNameClick?: (name: string) => void;
   onTagClick?: (tagName: string) => void;
+  onOpenLink: (url: string) => void;
   meta?: PostMeta;
   canReply?: boolean;
   selected?: boolean;
@@ -86,6 +89,7 @@ function Card(props: Props): ReactElement {
     selected,
     onSendReply,
     pending,
+    content,
   } = props;
 
   const { replyCount = 0, likeCount = 0 } = meta || {};
@@ -116,10 +120,24 @@ function Card(props: Props): ReactElement {
   }, [hash, onLikePost, isSendingLike]);
   const openPost = useOpenPost(props);
 
+  const [previewUrl, setPreviewUrl] = useState('');
+
+  useEffect(() => {
+    const parser = new DOMParser();
+    const html = markup(content);
+    const doc = parser.parseFromString(html, 'text/html');
+    const links = doc.querySelectorAll('a');
+    const link = links && links[0];
+
+    if (link?.href !== previewUrl) {
+      setPreviewUrl(link?.href);
+    }
+  }, [content, previewUrl]);
+
   return (
     <div
       tabIndex={onSelectPost ? 1 : undefined}
-      ref={el => setContentOverflow((el?.clientHeight || 0) >= 445)}
+      ref={el => setContentOverflow((el?.clientHeight || 0) >= 268)}
       className={classNames('post-card', className, {
         'post-card--selectable': onSelectPost,
         'post-card--avatarless': !avatar,
@@ -138,6 +156,15 @@ function Card(props: Props): ReactElement {
         onNameClick={onNameClick}
       />
       { renderContent(props) }
+      {
+        previewUrl && (
+          <LinkPreview
+            onOpenLink={props.onOpenLink}
+            className="post-card__preview"
+            url={previewUrl}
+          />
+        )
+      }
       {
         !!tags?.length && (
           <div className="post-card__tags">

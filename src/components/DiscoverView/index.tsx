@@ -18,6 +18,7 @@ type DiscoverViewProps = {
  onSendReply: (postHash: string) => void;
  onBlockUser: (postHash: string) => void;
  onFollowUser: (postHash: string) => void;
+ onOpenLink: (url: string) => void;
 } & RouteComponentProps<{ postHash?: string }>;
 
 function DiscoverView(props: DiscoverViewProps): ReactElement {
@@ -93,6 +94,7 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}
+      onOpenLink={props.onOpenLink}
       onScrolledToBottom={typeof next === 'number' && next > -1 ? query : undefined}
       onTagClick={onTagClick}
       // onUpdateAvatarUrl={() => null}

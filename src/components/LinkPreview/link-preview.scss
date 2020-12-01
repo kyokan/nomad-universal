@@ -1,0 +1,68 @@
+@import "../../styles/variable";
+
+iframe {
+  border: none;
+  margin: 0;
+  padding: 0;
+  outline: none;
+}
+.link-preview {
+  @extend %row-nowrap;
+  border: 1px solid $gray-150;
+  background: $white;
+  cursor: pointer;
+
+  &__image {
+    cursor: pointer;
+    flex: 0 0 auto;
+    width: 6rem;
+    height: 6rem;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    background-color: $black;
+  }
+
+  &__video-image {
+    cursor: pointer;
+    flex: 0 0 auto;
+    width: 100%;
+    height: 22.5rem;
+    background-repeat: no-repeat;
+    background-size: contain;
+    background-position: center;
+    background-color: $black;
+  }
+
+  &__loader {
+    margin: 2rem;
+  }
+
+  &__body {
+    @extend %col-nowrap;
+    padding: 1rem;
+    flex: 1 1 auto;
+    width: 0;
+  }
+
+  &__title {
+    @extend %regular-font;
+    @extend %bold;
+    margin-bottom: .125rem;
+  }
+
+  &__description {
+    @extend %regular-font;
+    flex: 1 1 auto;
+    color: $light-primary-text;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    margin-bottom: .25rem;
+  }
+
+  &__host {
+    @extend %small-font;
+    color: $gray-800;
+  }
+}

@@ -14,7 +14,7 @@ const renderer = new marked.Renderer({
   gfm: true,
   breaks: true,
   sanitize: true,
-  smartLists: true,
+  smartLists: false,
   smartypants: false,
   xhtml: false,
 });
@@ -97,6 +97,13 @@ export function markup(content: string, customRenderer?: marked.Renderer): strin
       } else {
         const dirty = marked(content, {
           renderer: customRenderer || renderer,
+          breaks: true,
+          pedantic: false,
+          gfm: true,
+          sanitize: true,
+          smartLists: false,
+          smartypants: false,
+          xhtml: false,
           highlight: function (str: string, lang: string) {
             if (lang && hljs.getLanguage(lang)) {
               try {
@@ -169,46 +176,67 @@ export const mapDraftToEditorState = (draft?: DraftPost): EditorState => {
     return EditorState.createEmpty(decorator);
   }
 
-  return EditorState.createWithContent(convertFromRaw(markdownToDraft(draft.content, {
-    preserveNewlines: true,
-    blockTypes: {
-      // eslint-disable-next-line @typescript-eslint/camelcase
-      table_open: function (item: any) {
-        return {
-          type: "table",
-          mutability: "IMMUTABLE",
-          data: {
-            table: {
-              ...item,
-            },
-          },
-        };
+  // return EditorState.createWithContent(
+  //   stateFromMarkdown(draft.content),
+  //   decorator,
+  // );
+  return EditorState.createWithContent(
+    convertFromRaw(markdownToDraft(draft.content, markdownConvertOptions)),
+    decorator,
+  );
+};
+
+export const markdownConvertOptions = {
+  preserveNewlines: true,
+  blockStyles: {
+    'ins_open': 'UNDERLINE',
+    'del_open': 'STRIKETHROUGH',
+  },
+  styleItems: {
+    'UNDERLINE': {
+      open: function () {
+        return '++';
+      },
+
+      close: function () {
+        return '++';
       }
     },
-    remarkableOptions: {
-      html: false,
-      xhtmlOut: false,
-      breaks: true,
-      enable: {
-        block: 'table',
+    'STRIKETHROUGH': {
+      open: function () {
+        return '~~';
       },
-      highlight: function (str: string, lang: string) {
-        if (lang && hljs.getLanguage(lang)) {
-          try {
-            return hljs.highlight(lang, str).value;
-          } catch (err) {
-            //
-          }
-        }
 
+      close: function () {
+        return '~~';
+      }
+    },
+  },
+  remarkableOptions: {
+    html: false,
+    xhtmlOut: false,
+    breaks: true,
+    enable: {
+      inline: ["ins", 'del'],
+      core: ['abbr']
+    },
+
+    highlight: function (str: string, lang: string) {
+      if (lang && hljs.getLanguage(lang)) {
         try {
-          return hljs.highlightAuto(str).value;
+          return hljs.highlight(lang, str).value;
         } catch (err) {
           //
         }
-
-        return ''; // use external default escaping
       }
+
+      try {
+        return hljs.highlightAuto(str).value;
+      } catch (err) {
+        //
+      }
+
+      return ''; // use external default escaping
     }
-  })), decorator);
+  }
 };

@@ -1,5 +1,7 @@
 #!/bin/bash
 
+cp ./src/components/LinkPreview/link-preview.scss ./lib/components/LinkPreview/link-preview.scss
+cp ./src/components/ComposeView/drafts.scss ./lib/components/ComposeView/drafts.scss
 cp ./src/components/Setting/settings.scss ./lib/components/Setting/settings.scss
 cp ./src/components/DomainSetting/domain-setting.scss ./lib/components/DomainSetting/domain-setting.scss
 cp ./src/components/UserDirectoryView/user-dir.scss ./lib/components/UserDirectoryView/user-dir.scss

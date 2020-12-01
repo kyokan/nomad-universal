@@ -21,6 +21,7 @@ type CustomViewPostsProps = {
   onFollowUser?: (hash: string) => void;
   onScrolledToBottom?: () => void;
   onTagClick?: (tagName: string) => void;
+  onOpenLink: (url: string) => void;
   loading: boolean;
   children: ReactNode;
 } & RouteComponentProps;
@@ -72,6 +73,7 @@ function CustomViewPosts(props: CustomViewPostsProps): ReactElement {
                 onNameClick={onNameClick}
                 onTagClick={onTagClick}
                 onFollowUser={onFollowUser}
+                onOpenLink={props.onOpenLink}
                 canReply
               />
             );
@@ -95,6 +97,7 @@ type RegularPostProps = {
   onFollowUser?: (name: string) => void;
   onNameClick?: (name: string) => void;
   onTagClick?: (tagName: string) => void;
+  onOpenLink: (url: string) => void;
   selected?: boolean;
 }
 
@@ -136,6 +139,7 @@ export function RegularPost(props: RegularPostProps): ReactElement {
         {...post}
         className={props.className}
         avatar={user?.profilePicture || ''}
+        onOpenLink={props.onOpenLink}
         onSelectPost={(post.pending || !user?.confirmed) ? undefined : props.onSelectPost}
         onLikePost={(post.pending || !user?.confirmed) ? undefined : props.onLikePost}
         onBlockUser={(post.pending || !user?.confirmed) ? undefined : props.onBlockUser}
@@ -157,6 +161,7 @@ type RawPostProps = {
   onFollowUser?: (hash: string) => void;
   onNameClick?: (name: string) => void;
   onTagClick?: (tagName: string) => void;
+  onOpenLink: (url: string) => void;
   avatar: string;
   canReply?: boolean;
   className?: string;
@@ -189,6 +194,7 @@ export function RawPost(props: RawPostProps): ReactElement {
     className = '',
     selected,
     pending,
+    onOpenLink,
   } = props;
 
   return (
@@ -212,6 +218,7 @@ export function RawPost(props: RawPostProps): ReactElement {
       onFollowUser={onFollowUser}
       onNameClick={onNameClick}
       onTagClick={onTagClick}
+      onOpenLink={onOpenLink}
       canReply={canReply}
       attachments={attachments}
       tags={tags}

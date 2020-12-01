@@ -15,8 +15,6 @@
   background-color: $white;
   border: 1px solid $gray-100;
   height: fit-content;
-  padding: 1rem 1.75rem;
-  border-radius: .125rem;
   margin-top: 2rem;
   margin-bottom: 4rem;
   max-width: 40rem;
@@ -28,6 +26,55 @@
       line-height: 1.3125;
       padding-bottom: 1.5rem;
     }
+  }
+
+  &__selectors {
+    @extend %row-nowrap;
+    cursor: default;
+    align-items: center;
+    border-bottom: 1px solid $gray-150;
+  }
+
+  &__selector {
+    @extend %row-nowrap;
+    transition: box-shadow 150ms ease-in-out;
+    flex: 1 1 auto;
+    display: flex;
+    flex-flow: row nowrap;
+    align-items: center;
+    justify-content: center;
+    padding: .5rem;
+    width: 0;
+    color: $gray-600;
+    font-weight: 500;
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      color: $blue-500;
+    }
+
+    &:active {
+      color: $blue-800;
+    }
+
+    .icon {
+      margin-right: .5rem;
+    }
+
+    &--active {
+      cursor: default;
+      color: $blue !important;
+      box-shadow: 0 2px 0 0 #0084de;
+
+      .icon {
+        color: $blue !important;
+      }
+    }
+  }
+
+  &__selector + &__selector {
+    border-left: 1px solid $gray-150;
   }
 
   &__group {
@@ -79,6 +126,10 @@
     font-size: .875rem;
     line-height: 1.3125;
     color: $dark-primary-text;
+  }
+
+  &__preview {
+    margin: 0 1rem;
   }
 
   .custom-rte-btn {
@@ -214,6 +265,8 @@
 
   &__actions {
     @extend %row-nowrap;
+    margin: 1rem;
+    margin-top: 0;
 
     &__l {
       @extend %row-nowrap;
@@ -258,13 +311,14 @@
 }
 
 .rte {
-  margin-bottom: 1rem;
+  margin: 1.5rem 1rem 1rem 1rem;
 
   .public-DraftEditor-content {
     font-family: 'Open Sans', Roboto, Helvetica, Arial, sans-serif;
     min-height: 8.375rem;
+    max-height: 70vh;
     font-size: .875rem;
-    line-height: 1.3125;
+    line-height: 1.4;
     color: $dark-primary-text;
   }
 
@@ -311,7 +365,6 @@
 
 @media only screen and (max-width: 768px) {
   .compose {
-    padding: .5rem 1rem;
     margin-top: 0;
     border: 0;
   }

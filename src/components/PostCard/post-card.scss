@@ -93,7 +93,7 @@
     }
 
     &__creator {
-      @extend %small-font;
+      @extend %regular-font;
       @extend %bold;
       flex: 0 0 auto;
       justify-content: flex-end;
@@ -129,7 +129,7 @@
     padding-left: .25rem;
     flex: 1 1 auto;
     overflow: hidden;
-    max-height: 24rem;
+    max-height: 12rem;
 
     .md-preview {
       margin-bottom: .5rem;
@@ -156,6 +156,10 @@
         }
       }
     }
+  }
+
+  &__preview {
+    margin: 1rem;
   }
 
   .Emoji {
@@ -274,14 +278,19 @@
   }
 
   .post__reply-editor-container.post__reply-editor-container--replying {
-    height: 16rem;
+    height: 17rem;
     margin-top: .75rem;
     margin-left: 1rem;
+
+    .rte {
+      margin: 0;
+    }
 
     .post-card__header__avatar {
       height: 2em;
       width: 2em;
     }
+
   }
 
   .post {
@@ -290,6 +299,7 @@
     &__reply-editor__actions {
       @extend %row-nowrap;
       justify-content: flex-end;
+      margin: .5rem 0;
 
       .button + .button {
         margin-left: .5rem;
@@ -395,6 +405,12 @@
 
   .post__reply-editor-container--replying {
     margin-left: .375rem !important;
+
+    .post__reply-editor {
+      .rte {
+        margin: 0;
+      }
+    }
   }
 
   .post-card__footer {

@@ -1,0 +1,522 @@
+@import "../../styles/variable";
+
+@font-face {
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 300;
+  src: local("Ubuntu Light"), local("Ubuntu-Light"), url("https://themes.googleusercontent.com/static/fonts/ubuntu/v4/WtcvfJHWXKxx4x0kuS1kobO3LdcAZYWl9Si6vvxL-qU.woff") format("woff");
+}
+@font-face {
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 400;
+  src: local("Ubuntu"), url("https://themes.googleusercontent.com/static/fonts/ubuntu/v4/CGXpU_uR_FUfdeyCjAWgZ-vvDin1pK8aKteLpeZ5c0A.woff") format("woff");
+}
+@font-face {
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 500;
+  src: local("Ubuntu Medium"), local("Ubuntu-Medium"), url("https://themes.googleusercontent.com/static/fonts/ubuntu/v4/gMhvhm-nVj1086DvGgmzB7O3LdcAZYWl9Si6vvxL-qU.woff") format("woff");
+}
+@font-face {
+  font-family: "Ubuntu";
+  font-style: normal;
+  font-weight: 700;
+  src: local("Ubuntu Bold"), local("Ubuntu-Bold"), url("https://themes.googleusercontent.com/static/fonts/ubuntu/v4/nsLtvfQoT-rVwGTHHnkeJrO3LdcAZYWl9Si6vvxL-qU.woff") format("woff");
+}
+@font-face {
+  font-family: "Ubuntu";
+  font-style: italic;
+  font-weight: 300;
+  src: local("Ubuntu Light Italic"), local("Ubuntu-LightItalic"), url("https://themes.googleusercontent.com/static/fonts/ubuntu/v4/DZ_YjBPqZ88vcZCcIXm6VqfTCPadK0KLfdEfFtGWCYw.woff") format("woff");
+}
+
+.public/DraftStyleDefault/block {
+  position: relative;
+  white-space: pre-wrap;
+  line-height: 1.4;
+  font-size: .875rem;
+  font-weight: 400;
+  font-family: "Ubuntu","Myriad Pro","Myriad",sans-serif;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/ltr {
+  direction: ltr;
+  text-align: left;
+}
+
+blockquote {
+
+}
+
+/* @noflip */
+.public/DraftStyleDefault/rtl {
+  direction: rtl;
+  text-align: right;
+}
+
+/**
+ * These rules provide appropriate text direction for counter pseudo-elements.
+ */
+/* @noflip */
+.public/DraftStyleDefault/listLTR {
+  direction: ltr;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/listRTL {
+  direction: rtl;
+}
+
+/**
+ * Default spacing for list container elements. Override with CSS as needed.
+ */
+.public/DraftStyleDefault/ul,
+.public/DraftStyleDefault/ol {
+  margin: .125rem 0;
+  padding: 0;
+}
+
+/**
+ * Default counters and styles are provided for five levels of nesting.
+ * If you require nesting beyond that level, you should use your own CSS
+ * classes to do so. If you care about handling RTL languages, the rules you
+ * create should look a lot like these.
+ */
+
+/* @noflip */
+.public/DraftStyleDefault/depth0.public/DraftStyleDefault/listLTR {
+  margin-left: 1.5em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth0.public/DraftStyleDefault/listRTL {
+  margin-right: 1.5em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth1.public/DraftStyleDefault/listLTR {
+  margin-left: 3em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth1.public/DraftStyleDefault/listRTL {
+  margin-right: 3em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth2.public/DraftStyleDefault/listLTR {
+  margin-left: 4.5em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth2.public/DraftStyleDefault/listRTL {
+  margin-right: 4.5em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth3.public/DraftStyleDefault/listLTR {
+  margin-left: 6em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth3.public/DraftStyleDefault/listRTL {
+  margin-right: 6em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth4.public/DraftStyleDefault/listLTR {
+  margin-left: 7.5em;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/depth4.public/DraftStyleDefault/listRTL {
+  margin-right: 7.5em;
+}
+
+/**
+ * Only use `square` list-style after the first two levels.
+ */
+.public/DraftStyleDefault/unorderedListItem {
+  list-style-type: square;
+  position: relative;
+}
+
+.public/DraftStyleDefault/unorderedListItem.public/DraftStyleDefault/depth0 {
+  list-style-type: disc;
+}
+
+.public/DraftStyleDefault/unorderedListItem.public/DraftStyleDefault/depth1 {
+  list-style-type: circle;
+}
+
+/**
+ * Ordered list item counters are managed with CSS, since all list nesting is
+ * purely visual.
+ */
+.public/DraftStyleDefault/orderedListItem {
+  list-style-type: none;
+  position: relative;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/orderedListItem.public/DraftStyleDefault/listLTR:before {
+  left: -36px;
+  position: absolute;
+  text-align: right;
+  width: 30px;
+}
+
+/* @noflip */
+.public/DraftStyleDefault/orderedListItem.public/DraftStyleDefault/listRTL:before {
+  position: absolute;
+  right: -36px;
+  text-align: left;
+  width: 30px;
+}
+
+/**
+ * Counters are reset in JavaScript. If you need different counter styles,
+ * override these rules. If you need more nesting, create your own rules to
+ * do so.
+ */
+.public/DraftStyleDefault/orderedListItem:before {
+  content: counter(ol0) ". ";
+  counter-increment: ol0;
+}
+
+.public/DraftStyleDefault/orderedListItem.public/DraftStyleDefault/depth1:before {
+  content: counter(ol1,lower-alpha) ". ";
+  counter-increment: ol1;
+}
+
+.public/DraftStyleDefault/orderedListItem.public/DraftStyleDefault/depth2:before {
+  content: counter(ol2,lower-roman) ". ";
+  counter-increment: ol2;
+}
+
+.public/DraftStyleDefault/orderedListItem.public/DraftStyleDefault/depth3:before {
+  content: counter(ol3) ". ";
+  counter-increment: ol3;
+}
+
+.public/DraftStyleDefault/orderedListItem.public/DraftStyleDefault/depth4:before {
+  content: counter(ol4,lower-alpha) ". ";
+  counter-increment: ol4;
+}
+
+.public/DraftStyleDefault/depth0.public/DraftStyleDefault/reset {
+  counter-reset: ol0;
+}
+
+.public/DraftStyleDefault/depth1.public/DraftStyleDefault/reset {
+  counter-reset: ol1;
+}
+
+.public/DraftStyleDefault/depth2.public/DraftStyleDefault/reset {
+  counter-reset: ol2;
+}
+
+.public/DraftStyleDefault/depth3.public/DraftStyleDefault/reset {
+  counter-reset: ol3;
+}
+
+.public/DraftStyleDefault/depth4.public/DraftStyleDefault/reset {
+  counter-reset: ol4;
+}
+
+h1, h2, h3, dt {
+  color: #423F37;
+  font-weight: 700;
+}
+.inverted h1, .inverted h2, .inverted h3, .inverted dt {
+  color: #fafafa;
+}
+
+h1 {
+  font-size: 2em;
+  margin: 0.67em 0;
+}
+
+h2, .article-list .article-title {
+  font-size: 1.5em;
+  margin: 0.83em 0;
+}
+
+h3, dt {
+  font-size: 1.17em;
+  margin: 1em 0;
+}
+
+h4 {
+  font-size: 1em;
+  margin: 1.33em 0;
+}
+
+h5 {
+  font-size: 0.83em;
+  margin: 1.67em 0;
+}
+
+h6 {
+  font-size: 0.75em;
+  margin: 2.33em 0;
+}
+
+a {
+  color: #8DB359;
+  cursor: pointer;
+  outline: 0 none;
+  text-decoration: underline;
+}
+a:hover {
+  outline: 0 none;
+  color: #739544;
+  text-decoration: underline;
+}
+
+p, pre {
+  margin: 1em 0;
+}
+
+code, kbd, pre, samp {
+  font-family: monospace,serif;
+  font-size: 1em;
+  margin: 0;
+  padding: 0;
+}
+
+pre {
+  background-color: #f2f2f2;
+  font-size: 0.875rem;
+  overflow-x: auto;
+  padding: .5rem;
+  position: relative;
+  white-space: pre;
+  word-wrap: normal;
+  margin: 0;
+}
+.inverted pre {
+  background-color: #404040;
+}
+
+code, kbd, samp {
+  margin: 0;
+}
+
+code, kbd, pre, samp {
+  font-family: monospace,serif;
+}
+
+code {
+  color: $dark-primary-text;
+}
+.inverted code {
+  color: #fafafa;
+}
+
+aside {
+  display: block;
+  float: right;
+  width: 390px;
+}
+
+b, strong {
+  font-weight: bold;
+  color: $dark-primary-text;
+  font-weight: 700;
+}
+.inverted b, .inverted strong {
+  color: #fafafa;
+}
+
+blockquote {
+  color: #57534A;
+  font-size: 1.25em;
+  font-weight: 700;
+  background-color: #f9f9f9;
+  margin: 1rem;
+  padding: 1rem;
+}
+.inverted blockquote {
+  color: #fafafa;
+  background-color: #57534A;
+}
+
+figure {
+  margin-left: -4.5rem;
+  margin-right: -4.5rem;
+  margin-bottom: 2em;
+  margin-top: 2em;
+}
+
+hr {
+  -moz-border-bottom-colors: none;
+  -moz-border-left-colors: none;
+  -moz-border-right-colors: none;
+  -moz-border-top-colors: none;
+  border-color: -moz-use-text-color -moz-use-text-color #ECE6DA;
+  border-image: none;
+  border-style: none none solid;
+  border-width: medium medium 1px;
+  margin: 3em 6em;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+  border: 0 none;
+}
+
+.inverted ol > li:before {
+  color: #fafafa;
+}
+
+.inverted ul > li:before {
+  color: #fafafa;
+}
+
+ol, ul, dl {
+  margin-left: 2rem;
+  padding: 0;
+}
+
+ol {
+  counter-reset: ol;
+}
+
+li + li, dd + dt {
+  margin-top: 0.5em;
+}
+
+ul > li, ol > li {
+  position: relative;
+}
+
+//li {
+//  list-style: none outside none;
+//}
+
+figure > figcaption {
+  margin-top: 0.5em;
+}
+
+small, dd, figcaption {
+  display: block;
+  font-size: 0.8rem;
+  font-style: italic;
+  line-height: 1.2;
+}
+
+tbody {
+  display: table-row-group;
+}
+
+tfoot {
+  display: table-footer-group;
+}
+
+table {
+  margin-bottom: 2em;
+  font-size: 0.8em;
+  padding: 0;
+  border-collapse: collapse;
+  box-shadow: 1px 1px 2px rgba(0, 0, 0, 0.35);
+  width: 80%;
+  margin: 0 auto 2em auto;
+  border: 1px solid #ddd;
+  border-collapse: separate;
+  *border-collapse: collapse;
+  -webkit-border-radius: 4px;
+  -moz-border-radius: 4px;
+  border-radius: 4px;
+}
+table th, table td {
+  padding: 10px 10px 9px;
+  line-height: 18px;
+  text-align: left;
+}
+table th {
+  padding-top: 9px !important;
+  text-transform: uppercase;
+  vertical-align: middle;
+}
+table td {
+  vertical-align: top;
+  border-top: 1px solid #ddd;
+}
+.inverted table td {
+  border-color: #aaa;
+}
+table tbody th {
+  border-top: 1px solid #ddd;
+  vertical-align: top;
+}
+.inverted table tbody th {
+  border-color: #aaa;
+}
+table th + th, table td + td, table th + td {
+  border-left: 1px solid #ddd;
+}
+.inverted table th + th, .inverted table td + td, .inverted table th + td {
+  border-color: #aaa;
+}
+table thead tr:first-child th:first-child, table tbody tr:first-child td:first-child {
+  -webkit-border-radius: 4px 0 0 0;
+  -moz-border-radius: 4px 0 0 0;
+  border-radius: 4px 0 0 0;
+}
+table thead tr:first-child th:last-child {
+  -webkit-border-radius: 0 4px 0 0;
+  -moz-border-radius: 0 4px 0 0;
+  border-radius: 0 4px 0 0;
+}
+table tbody tr:first-child td:last-child {
+  -webkit-border-radius: 0 4px 0 0;
+  -moz-border-radius: 0 4px 0 0;
+  border-radius: 0 4px 0 0;
+}
+table tbody tr:last-child td:first-child {
+  -webkit-border-radius: 0 0 0 4px;
+  -moz-border-radius: 0 0 0 4px;
+  border-radius: 0 0 0 4px;
+}
+table tbody tr:last-child td:last-child {
+  -webkit-border-radius: 0 0 4px 0;
+  -moz-border-radius: 0 0 4px 0;
+  border-radius: 0 0 4px 0;
+}
+
+tbody tr:nth-child(odd) {
+  background-color: rgba(0, 0, 0, 0.03);
+}
+
+caption {
+  background: rgba(0, 0, 0, 0.75);
+  border-radius: 4px;
+  box-shadow: 2px 2px 2px rgba(0, 0, 0, 0.35);
+  color: #57534A;
+  display: table-caption;
+  font-size: 1.3em;
+  font-weight: 300;
+  letter-spacing: 2px;
+  margin: 4px 0;
+  padding: 4px;
+  text-transform: uppercase;
+  word-spacing: .2em;
+}
+.inverted caption {
+  color: #fafafa;
+}
+
+/* grey out placeholders */
+:-moz-placeholder, ::-webkit-input-placeholder {
+  color: #bfbfbf;
+}
+
+.article-date {
+  color: #C7C2B8;
+  display: block;
+  font-size: 0.8rem;
+}

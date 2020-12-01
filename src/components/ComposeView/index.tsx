@@ -1,62 +1,67 @@
-import React, {ChangeEvent, ReactElement, useCallback, useState} from "react";
+import React, {ChangeEvent, ReactElement, useCallback, useEffect, useState} from "react";
 import {withRouter, RouteComponentProps} from "react-router";
 import MarkdownEditor from "../../components/MarkdownEditor";
 import "./compose.scss";
 import {addTag, useDraftPost, useUpdateDraft} from "../../ducks/drafts";
 import Button from "../../components/Button";
+import RTE from "../../components/RichTextEditor";
 import {useDispatch} from "react-redux";
-import ReactRTE from "react-rte";
 import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import {RelayerNewPostResponse} from "../../utils/types";
 import {INDEXER_API} from "../../utils/api";
+import { markdownToDraft, draftToMarkdown } from 'markdown-draft-js';
+import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils} from 'draft-js';
+import "./drafts.scss";
+import classNames from "classnames";
+import {markup} from "../../utils/rte";
+import LinkPreview from "../LinkPreview";
 
 type Props = {
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
   onFileUpload: (file: File) => Promise<string>;
   onFileUploadButtonClick?: () => any;
+  onOpenLink: (url: string) => void;
 } & RouteComponentProps;
 
 function ComposeView(props: Props): ReactElement {
-  const dispatch = useDispatch();
   const updateDraft = useUpdateDraft();
-  // const onSubmitNewPost = useSendNewPost();
+
   const draft = useDraftPost();
   const rows = draft.content.split('\n').length;
+
   const [isPreviewing, setPreviewing] = useState(false);
   const [isSending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [draftTag, setDraftTag] = useState('');
-  const [isEditing, setEditing] = useState(false);
-  const [draftState, setDraftState] = useState(ReactRTE.createValueFromString(draft.content, 'markdown'));
   const [truncate, setTruncate] = useState(false);
+  const [previewUrl, setPreviewUrl] = useState('');
 
-  const onBlur = useCallback(() => {
-    if (draftTag) {
-      dispatch(addTag(draftTag));
-      setDraftTag('');
+  useEffect(() => {
+    const parser = new DOMParser();
+    const html = markup(draft.content);
+    const doc = parser.parseFromString(html, 'text/html');
+    const links = doc.querySelectorAll('a');
+    const link = links && links[0];
+
+    if (link?.href !== previewUrl) {
+      setPreviewUrl(link?.href);
     }
-    setEditing(false);
-  }, [draftTag]);
+  }, [draft, previewUrl]);
 
   const togglePreview = useCallback(() => {
     setPreviewing(!isPreviewing)
   }, [isPreviewing]);
 
-  const onDraftChange = useCallback(async (value: any ) => {
-    setDraftState(value);
-    updateDraft({
-      ...draft,
-      content: value.toString('markdown'),
-    });
+  const onDraftChange = useCallback(async (draftPost: DraftPost ) => {
+    updateDraft(draftPost);
     setErrorMessage('');
-  }, [draft]);
+  }, []);
 
   const onMarkdownChangeChange = useCallback(async (e: ChangeEvent<HTMLTextAreaElement> ) => {
-    setDraftState(ReactRTE.createValueFromString(draft.content, 'markdown'));
+    const markdownString = e.target.value;
     updateDraft({
       ...draft,
-      content: e.target.value,
+      content: markdownString,
     });
     setErrorMessage('');
   }, [draft]);
@@ -92,68 +97,16 @@ function ComposeView(props: Props): ReactElement {
     <div className="compose-container">
       <div className="compose">
         <div className="compose__header">
+
         </div>
         {
           !isPreviewing
             ? (
-              <ReactRTE
-                value={draftState}
-                onChange={onDraftChange}
-                disabled={isSending || success || truncate}
-                editorStyle={{
-                  background: truncate ? '#f2f2f2' : '#fff',
-                }}
-                toolbarConfig={{
-                  // Optionally specify the groups to display (displayed in the order listed).
-                  display: [
-                    'INLINE_STYLE_BUTTONS',
-                    'BLOCK_TYPE_BUTTONS',
-                    'LINK_BUTTONS',
-                    'BLOCK_TYPE_DROPDOWN',
-                    'HISTORY_BUTTONS',
-                  ],
-                  INLINE_STYLE_BUTTONS: [
-                    {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
-                    {label: 'Italic', style: 'ITALIC'},
-                    {label: 'Underline', style: 'UNDERLINE'}
-                  ],
-                  BLOCK_TYPE_DROPDOWN: [
-                    {label: 'Normal', style: 'unstyled'},
-                    {label: 'Heading Large', style: 'header-one'},
-                    {label: 'Heading Medium', style: 'header-two'},
-                    {label: 'Heading Small', style: 'header-three'}
-                  ],
-                  BLOCK_TYPE_BUTTONS: [
-                    {label: 'UL', style: 'unordered-list-item'},
-                    {label: 'OL', style: 'ordered-list-item'},
-                  ],
-                }}
-                // customControls={[
-                //   () => {
-                //     return (
-                //       <div className="custom-rte-btn">
-                //         {(
-                //           // @ts-ignore
-                //           <Icon
-                //             className="custom-rte-btn__icon"
-                //             material="image"
-                //             onClick={props.onFileUploadButtonClick && onSelectAndInsertFile}
-                //           />
-                //         )}
-                //         {
-                //           !props.onFileUploadButtonClick && (
-                //             <input
-                //               type="file"
-                //               onChange={e => onInsertFile(e.target.files![0])}
-                //             />
-                //           )
-                //         }
-                //       </div>
-                //
-                //     )
-                //   }
-                // ]}
-              />
+              <div className="rte">
+                <RTE
+                  onChange={onDraftChange}
+                />
+              </div>
             )
             : (
               <MarkdownEditor
@@ -165,6 +118,15 @@ function ComposeView(props: Props): ReactElement {
                 disabled={isSending || success || truncate}
               />
             )
+        }
+        {
+          previewUrl && (
+            <LinkPreview
+              onOpenLink={props.onOpenLink}
+              className="compose__preview"
+              url={previewUrl}
+            />
+          )
         }
         <div className="compose__error-message">{errorMessage}</div>
         <div className="compose__actions">
@@ -188,7 +150,7 @@ function ComposeView(props: Props): ReactElement {
               color={success ? "green" : undefined}
               onClick={send}
               loading={isSending}
-              disabled={isSending || (!draftState.getEditorState().getCurrentContent().hasText() && !truncate)}
+              disabled={isSending || (!draft.content && !truncate)}
             >
               { success ? "Posted" : "Post" }
             </Button>
@@ -205,7 +167,7 @@ type RichTextEditorProps = {
   className?: string;
   onFileUpload?: (file: File) => Promise<string>;
   content: string;
-  onChange: (content: string) => void;
+  onChange: (draftPost: DraftPost) => void;
   isShowingMarkdown?: boolean;
   disabled?: boolean;
 } & RouteComponentProps;
@@ -218,84 +180,43 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
     content = '',
     isShowingMarkdown,
     disabled,
+    onChange,
   } = props;
   const rows = content.split('\n').length;
-  const [draftState, setDraftState] = useState(ReactRTE.createValueFromString(content, 'markdown'));
+  const markdownString = content;
+  const rawData = markdownToDraft(markdownString);
+  const contentState = convertFromRaw(rawData);
+  const editorState = EditorState.createWithContent(contentState);
+  const [draftState, setDraftState] = useState(editorState);
 
-  const onInsertFile = useCallback(async (file: File) => {
-    if (props.onFileUpload) {
-      const refhash = await props.onFileUpload(file);
-      const newContent = `${content}\n\n![](${INDEXER_API}/media/${refhash})\n\n`;
-      props.onChange(newContent);
-    }
-  }, [content]);
-
-  const onDraftChange = useCallback(async (value: any ) => {
-    setDraftState(value);
-
-    props.onChange(value.toString('markdown'));
-  }, [content]);
+  const onDraftChange = useCallback(async (draftPost: DraftPost ) => {
+    const markdownString = draftPost.content;
+    const rawData = markdownToDraft(markdownString);
+    const contentState = convertFromRaw(rawData);
+    const newEditorState = EditorState.createWithContent(contentState);
+    setDraftState(newEditorState);
+    onChange(draftPost);
+  }, [draftState]);
 
   const onMarkdownChangeChange = useCallback(async (e: ChangeEvent<HTMLTextAreaElement> ) => {
-    setDraftState(ReactRTE.createValueFromString(content, 'markdown'));
-    props.onChange(e.target.value);
-  }, [content]);
+    const markdownString = e.target.value;
+    const rawData = markdownToDraft(markdownString);
+    const contentState = convertFromRaw(rawData);
+    const newEditorState = EditorState.createWithContent(contentState);
+
+    setDraftState(newEditorState);
+  }, [draftState]);
 
   return (
-    <div className={`rte ${className}`}>
+    <div className={`rte-wrapper ${className}`}>
       {
         !isShowingMarkdown
           ? (
-            <ReactRTE
-              value={draftState}
-              onChange={onDraftChange}
-              toolbarConfig={{
-                // Optionally specify the groups to display (displayed in the order listed).
-                display: [
-                  'INLINE_STYLE_BUTTONS',
-                  'BLOCK_TYPE_BUTTONS',
-                  'LINK_BUTTONS',
-                  'BLOCK_TYPE_DROPDOWN',
-                  'HISTORY_BUTTONS',
-                ],
-                INLINE_STYLE_BUTTONS: [
-                  {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
-                  {label: 'Italic', style: 'ITALIC'},
-                  {label: 'Underline', style: 'UNDERLINE'}
-                ],
-                BLOCK_TYPE_DROPDOWN: [
-                  {label: 'Normal', style: 'unstyled'},
-                  {label: 'Heading Large', style: 'header-one'},
-                  {label: 'Heading Medium', style: 'header-two'},
-                  {label: 'Heading Small', style: 'header-three'}
-                ],
-                BLOCK_TYPE_BUTTONS: [
-                  {label: 'UL', style: 'unordered-list-item'},
-                  {label: 'OL', style: 'ordered-list-item'},
-                ],
-              }}
-              // customControls={[
-              //   () => {
-              //     return (
-              //       <div className="custom-rte-btn">
-              //         {(
-              //           // @ts-ignore
-              //           <Icon
-              //             className="custom-rte-btn__icon"
-              //             material="image"
-              //             onClick={() => null}
-              //           />
-              //         )}
-              //         <input
-              //           type="file"
-              //           onChange={e => onInsertFile(e.target.files![0])}
-              //         />
-              //       </div>
-              //
-              //     )
-              //   }
-              // ]}
-            />
+            <div className="rte">
+              <RTE
+                onChange={onDraftChange}
+              />
+            </div>
           )
           : (
             <MarkdownEditor

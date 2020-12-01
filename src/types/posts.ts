@@ -1,7 +1,6 @@
 export enum PostType {
   ORIGINAL = 'original',
   COMMENT = 'comment',
-  REPOST = 'repost',
 }
 
 export type RelayerPostModel = {

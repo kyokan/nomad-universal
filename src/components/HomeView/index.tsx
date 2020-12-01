@@ -22,6 +22,7 @@ type Props = {
   onSendReply: (hash: string) => void;
   onBlockUser: (hash: string) => void;
   onFollowUser: (hash: string) => void;
+  onOpenLink: (hash: string) => void;
 } & RouteComponentProps;
 
 function HomeView(props: Props): ReactElement {
@@ -127,6 +128,7 @@ function HomeView(props: Props): ReactElement {
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}
+      onOpenLink={props.onOpenLink}
       onSelectPost={onSelectPost}
       onTagClick={onTagClick}
       onScrolledToBottom={typeof next === 'number' ? query : undefined}

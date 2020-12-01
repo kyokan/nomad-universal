@@ -16,6 +16,7 @@ type OwnProps = {
   onSendReply?: (hash: string) => void;
   onBlockUser?: (hash: string) => void;
   onFollowUser?: (hash: string) => void;
+  onOpenLink: (url: string) => void;
   onSelectPost?: (hash: string, creator: string, id: string) => void;
 }
 
@@ -73,6 +74,7 @@ function _Thread(props: Props): ReactElement {
         onSendReply={props.onSendReply}
         onBlockUser={props.onBlockUser}
         onFollowUser={props.onFollowUser}
+        onOpenLink={props.onOpenLink}
         onSelectPost={onSelectPost}
         onNameClick={onNameClick}
         onTagClick={onTagClick}
@@ -86,6 +88,7 @@ function _Thread(props: Props): ReactElement {
               key={commentId}
               hash={commentId}
               level={level + 1}
+              onOpenLink={props.onOpenLink}
               onLikePost={props.onLikePost}
               onSendReply={props.onSendReply}
               onBlockUser={props.onBlockUser}

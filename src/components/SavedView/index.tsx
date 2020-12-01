@@ -11,6 +11,7 @@ type Props = {
   onSendReply: (postHash: string) => void;
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
+  onOpenLink: (postHash: string) => void;
 } & RouteComponentProps<{viewIndex: string}>;
 
 function SavedView (props: Props): ReactElement {
@@ -64,6 +65,7 @@ function SavedView (props: Props): ReactElement {
       })}
       headerActions={[]}
       onLikePost={props.onLikePost}
+      onOpenLink={props.onOpenLink}
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}

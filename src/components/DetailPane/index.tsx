@@ -107,6 +107,7 @@ function DetailPane (props: Props): ReactElement {
               <Thread
                 key={hash}
                 hash={hash}
+                onOpenLink={props.onOpenLink}
                 onLikePost={props.onLikePost}
                 onSendReply={props.onSendReply}
                 onBlockUser={props.onBlockUser}

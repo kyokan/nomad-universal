@@ -9,6 +9,7 @@ type Props = {
   onSendReply: (postHash: string) => void;
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
+  onOpenLink: (url: string) => void;
 } & RouteComponentProps<{tagName: string}>;
 
 function TagView(props: Props): ReactElement {
@@ -31,6 +32,7 @@ function TagView(props: Props): ReactElement {
         allowedTags: [tagName],
       })}
       headerActions={[]}
+      onOpenLink={props.onOpenLink}
       onLikePost={onLikePost}
       onSendReply={onSendReply}
       onBlockUser={onBlockUser}

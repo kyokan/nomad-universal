@@ -120,7 +120,6 @@ function ComposeView(props: Props): ReactElement {
                   onChange={onDraftChange}
                 />
               </div>
-
             )
             : (
               <MarkdownEditor
@@ -172,7 +171,7 @@ type RichTextEditorProps = {
   className?: string;
   onFileUpload?: (file: File) => Promise<string>;
   content: string;
-  onChange: (content: string) => void;
+  onChange: (draftPost: DraftPost) => void;
   isShowingMarkdown?: boolean;
   disabled?: boolean;
 } & RouteComponentProps;
@@ -185,54 +184,43 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
     content = '',
     isShowingMarkdown,
     disabled,
+    onChange,
   } = props;
   const rows = content.split('\n').length;
-  const [draftState, setDraftState] = useState(ReactRTE.createValueFromString(content, 'markdown'));
+  const markdownString = content;
+  const rawData = markdownToDraft(markdownString);
+  const contentState = convertFromRaw(rawData);
+  const editorState = EditorState.createWithContent(contentState);
+  const [draftState, setDraftState] = useState(editorState);
 
-  const onDraftChange = useCallback(async (value: any ) => {
-    setDraftState(value);
-    props.onChange(value.toString('markdown'));
-  }, [content]);
+  const onDraftChange = useCallback(async (draftPost: DraftPost ) => {
+    const markdownString = draftPost.content;
+    const rawData = markdownToDraft(markdownString);
+    const contentState = convertFromRaw(rawData);
+    const newEditorState = EditorState.createWithContent(contentState);
+    setDraftState(newEditorState);
+    onChange(draftPost);
+  }, [draftState]);
 
   const onMarkdownChangeChange = useCallback(async (e: ChangeEvent<HTMLTextAreaElement> ) => {
-    setDraftState(ReactRTE.createValueFromString(content, 'markdown'));
-    props.onChange(e.target.value);
-  }, [content]);
+    const markdownString = e.target.value;
+    const rawData = markdownToDraft(markdownString);
+    const contentState = convertFromRaw(rawData);
+    const newEditorState = EditorState.createWithContent(contentState);
+
+    setDraftState(newEditorState);
+  }, [draftState]);
 
   return (
-    <div className={`rte ${className}`}>
+    <div className={`rte-wrapper ${className}`}>
       {
         !isShowingMarkdown
           ? (
-            <ReactRTE
-              value={draftState}
-              onChange={onDraftChange}
-              toolbarConfig={{
-                // Optionally specify the groups to display (displayed in the order listed).
-                display: [
-                  'INLINE_STYLE_BUTTONS',
-                  'BLOCK_TYPE_BUTTONS',
-                  'LINK_BUTTONS',
-                  'BLOCK_TYPE_DROPDOWN',
-                  'HISTORY_BUTTONS',
-                ],
-                INLINE_STYLE_BUTTONS: [
-                  {label: 'Bold', style: 'BOLD', className: 'custom-css-class'},
-                  {label: 'Italic', style: 'ITALIC'},
-                  {label: 'Underline', style: 'UNDERLINE'}
-                ],
-                BLOCK_TYPE_DROPDOWN: [
-                  {label: 'Normal', style: 'unstyled'},
-                  {label: 'Heading Large', style: 'header-one'},
-                  {label: 'Heading Medium', style: 'header-two'},
-                  {label: 'Heading Small', style: 'header-three'}
-                ],
-                BLOCK_TYPE_BUTTONS: [
-                  {label: 'UL', style: 'unordered-list-item'},
-                  {label: 'OL', style: 'ordered-list-item'},
-                ],
-              }}
-            />
+            <div className="rte">
+              <RTE
+                onChange={onDraftChange}
+              />
+            </div>
           )
           : (
             <MarkdownEditor

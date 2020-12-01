@@ -164,6 +164,19 @@ function findLinkEntities(contentBlock: any, callback: any, contentState: any) {
   );
 }
 
+function findTableEntities(contentBlock: any, callback: any, contentState: any) {
+  contentBlock.findEntityRanges(
+    (character: any) => {
+      const entityKey = character.getEntity();
+      return (
+        entityKey !== null &&
+        contentState.getEntity(entityKey).getType() === 'table'
+      );
+    },
+    callback
+  );
+}
+
 export const mapDraftToEditorState = (draft?: DraftPost): EditorState => {
   if (!draft) {
     return EditorState.createEmpty(decorator);
@@ -177,26 +190,10 @@ export const mapDraftToEditorState = (draft?: DraftPost): EditorState => {
 
 export const markdownConvertOptions = {
   preserveNewlines: true,
-  blockTypes: {
-    table_open: function (item: any) {
-      return {
-        type: "table",
-        mutability: "IMMUTABLE",
-        data: {
-          table: {
-            ...item,
-          },
-        },
-      };
-    }
-  },
   remarkableOptions: {
     html: false,
     xhtmlOut: false,
     breaks: true,
-    enable: {
-      block: 'table',
-    },
     highlight: function (str: string, lang: string) {
       if (lang && hljs.getLanguage(lang)) {
         try {

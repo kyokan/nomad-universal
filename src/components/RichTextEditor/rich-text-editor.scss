@@ -103,6 +103,7 @@
     border: 1px solid $gray-150;
     border-top: none;
     padding: .5rem .75rem;
+    background-color: $white;
   }
 
   .public-DraftStyleDefault-block {
@@ -138,6 +139,9 @@
   &__controls {
     @extend %row-nowrap;
     border: 1px solid $gray-150;
+    position: relative;
+    z-index: 300;
+    background-color: $white;
 
     a {
       cursor: pointer;
@@ -147,6 +151,7 @@
 
     &__button {
       @extend %row-nowrap;
+      position: relative;
       flex: 0 0 auto;
       align-items: center;
       justify-content: center;
@@ -255,5 +260,31 @@
       height: 5rem !important;
       font-size: .8125rem !important;
     }
+  }
+}
+
+.rte__link-input {
+  @extend %row-nowrap;
+  position: absolute;
+  top: 100%;
+  left: -1rem;
+  z-index: 300;
+  padding: .25rem;
+  background: $white;
+  border: 1px solid $gray-150;
+
+  .input-container {
+    padding: .25rem;
+    width: 12rem;
+  }
+
+  &__actions {
+    @extend %row-nowrap;
+
+    button.icon {
+      font-size: 1rem !important;
+      margin-left: .25rem;
+    }
+
   }
 }

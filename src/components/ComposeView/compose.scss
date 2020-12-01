@@ -246,6 +246,8 @@
 
   &__actions {
     @extend %row-nowrap;
+    margin: 1rem;
+    margin-top: 0;
 
     &__l {
       @extend %row-nowrap;
@@ -344,7 +346,6 @@
 
 @media only screen and (max-width: 768px) {
   .compose {
-    padding: .5rem 1rem;
     margin-top: 0;
     border: 0;
   }

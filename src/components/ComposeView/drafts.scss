@@ -1,3 +1,5 @@
+@import "../../styles/variable";
+
 @font-face {
   font-family: "Ubuntu";
   font-style: normal;
@@ -307,7 +309,7 @@ code, kbd, pre, samp {
 }
 
 code {
-  color: #57534A;
+  color: $dark-primary-text;
 }
 .inverted code {
   color: #fafafa;
@@ -321,7 +323,7 @@ aside {
 
 b, strong {
   font-weight: bold;
-  color: #57534A;
+  color: $dark-primary-text;
   font-weight: 700;
 }
 .inverted b, .inverted strong {

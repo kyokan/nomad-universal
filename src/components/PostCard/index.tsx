@@ -19,10 +19,9 @@ import Icon from "../Icon";
 import PostCardHeader from "./PostCardHeader";
 import Attachments from "../Attachments";
 import Menuable, {MenuProps} from "../Menuable";
-import {useMuteUser, useUnmuteUser} from "../../ducks/blocklist";
 import {parseUsername, undotName} from "../../utils/user";
 import Button from "../Button";
-import {createNewDraft} from "../../ducks/drafts/type";
+import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import {RichTextEditor} from "../ComposeView";
 
 type Props = {
@@ -426,10 +425,9 @@ export function renderQuickReplyEditor(hash: string, isShowingReply: boolean, se
 
   const dispatch = useDispatch();
 
-  const onChange = useCallback((content: string) => {
+  const onChange = useCallback((draftPost: DraftPost) => {
     dispatch(updateReplies({
-      ...replyDraft,
-      content: content,
+      ...draftPost,
       parent: hash,
     }));
   }, [dispatch, hash]);

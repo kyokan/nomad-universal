@@ -332,7 +332,6 @@ function renderContent(props: Props): ReactNode {
         </div>
       )}
       <Markup content={content} />
-      <Attachments attachments={attachments} />
     </div>
   );
 }

@@ -6,10 +6,12 @@ iframe {
   padding: 0;
   outline: none;
   background-color: $black;
+  max-height: 22.5rem;
 }
 
 video {
   background-color: $black;
+  max-height: 22.5rem;
 }
 
 .link-preview {
@@ -18,6 +20,7 @@ video {
   background: $white;
   cursor: pointer;
   overflow: hidden;
+  border-radius: 3px;
 
   &__image {
     cursor: pointer;
@@ -31,8 +34,12 @@ video {
   }
 
   &__image-wrapper {
+    @extend %col-nowrap;
+    align-items: center;
+    justify-content: center;
     position: relative;
-    height: 22.5rem;
+    max-height: 22.5rem;
+    height: fit-content;
     width: 100%;
 
     &__image-bg {
@@ -45,14 +52,10 @@ video {
     }
 
     &__image {
-      position: absolute;
-      top: 0;
-      left: 0;
+      position: relative;
       background-repeat: no-repeat;
       background-size: contain;
       background-position: center;
-      height: 100%;
-      width: 100%;
     }
   }
 

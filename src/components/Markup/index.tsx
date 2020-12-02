@@ -4,6 +4,7 @@ import {MenuPortal} from "../Menuable/menu-portal";
 import copy from "copy-to-clipboard";
 import { withRouter, RouteComponentProps } from "react-router";
 import './markup.scss';
+import RichTextEditor from "../RichTextEditor";
 
 type Props = {
   content: string;
@@ -18,7 +19,6 @@ function Markup(props: Props): ReactElement {
   const [href, setHref] = useState('');
   const [x, setX] = useState(-1);
   const [y, setY] = useState(-1);
-
   // const onContextMenuClick = useCallback(e => {
   //   // @ts-ignore
   //   const { tagName, href, dataset } = e.target || {};
@@ -78,10 +78,10 @@ function Markup(props: Props): ReactElement {
         onClick={onClick}
         // onContextMenu={onContextMenuClick}
       >
-        <DangerousHTML
-          customRenderer={props.customRenderer}
+        <RichTextEditor
           content={props.content}
-          html={props.html}
+          onChange={() => null}
+          readOnly
         />
       </div>
       {

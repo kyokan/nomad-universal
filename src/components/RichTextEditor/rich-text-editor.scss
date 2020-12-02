@@ -192,6 +192,15 @@
     }
   }
 
+  &--readOnly {
+    div.DraftEditor-root {
+      background-color: transparent;
+      border: none;
+      min-height: 0;
+      padding: 0;
+    }
+  }
+
   &--disabled {
     opacity: .5;
 

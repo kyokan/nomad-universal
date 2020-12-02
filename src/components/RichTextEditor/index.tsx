@@ -3,7 +3,7 @@ import React, {
   memo,
   MouseEventHandler,
   ReactElement, ReactNode,
-  useCallback,
+  useCallback, useEffect,
   useState
 } from 'react';
 import {
@@ -17,7 +17,7 @@ import Editor from "draft-js-plugins-editor";
 import c from "classnames";
 import Icon from "../Icon";
 import './rich-text-editor.scss';
-import {DraftPost} from "../../ducks/drafts/type";
+import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import {useDraftPost} from "../../ducks/drafts";
 import {PostType} from "../../types/posts";
 import {customStyleMap, mapDraftToEditorState, markdownConvertOptions} from "../../utils/rte";
@@ -32,9 +32,11 @@ const TableUtils = require('draft-js-table');
 
 type Props = {
   className?: string;
+  content?: string;
   onChange: (post: DraftPost) => void;
   disabled?: boolean;
   embedded?: boolean;
+  readOnly?: boolean;
   onSecondaryClick?: MouseEventHandler;
   onPrimaryClick?: MouseEventHandler;
   primaryBtnProps?: ButtonHTMLAttributes<HTMLButtonElement>;
@@ -49,6 +51,7 @@ function RichTextEditor(props: Props): ReactElement {
     onPrimaryClick,
     onSecondaryClick,
     primaryBtnProps,
+    readOnly,
   } = props;
 
   const draftPost = useDraftPost();
@@ -56,6 +59,12 @@ function RichTextEditor(props: Props): ReactElement {
   const [ref, setRef] = useState<Editor|null>(null);
   const [editorState, _setEditorState] = useState<EditorState>(mapDraftToEditorState(draftPost));
   const [title, setTitle] = useState<string>(draftPost?.title || '');
+
+  useEffect(() => {
+    (async function() {
+      _setEditorState(mapDraftToEditorState(createNewDraft({ content: props.content })))
+    })();
+  }, [props.content]);
 
   const setEditorState = useCallback((newEditorState: EditorState) => {
     _setEditorState(newEditorState);
@@ -191,28 +200,33 @@ function RichTextEditor(props: Props): ReactElement {
       className={c('rich-text-editor', className, {
         'rich-text-editor--disabled': disabled,
         'rich-text-editor--embedded': embedded,
+        'rich-text-editor--readOnly': readOnly,
       })}
     >
-      <RTEControls
-        editorState={editorState}
-        onBoldClick={onBoldClick}
-        onItalicClick={onItalicClick}
-        onUnderlineClick={onUnderlineClick}
-        onStrikethroughClick={onStrikethroughClick}
-        onCodeClick={onCodeClick}
-        onLinkClick={onLinkClick}
-        onAddLink={onAddLink}
-        showURLInput={showLinkInput}
-        isShowingLinkInput={isShowingLinkInput}
-        onCodeBlockClick={onCodeBlockClick}
-        onOrderedListClick={onOrderedListClick}
-        onUnorderedListClick={onUnorderedListClick}
-        onBlockquoteClick={onBlockquoteClick}
-        onPrimaryClick={onPrimaryClick}
-        onSecondaryClick={onSecondaryClick}
-        embedded={embedded}
-        primaryBtnProps={primaryBtnProps}
-      />
+      {
+        !readOnly && (
+          <RTEControls
+            editorState={editorState}
+            onBoldClick={onBoldClick}
+            onItalicClick={onItalicClick}
+            onUnderlineClick={onUnderlineClick}
+            onStrikethroughClick={onStrikethroughClick}
+            onCodeClick={onCodeClick}
+            onLinkClick={onLinkClick}
+            onAddLink={onAddLink}
+            showURLInput={showLinkInput}
+            isShowingLinkInput={isShowingLinkInput}
+            onCodeBlockClick={onCodeBlockClick}
+            onOrderedListClick={onOrderedListClick}
+            onUnorderedListClick={onUnorderedListClick}
+            onBlockquoteClick={onBlockquoteClick}
+            onPrimaryClick={onPrimaryClick}
+            onSecondaryClick={onSecondaryClick}
+            embedded={embedded}
+            primaryBtnProps={primaryBtnProps}
+          />
+        )
+      }
       <Editor
         ref={setRef}
         editorState={editorState}
@@ -224,6 +238,7 @@ function RichTextEditor(props: Props): ReactElement {
         plugins={[
           addLinkPlugin as any,
         ]}
+        readOnly={readOnly}
       />
     </div>
   );
@@ -386,6 +401,12 @@ function RTEControls(props: RETControlsProps): ReactElement {
         onClick={onUnorderedListClick}
         width={16}
         active={currentType === "unordered-list-item"}
+      />
+      <RTEButton
+        material="format_quote"
+        onClick={onBlockquoteClick}
+        width={16}
+        active={currentType === "blockquote"}
       />
       <RTEButton
         material="format_quote"

@@ -42,7 +42,7 @@ function ComposeView(props: Props): ReactElement {
     const doc = parser.parseFromString(html, 'text/html');
     const links = doc.querySelectorAll('a');
     const link = links && links[0];
-
+    console.log(link);
     if (link?.href !== previewUrl) {
       setPreviewUrl(link?.href);
     }
@@ -184,6 +184,7 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
   } = props;
   const rows = content.split('\n').length;
   const markdownString = content;
+  console.log(markdownString)
   const rawData = markdownToDraft(markdownString);
   const contentState = convertFromRaw(rawData);
   const editorState = EditorState.createWithContent(contentState);

@@ -32,7 +32,16 @@ renderer.link = (href: string, title: string, text: string, level = 0): string =
       ? linkText
       : text || linkText;
 
-    return `<a href="${href}" title="${text}" target="_blank">${displayText}</a>`
+    let replacedHref = href;
+
+    switch (protocol) {
+      case 'sia:':
+        replacedHref = href.replace('sia://', 'https://siasky.net/');
+        break;
+      default:
+        break;
+    }
+    return `<a href="${replacedHref}" title="${text}" target="_blank">${displayText}</a>`;
   } catch (e) {
     //
     return '';

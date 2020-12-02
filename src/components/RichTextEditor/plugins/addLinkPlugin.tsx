@@ -33,6 +33,7 @@ type LinkProps = {
 export const Link = (props: LinkProps) => {
   const { contentState, entityKey } = props;
   const { url } = contentState.getEntity(entityKey).getData();
+
   return (
     <a
       className="link"

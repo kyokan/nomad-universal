@@ -29,6 +29,7 @@ export type CustomFilterViewProps = {
   onSendReply: (postHash: string) => void;
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   onOpenLink: (url: string) => void;
   onTagClick?: (tagName: string) => void;
   canUploadHero?: boolean;
@@ -50,6 +51,7 @@ function _CustomFilterView(props: CustomFilterViewProps): ReactElement {
     onSendReply,
     onBlockUser,
     onFollowUser,
+    onFileUpload,
   } = props;
 
   const onSelectPost = useCallback((postHash: string) => {
@@ -114,6 +116,7 @@ function _CustomFilterView(props: CustomFilterViewProps): ReactElement {
       onSelectPost={onSelectPost}
       onBlockUser={onBlockUser}
       onFollowUser={onFollowUser}
+      onFileUpload={onFileUpload}
       onScrolledToBottom={typeof next === 'number' ? query : undefined}
       loading={loading}
       panels={panels}

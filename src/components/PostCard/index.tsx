@@ -41,6 +41,7 @@ type Props = {
   attachments: string[];
   tags: string[];
   onSelectPost?: (hash: string, creator: string, id: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   onLikePost?: (hash: string) => void;
   onBlockUser?: (username: string) => void;
   onFollowUser?: (username: string) => void;
@@ -90,6 +91,7 @@ function Card(props: Props): ReactElement {
     onSendReply,
     pending,
     content,
+    onFileUpload,
   } = props;
 
   const { replyCount = 0, likeCount = 0 } = meta || {};
@@ -214,7 +216,7 @@ function Card(props: Props): ReactElement {
         }
         { renderPostMenu(props) }
       </div>
-      {renderQuickReplyEditor(hash, isShowingReply, setShowingReply, onSendReply)}
+      {renderQuickReplyEditor(hash, isShowingReply, setShowingReply, onSendReply, onFileUpload)}
     </div>
   );
 }
@@ -442,7 +444,13 @@ function renderLikedBy(hash: string, creator: string): ReactNode {
 }
 
 
-export function renderQuickReplyEditor(hash: string, isShowingReply: boolean, setShowingReply: (isShowing: boolean) => void, onSendReply?: (hash: string) => void): ReactNode {
+export function renderQuickReplyEditor(
+  hash: string,
+  isShowingReply: boolean,
+  setShowingReply: (isShowing: boolean) => void,
+  onSendReply?: (hash: string) => void,
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>,
+): ReactNode {
   const { isSendingReplies } = useReplies();
   const replyDraft = useReplyId(hash);
   const content = replyDraft.content;
@@ -527,6 +535,7 @@ export function renderQuickReplyEditor(hash: string, isShowingReply: boolean, se
               onChange={onChange}
               content={content}
               disabled={isSendingReplies}
+              onFileUpload={onFileUpload}
               isShowingMarkdown={false}
             />
             <div className="post__reply-editor__actions">

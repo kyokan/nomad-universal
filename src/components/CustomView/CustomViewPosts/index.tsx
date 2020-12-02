@@ -14,6 +14,7 @@ import {useFetchUser, useUser} from "../../../ducks/users";
 type CustomViewPostsProps = {
   indexerAPI?: string;
   hashes: string[];
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   onSelectPost?: (hash: string, creator: string, id: string) => void;
   onLikePost?: (hash: string) => void;
   onBlockUser?: (hash: string) => void;
@@ -74,6 +75,7 @@ function CustomViewPosts(props: CustomViewPostsProps): ReactElement {
                 onTagClick={onTagClick}
                 onFollowUser={onFollowUser}
                 onOpenLink={props.onOpenLink}
+                onFileUpload={props.onFileUpload}
                 canReply
               />
             );
@@ -98,6 +100,7 @@ type RegularPostProps = {
   onNameClick?: (name: string) => void;
   onTagClick?: (tagName: string) => void;
   onOpenLink: (url: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   selected?: boolean;
 }
 
@@ -145,6 +148,7 @@ export function RegularPost(props: RegularPostProps): ReactElement {
         onBlockUser={(post.pending || !user?.confirmed) ? undefined : props.onBlockUser}
         onSendReply={(post.pending || !user?.confirmed) ? undefined : props.onSendReply}
         onFollowUser={(post.pending || !user?.confirmed) ? undefined : props.onFollowUser}
+        onFileUpload={(post.pending || !user?.confirmed) ? undefined : props.onFileUpload}
         onNameClick={props.onNameClick}
         canReply={(post.pending || !user?.confirmed) ? undefined : props.canReply}
         onTagClick={props.onTagClick}
@@ -155,6 +159,7 @@ export function RegularPost(props: RegularPostProps): ReactElement {
 
 type RawPostProps = {
   onSelectPost?: (hash: string, creator: string, id: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   onLikePost?: (hash: string) => void;
   onSendReply?: (hash: string) => void;
   onBlockUser?: (hash: string) => void;
@@ -195,6 +200,7 @@ export function RawPost(props: RawPostProps): ReactElement {
     selected,
     pending,
     onOpenLink,
+    onFileUpload,
   } = props;
 
   return (
@@ -219,6 +225,7 @@ export function RawPost(props: RawPostProps): ReactElement {
       onNameClick={onNameClick}
       onTagClick={onTagClick}
       onOpenLink={onOpenLink}
+      onFileUpload={onFileUpload}
       canReply={canReply}
       attachments={attachments}
       tags={tags}

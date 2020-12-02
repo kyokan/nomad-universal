@@ -1,6 +1,6 @@
 {
   "name": "nomad-universal",
-  "version": "1.1.6",
+  "version": "1.1.7",
   "description": "universal ui components for Nomad",
   "main": "index.js",
   "scripts": {
@@ -34,6 +34,7 @@
     "typescript": "3.7.2"
   },
   "dependencies": {
+    "@nebulous/skynet": "^2.0.1",
     "@types/node": "^13.11.1",
     "blake2b": "2.1.3",
     "copy-to-clipboard": "^3.3.1",
@@ -55,6 +56,7 @@
     "react-router-dom": "^5.2.0",
     "react-rte": "^0.16.3",
     "redux-thunk": "^2.3.0",
+    "skynet-js": "^2.9.0",
     "ts-node": "8.5.2"
   },
   "files": [

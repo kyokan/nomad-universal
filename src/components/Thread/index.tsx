@@ -18,6 +18,7 @@ type OwnProps = {
   onFollowUser?: (hash: string) => void;
   onOpenLink: (url: string) => void;
   onSelectPost?: (hash: string, creator: string, id: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 }
 
 type Props = OwnProps & RouteComponentProps;
@@ -75,6 +76,7 @@ function _Thread(props: Props): ReactElement {
         onBlockUser={props.onBlockUser}
         onFollowUser={props.onFollowUser}
         onOpenLink={props.onOpenLink}
+        onFileUpload={props.onFileUpload}
         onSelectPost={onSelectPost}
         onNameClick={onNameClick}
         onTagClick={onTagClick}
@@ -93,6 +95,7 @@ function _Thread(props: Props): ReactElement {
               onSendReply={props.onSendReply}
               onBlockUser={props.onBlockUser}
               onFollowUser={props.onFollowUser}
+              onFileUpload={props.onFileUpload}
               onSelectPost={onSelectPost}
             />
           );

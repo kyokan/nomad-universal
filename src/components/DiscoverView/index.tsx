@@ -14,11 +14,12 @@ import {addTag, addUser} from "../../ducks/search";
 import {Pageable} from "../../types/Pageable";
 
 type DiscoverViewProps = {
- onLikePost: (postHash: string) => void;
- onSendReply: (postHash: string) => void;
- onBlockUser: (postHash: string) => void;
- onFollowUser: (postHash: string) => void;
- onOpenLink: (url: string) => void;
+  onLikePost: (postHash: string) => void;
+  onSendReply: (postHash: string) => void;
+  onBlockUser: (postHash: string) => void;
+  onFollowUser: (postHash: string) => void;
+  onOpenLink: (url: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps<{ postHash?: string }>;
 
 function DiscoverView(props: DiscoverViewProps): ReactElement {
@@ -94,6 +95,7 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}
+      onFileUpload={props.onFileUpload}
       onOpenLink={props.onOpenLink}
       onScrolledToBottom={typeof next === 'number' && next > -1 ? query : undefined}
       onTagClick={onTagClick}

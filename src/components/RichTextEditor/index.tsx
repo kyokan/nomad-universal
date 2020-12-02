@@ -11,7 +11,7 @@ import {
   DraftHandleValue,
   EditorState,
   RichUtils,
-  DefaultDraftBlockRenderMap, convertFromRaw,
+  DefaultDraftBlockRenderMap,
 } from "draft-js";
 import Editor from "draft-js-plugins-editor";
 import c from "classnames";
@@ -24,8 +24,8 @@ import {customStyleMap, mapDraftToEditorState, markdownConvertOptions} from "../
 import {addLinkPlugin} from "./plugins/addLinkPlugin";
 import Input from "../Input";
 import {draftToMarkdown} from "markdown-draft-js";
-const { stateFromMarkdown } = require('draft-js-import-markdown');
-const { stateToMarkdown } = require('draft-js-export-markdown');
+import Menuable from "../Menuable";
+const { SkynetClient } = require('skynet-js');
 
 const hljs = require('highlight.js');
 const TableUtils = require('draft-js-table');
@@ -39,6 +39,7 @@ type Props = {
   readOnly?: boolean;
   onSecondaryClick?: MouseEventHandler;
   onPrimaryClick?: MouseEventHandler;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   primaryBtnProps?: ButtonHTMLAttributes<HTMLButtonElement>;
 }
 
@@ -54,15 +55,15 @@ function RichTextEditor(props: Props): ReactElement {
     readOnly,
   } = props;
 
-  const draftPost = useDraftPost();
-
   const [ref, setRef] = useState<Editor|null>(null);
-  const [editorState, _setEditorState] = useState<EditorState>(mapDraftToEditorState(draftPost));
-  const [title, setTitle] = useState<string>(draftPost?.title || '');
+  const [editorState, _setEditorState] = useState<EditorState>(EditorState.createEmpty());
+  const [title, setTitle] = useState<string>('');
 
   useEffect(() => {
     (async function() {
-      _setEditorState(mapDraftToEditorState(createNewDraft({ content: props.content })))
+      if (typeof props.content !== 'undefined') {
+        _setEditorState(mapDraftToEditorState(createNewDraft({ content: props.content })))
+      }
     })();
   }, [props.content]);
 
@@ -163,6 +164,17 @@ function RichTextEditor(props: Props): ReactElement {
     showLinkInput(false);
   }, [editorState]);
 
+  const onFileUpload = useCallback(async () => {
+    if (!props.onFileUpload) return;
+    await props.onFileUpload(async (file, skylink, progress) => {
+      const currentContent = editorState.getCurrentContent();
+      const markdown = draftToMarkdown(convertToRaw(currentContent), markdownConvertOptions);
+      const md = markdown + '\n' + `[${file.name}](${skylink})`;
+      const newEditorState = mapDraftToEditorState(createNewDraft({ content: md }));
+      setEditorState(newEditorState);
+    });
+  }, [editorState, props.onFileUpload]);
+
   const onCodeBlockClick = useRTEInBlockTypeCallback(
     editorState,
     ref,
@@ -222,6 +234,7 @@ function RichTextEditor(props: Props): ReactElement {
             onBlockquoteClick={onBlockquoteClick}
             onPrimaryClick={onPrimaryClick}
             onSecondaryClick={onSecondaryClick}
+            onFileUpload={onFileUpload}
             embedded={embedded}
             primaryBtnProps={primaryBtnProps}
           />
@@ -289,6 +302,7 @@ type RETControlsProps = {
   onBlockquoteClick: () => void;
   onSecondaryClick?: MouseEventHandler;
   onPrimaryClick?: MouseEventHandler;
+  onFileUpload: () => void;
   embedded?: boolean;
   primaryBtnProps?: ButtonHTMLAttributes<HTMLButtonElement>;
   isShowingLinkInput?: boolean;
@@ -312,6 +326,7 @@ function RTEControls(props: RETControlsProps): ReactElement {
     primaryBtnProps = {},
     editorState,
     isShowingLinkInput,
+    onFileUpload,
   } = props;
 
   const currentInlineStyle = editorState.getCurrentInlineStyle()?.toJS();
@@ -408,12 +423,20 @@ function RTEControls(props: RETControlsProps): ReactElement {
         width={16}
         active={currentType === "blockquote"}
       />
-      <RTEButton
-        material="format_quote"
-        onClick={onBlockquoteClick}
-        width={16}
-        active={currentType === "blockquote"}
-      />
+      <Menuable
+        items={[
+          {
+            text: 'Upload via Sia Skynet',
+            onClick: onFileUpload,
+          }
+        ]}
+      >
+        <RTEButton
+          onClick={() => null}
+          material="publish"
+          width={16}
+        />
+      </Menuable>
       {
         embedded && (
           <div className="rich-text-editor__controls__actions">

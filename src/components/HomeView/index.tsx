@@ -23,6 +23,7 @@ type Props = {
   onBlockUser: (hash: string) => void;
   onFollowUser: (hash: string) => void;
   onOpenLink: (hash: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps;
 
 function HomeView(props: Props): ReactElement {
@@ -128,6 +129,7 @@ function HomeView(props: Props): ReactElement {
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}
+      onFileUpload={props.onFileUpload}
       onOpenLink={props.onOpenLink}
       onSelectPost={onSelectPost}
       onTagClick={onTagClick}

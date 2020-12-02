@@ -18,7 +18,7 @@ import LinkPreview from "../LinkPreview";
 
 type Props = {
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
-  onFileUpload: (file: File) => Promise<string>;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   onFileUploadButtonClick?: () => any;
   onOpenLink: (url: string) => void;
 } & RouteComponentProps;
@@ -104,6 +104,7 @@ function ComposeView(props: Props): ReactElement {
             ? (
               <div className="rte">
                 <RTE
+                  onFileUpload={props.onFileUpload}
                   onChange={onDraftChange}
                 />
               </div>
@@ -165,7 +166,7 @@ export default withRouter(ComposeView);
 
 type RichTextEditorProps = {
   className?: string;
-  onFileUpload?: (file: File) => Promise<string>;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   content: string;
   onChange: (draftPost: DraftPost) => void;
   isShowingMarkdown?: boolean;
@@ -181,10 +182,11 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
     isShowingMarkdown,
     disabled,
     onChange,
+    onFileUpload,
   } = props;
   const rows = content.split('\n').length;
   const markdownString = content;
-  console.log(markdownString)
+
   const rawData = markdownToDraft(markdownString);
   const contentState = convertFromRaw(rawData);
   const editorState = EditorState.createWithContent(contentState);
@@ -215,6 +217,7 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
           ? (
             <div className="rte">
               <RTE
+                onFileUpload={onFileUpload}
                 onChange={onDraftChange}
               />
             </div>

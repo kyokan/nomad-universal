@@ -15,6 +15,7 @@ import {NapiResponse} from "../../utils/types";
 
 type Props = {
   postHash?: string;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   onLikePost?: (hash: string) => void;
   onSendReply?: (hash: string) => void;
   onBlockUser?: (hash: string) => void;
@@ -75,6 +76,7 @@ function DetailPane (props: Props): ReactElement {
                   onNameClick={onNameClick}
                   onTagClick={onTagClick}
                   onOpenLink={props.onOpenLink}
+                  onFileUpload={props.onFileUpload}
                   canReply
                 />
               ))}
@@ -94,6 +96,7 @@ function DetailPane (props: Props): ReactElement {
               onNameClick={onNameClick}
               onTagClick={onTagClick}
               onOpenLink={props.onOpenLink}
+              onFileUpload={props.onFileUpload}
               shouldFetchCommentsOnMount
               canReply
               selected
@@ -112,6 +115,7 @@ function DetailPane (props: Props): ReactElement {
                 onSendReply={props.onSendReply}
                 onBlockUser={props.onBlockUser}
                 onFollowUser={props.onFollowUser}
+                onFileUpload={props.onFileUpload}
               />
             ))
           }

@@ -38,6 +38,7 @@ type Props = {
   onBlockUser?: (hash: string) => void;
   onFollowUser?: (hash: string) => void;
   onOpenLink: (url: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   onScrolledToBottom?: () => void;
   onTagClick?: (tagName: string) => void;
   loading: boolean;
@@ -72,6 +73,7 @@ function CustomView(props: Props): ReactElement {
     onSendReply,
     onBlockUser,
     onFollowUser,
+    onFileUpload,
     onScrolledToBottom,
     loading,
     panels,
@@ -131,6 +133,7 @@ function CustomView(props: Props): ReactElement {
         onSendReply={onSendReply}
         onBlockUser={onBlockUser}
         onFollowUser={onFollowUser}
+        onFileUpload={onFileUpload}
         onScrolledToBottom={onScrolledToBottom}
         onTagClick={onTagClick}
         onOpenLink={props.onOpenLink}
@@ -157,6 +160,7 @@ function CustomView(props: Props): ReactElement {
                 onBlockUser={onBlockUser}
                 onFollowUser={onFollowUser}
                 onOpenLink={props.onOpenLink}
+                onFileUpload={props.onFileUpload}
               />
             </div>
           </>

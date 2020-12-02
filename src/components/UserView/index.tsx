@@ -44,6 +44,7 @@ type Props = {
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
   onOpenLink: (postHash: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps<{username: string; viewType?: string; postHash?: string}>;
 
 function UserView(props: Props): ReactElement {
@@ -421,6 +422,7 @@ function UserView(props: Props): ReactElement {
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}
+      onFileUpload={props.onFileUpload}
       onOpenLink={props.onOpenLink}
       onSelectPost={onSelectPost}
       onScrolledToBottom={typeof next === 'number' ? query : undefined}

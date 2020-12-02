@@ -10,6 +10,7 @@ type Props = {
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
   onOpenLink: (url: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps<{tagName: string}>;
 
 function TagView(props: Props): ReactElement {
@@ -19,6 +20,7 @@ function TagView(props: Props): ReactElement {
     onSendReply,
     onBlockUser,
     onFollowUser,
+    onFileUpload,
   } = props;
 
   return (
@@ -37,6 +39,7 @@ function TagView(props: Props): ReactElement {
       onSendReply={onSendReply}
       onBlockUser={onBlockUser}
       onFollowUser={onFollowUser}
+      onFileUpload={onFileUpload}
     />
   )
 }

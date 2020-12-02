@@ -140,6 +140,7 @@ type CustomViewContainerProps = {
   onSendReply: (postHash: string) => void;
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps<{viewIndex?: string}>
 
 function _CustomViewContainer(props: CustomViewContainerProps): ReactElement {
@@ -211,6 +212,7 @@ function _CustomViewContainer(props: CustomViewContainerProps): ReactElement {
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}
+      onFileUpload={props.onFileUpload}
       onTitleUpdate={async (title: string) => {
         await updateTitleByViewIndex(title, Number(props.match.params.viewIndex));
         setEditTitle(false);

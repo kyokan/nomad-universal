@@ -12,6 +12,7 @@ type Props = {
   onBlockUser: (postHash: string) => void;
   onFollowUser: (postHash: string) => void;
   onOpenLink: (postHash: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps<{viewIndex: string}>;
 
 function SavedView (props: Props): ReactElement {
@@ -69,6 +70,7 @@ function SavedView (props: Props): ReactElement {
       onSendReply={props.onSendReply}
       onBlockUser={props.onBlockUser}
       onFollowUser={props.onFollowUser}
+      onFileUpload={props.onFileUpload}
       onTagClick={onTagClick}
     />
   )

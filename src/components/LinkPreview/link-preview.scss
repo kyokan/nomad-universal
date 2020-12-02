@@ -8,6 +8,10 @@ iframe {
   background-color: $black;
 }
 
+video {
+  background-color: $black;
+}
+
 .link-preview {
   @extend %row-nowrap;
   border: 1px solid $gray-150;

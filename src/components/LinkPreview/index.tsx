@@ -78,6 +78,7 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
         URL_LOADING[props.url] = true;
         const resp = await fetch(`${INDEXER_API}/preview?url=${encodeURI(props.url)}`);
         const json = await resp.json();
+        console.log(json);
 
         if (json.siteName === 'YouTube') {
           const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
@@ -97,10 +98,12 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
           }
         }
 
-        if (json.mediaType === 'video.other' && json.siteName === 'Imgur') {
+        if (json.mediaType === 'video.other') {
           setHtmlProps(null);
           setYoutubeProps(null);
           setImageProps(null);
+
+          console.log(json);
           VID_CACHE[props.url] = {
             videoUrl: json.videos[0]?.url,
             title: json.title,
@@ -234,9 +237,10 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
             <video
               src={videoProps?.videoUrl}
               width="100%"
-              height={360}
+              height="fit-content"
               autoPlay
               controls
+              loop
             />
           )
           : (

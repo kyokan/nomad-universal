@@ -39,15 +39,6 @@
       flex: 1 0 auto;
     }
 
-    .thread {
-      &__post {
-      }
-
-      .post-card {
-        //background-color: $gray-25;
-      }
-    }
-
     .post-card {
       flex: 0 0 auto;
 
@@ -64,6 +55,10 @@
       box-shadow: none;
     }
   }
+
+  //.post-card__preview {
+  //  margin: 1rem 0;
+  //}
 
   &__parents {
     flex: 0 0 auto;
@@ -117,6 +112,10 @@
           margin-top: .25rem;
           margin-bottom: .25rem;
         }
+      }
+
+      &__preview {
+        margin: 1rem 0 1rem 2.75rem;
       }
 
       &__tags {

@@ -5,22 +5,51 @@ iframe {
   margin: 0;
   padding: 0;
   outline: none;
+  background-color: $black;
 }
+
 .link-preview {
   @extend %row-nowrap;
   border: 1px solid $gray-150;
   background: $white;
   cursor: pointer;
+  overflow: hidden;
 
   &__image {
     cursor: pointer;
     flex: 0 0 auto;
-    width: 6rem;
-    height: 6rem;
+    width: 5rem;
+    height: 5rem;
     background-repeat: no-repeat;
     background-size: contain;
     background-position: center;
     background-color: $black;
+  }
+
+  &__image-wrapper {
+    position: relative;
+    height: 22.5rem;
+    width: 100%;
+
+    &__image-bg {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      background-color: $gray-900;
+    }
+
+    &__image {
+      position: absolute;
+      top: 0;
+      left: 0;
+      background-repeat: no-repeat;
+      background-size: contain;
+      background-position: center;
+      height: 100%;
+      width: 100%;
+    }
   }
 
   &__video-image {
@@ -40,19 +69,22 @@ iframe {
 
   &__body {
     @extend %col-nowrap;
-    padding: 1rem;
+    padding: .5rem .75rem;
     flex: 1 1 auto;
     width: 0;
   }
 
   &__title {
-    @extend %regular-font;
+    @extend %lite-font;
     @extend %bold;
     margin-bottom: .125rem;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   &__description {
-    @extend %regular-font;
+    @extend %lite-font;
     flex: 1 1 auto;
     color: $light-primary-text;
     overflow: hidden;

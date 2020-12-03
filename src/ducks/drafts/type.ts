@@ -1,6 +1,8 @@
 import {PostType} from "../../types/posts";
+import {PostType as SubTypes} from "fn-client/lib/application/Post";
 
 export type DraftPost = {
+  subtype: SubTypes;
   type: PostType;
   timestamp: number;
   title: string;
@@ -13,6 +15,7 @@ export type DraftPost = {
 }
 
 export type DraftPostOpts = {
+  subtype?: SubTypes;
   type?: PostType;
   timestamp?: number;
   title?: string;
@@ -26,6 +29,7 @@ export type DraftPostOpts = {
 
 export const createNewDraft = (draft?: DraftPostOpts): DraftPost => {
   return {
+    subtype: '',
     type: PostType.ORIGINAL,
     timestamp: 0,
     title: '',

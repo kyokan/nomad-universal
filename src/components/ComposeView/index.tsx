@@ -1,20 +1,27 @@
-import React, {ChangeEvent, ReactElement, useCallback, useEffect, useState} from "react";
+import React, {
+  ChangeEvent,
+  ReactElement,
+  ReactNode,
+  useCallback,
+  useEffect,
+  useState,
+} from "react";
 import {withRouter, RouteComponentProps} from "react-router";
 import MarkdownEditor from "../../components/MarkdownEditor";
 import "./compose.scss";
-import {addTag, useDraftPost, useUpdateDraft} from "../../ducks/drafts";
+import {useDraftPost, useUpdateDraft} from "../../ducks/drafts";
 import Button from "../../components/Button";
 import RTE from "../../components/RichTextEditor";
-import {useDispatch} from "react-redux";
 import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import {RelayerNewPostResponse} from "../../utils/types";
-import {INDEXER_API} from "../../utils/api";
-import { markdownToDraft, draftToMarkdown } from 'markdown-draft-js';
-import {Editor, EditorState, convertToRaw, convertFromRaw, RichUtils} from 'draft-js';
+import { markdownToDraft } from 'markdown-draft-js';
+import {EditorState, convertFromRaw} from 'draft-js';
 import "./drafts.scss";
-import classNames from "classnames";
 import {markup} from "../../utils/rte";
 import LinkPreview from "../LinkPreview";
+import Icon from "../Icon";
+import classNames from "classnames";
+import Input from "../Input";
 
 type Props = {
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
@@ -36,26 +43,17 @@ function ComposeView(props: Props): ReactElement {
   const [truncate, setTruncate] = useState(false);
   const [previewUrl, setPreviewUrl] = useState('');
 
-  useEffect(() => {
-    const parser = new DOMParser();
-    const html = markup(draft.content);
-    const doc = parser.parseFromString(html, 'text/html');
-    const links = doc.querySelectorAll('a');
-    const link = links && links[0];
-    console.log(link);
-    if (link?.href !== previewUrl) {
-      setPreviewUrl(link?.href);
-    }
-  }, [draft, previewUrl]);
-
   const togglePreview = useCallback(() => {
-    setPreviewing(!isPreviewing)
+    setPreviewing(!isPreviewing);
   }, [isPreviewing]);
 
   const onDraftChange = useCallback(async (draftPost: DraftPost ) => {
-    updateDraft(draftPost);
+    updateDraft({
+      ...draft,
+      content: draftPost.content,
+    });
     setErrorMessage('');
-  }, []);
+  }, [draft]);
 
   const onMarkdownChangeChange = useCallback(async (e: ChangeEvent<HTMLTextAreaElement> ) => {
     const markdownString = e.target.value;
@@ -93,17 +91,104 @@ function ComposeView(props: Props): ReactElement {
     truncate,
   ]);
 
+  const [postType, setPostType] = useState<'POST' | 'LINK' | 'MEDIA'>('POST');
+  const switchType = useCallback((type: 'POST' | 'LINK' | 'MEDIA') => {
+    setPostType(type);
+    updateDraft({
+      ...draft,
+      subtype: type === 'POST' ? '' : 'LINK',
+      title: '',
+    });
+  }, [draft]);
+
+  useEffect(() => {
+    if (postType !== 'LINK') {
+      return;
+    }
+    let replacedHref = draft.title;
+
+    try {
+      const {protocol} = new URL(replacedHref || '');
+
+      switch (protocol) {
+        case 'sia:':
+          replacedHref = draft.title.replace('sia://', 'https://siasky.net/');
+          break;
+        default:
+          break;
+      }
+    } catch (e) {
+
+    }
+
+    setPreviewUrl(replacedHref);
+  }, [postType, draft.title]);
+
+  useEffect(() => {
+    if (postType !== 'POST') {
+      return;
+    }
+
+    const parser = new DOMParser();
+    const html = markup(draft.content);
+    const doc = parser.parseFromString(html, 'text/html');
+    const links = doc.querySelectorAll('a');
+    const link = links && links[0];
+    if (link?.href !== previewUrl) {
+      setPreviewUrl(link?.href);
+    }
+  }, [draft.content, previewUrl, postType]);
+
+  let disabled = false;
+
+  if (postType === 'LINK') {
+    try {
+      new URL(draft.title);
+      disabled = false;
+    } catch (e) {
+      disabled = true;
+    }
+  } else if (postType === 'POST') {
+    disabled = !draft.content;
+  } else if (postType === 'MEDIA') {
+    disabled = !draft.title;
+  }
+
   return (
     <div className="compose-container">
       <div className="compose">
         <div className="compose__header">
-
+          <div className="compose__selectors">
+            {renderSelector(
+              'Post',
+              'message',
+              'POST',
+              postType,
+              () => switchType('POST'),
+            )}
+            {renderSelector(
+              'Link',
+              'link',
+              'LINK',
+              postType,
+              () => switchType('LINK'),
+            )}
+            {renderSelector(
+              'Media',
+              'image',
+              'MEDIA',
+              postType,
+              () => switchType('MEDIA'),
+            )}
+          </div>
         </div>
+        {renderTitle(props, postType)}
         {
           !isPreviewing
             ? (
               <div className="rte">
                 <RTE
+                  content={draft.content}
                   onFileUpload={props.onFileUpload}
                   onChange={onDraftChange}
                 />
@@ -151,7 +236,7 @@ function ComposeView(props: Props): ReactElement {
               color={success ? "green" : undefined}
               onClick={send}
               loading={isSending}
-              disabled={isSending || (!draft.content && !truncate)}
+              disabled={isSending || (disabled && !truncate)}
             >
               { success ? "Posted" : "Post" }
             </Button>
@@ -163,6 +248,51 @@ function ComposeView(props: Props): ReactElement {
 }
 
 export default withRouter(ComposeView);
+
+
+function renderTitle(props: Props, postType: 'POST'|'LINK'|'MEDIA'): ReactNode {
+  const draft = useDraftPost();
+  const updateDraft = useUpdateDraft();
+
+  const onTitleChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    updateDraft({
+      ...draft,
+      title: e.target.value,
+    });
+  }, [
+    draft.title,
+    draft.content,
+    draft.subtype,
+  ]);
+
+  if (postType === 'LINK') {
+    return (
+      <div
+        className="compose__title-input"
+      >
+        <Input
+          type="text"
+          placeholder="URL"
+          onChange={onTitleChange}
+          value={draft.title}
+        />
+      </div>
+    );
+  }
+
+  return (
+    <div
+      className="compose__title-input"
+    >
+      <Input
+        type="text"
+        placeholder="Title (Optional)"
+        onChange={onTitleChange}
+        value={draft.title}
+      />
+    </div>
+  );
+}
 
 type RichTextEditorProps = {
   className?: string;
@@ -188,7 +318,6 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
   } = props;
   const rows = content.split('\n').length;
   const markdownString = content;
-
   const rawData = markdownToDraft(markdownString);
   const contentState = convertFromRaw(rawData);
   const editorState = EditorState.createWithContent(contentState);
@@ -238,4 +367,24 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
       }
     </div>
   );
+}
+
+function renderSelector(
+  text: string,
+  material: string,
+  ownType: 'POST'|'LINK'|'MEDIA',
+  currentType: 'POST'|'LINK'|'MEDIA',
+  onClick: () => void,
+): ReactNode {
+  return (
+    <div
+      className={classNames('compose__selector', {
+        'compose__selector--active': ownType === currentType,
+      })}
+      onClick={onClick}
+    >
+      <Icon material={material} width={20} />
+      <div>{text}</div>
+    </div>
+  )
 }

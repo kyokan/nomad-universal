@@ -12,6 +12,7 @@ import {
   EditorState,
   RichUtils,
   DefaultDraftBlockRenderMap,
+  ContentState,
 } from "draft-js";
 import Editor from "draft-js-plugins-editor";
 import c from "classnames";
@@ -25,7 +26,6 @@ import {addLinkPlugin} from "./plugins/addLinkPlugin";
 import Input from "../Input";
 import {draftToMarkdown} from "markdown-draft-js";
 import Menuable from "../Menuable";
-const { SkynetClient } = require('skynet-js');
 
 const hljs = require('highlight.js');
 const TableUtils = require('draft-js-table');
@@ -56,16 +56,19 @@ function RichTextEditor(props: Props): ReactElement {
   } = props;
 
   const [ref, setRef] = useState<Editor|null>(null);
-  const [editorState, _setEditorState] = useState<EditorState>(EditorState.createEmpty());
+  const [editorState, _setEditorState] = useState<EditorState>(props.content
+    ? EditorState.createWithContent(ContentState.createFromText(props.content))
+    : EditorState.createEmpty()
+  );
   const [title, setTitle] = useState<string>('');
 
   useEffect(() => {
     (async function() {
-      if (typeof props.content !== 'undefined') {
+      if (readOnly && typeof props.content !== 'undefined') {
         _setEditorState(mapDraftToEditorState(createNewDraft({ content: props.content })))
       }
     })();
-  }, [props.content]);
+  }, [props.content, readOnly]);
 
   const setEditorState = useCallback((newEditorState: EditorState) => {
     _setEditorState(newEditorState);
@@ -75,6 +78,7 @@ function RichTextEditor(props: Props): ReactElement {
 
     onChange({
       type: PostType.ORIGINAL,
+      subtype: '',
       timestamp: new Date().getTime(),
       title,
       content: currentContent.hasText() ? markdown : '',

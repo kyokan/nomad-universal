@@ -134,6 +134,8 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
         const resp = await fetch(`${INDEXER_API}/preview?url=${encodeURI(props.url)}`);
         const json = await resp.json();
 
+        console.log(json);
+
         if (json.siteName === 'YouTube') {
           const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
           const match = props.url.match(regExp);
@@ -225,6 +227,8 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
           return;
         }
 
+      } catch (e) {
+        console.error(e);
       } finally {
         setLoading(false);
         URL_LOADING[props.url] = false;

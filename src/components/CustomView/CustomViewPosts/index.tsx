@@ -201,6 +201,7 @@ export function RawPost(props: RawPostProps): ReactElement {
     pending,
     onOpenLink,
     onFileUpload,
+    type: postType,
   } = props;
 
   return (
@@ -231,6 +232,7 @@ export function RawPost(props: RawPostProps): ReactElement {
       tags={tags}
       selected={selected}
       pending={pending}
+      postType={postType}
     />
   );
 }

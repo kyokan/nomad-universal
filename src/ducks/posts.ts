@@ -12,9 +12,12 @@ import {dotName, parseUsername, serializeUsername} from "../utils/user";
 import {DraftPost} from "./drafts/type";
 import {mapDomainEnvelopeToPost, mapDraftToPostPayload} from "../utils/posts";
 import {
-  NapiResponse, RelayerNewBlockResponse, RelayerNewFollowResponse,
+  NapiResponse,
+  RelayerNewBlockResponse,
+  RelayerNewFollowResponse,
   RelayerNewPostResponse,
-  RelayerNewReactionResponse, ResponsePost,
+  RelayerNewReactionResponse,
+  ResponsePost,
 } from "../utils/types";
 import {Pageable} from "../types/Pageable";
 
@@ -239,7 +242,11 @@ export const mapRawToPost = (rawPost: ResponsePost): Post => {
 
   return createNewPost({
     hash: rawPost.hash,
-    type: rawPost.parent ? PostType.COMMENT : PostType.ORIGINAL,
+    type: rawPost.parent
+      ? PostType.COMMENT
+      : rawPost.type === "LINK"
+        ? PostType.LINK
+        : PostType.ORIGINAL,
     creator: rawPost.name,
     timestamp: new Date(rawPost.timestamp).getTime(),
     title: rawPost.title,

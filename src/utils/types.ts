@@ -1,4 +1,5 @@
 import {Filter} from "./filter";
+import {PostType} from "fn-client/lib/application/Post";
 
 export type NapiResponse<payload> = {
   id: number;
@@ -23,6 +24,7 @@ export type ResponsePost = {
   tags: string[];
   meta: PostMeta;
   title: string;
+  type: PostType;
 };
 
 /**

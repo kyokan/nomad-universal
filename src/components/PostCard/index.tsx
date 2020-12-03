@@ -2,22 +2,23 @@ import React, {MouseEvent, ReactElement, ReactNode, useCallback, useEffect, useS
 import './post-card.scss';
 import Markup from "../Markup";
 import PostButton from "../PostButton";
-import CommentBlackIcon from "../../static/assets/icons/reply-black.svg";
 import HeartIcon from "../../static/assets/icons/heart.svg";
-import MoreSmallIcon from "../../static/assets/icons/more.svg";
 import classNames from "classnames";
 import {PostMeta, usePostId} from "../../ducks/posts";
 import {
   useCurrentBlocks,
   useCurrentFollowings,
-  useCurrentLikes, useCurrentUsername, useIdentity, userCurrentMutedNames, useUser,
+  useCurrentLikes,
+  useCurrentUsername,
+  useIdentity,
+  userCurrentMutedNames,
+  useUser,
   useUsersMap
 } from "../../ducks/users";
 import {updateReplies, useReplies, useReplyId} from "../../ducks/drafts/replies";
 import {useDispatch} from "react-redux";
 import Icon from "../Icon";
 import PostCardHeader from "./PostCardHeader";
-import Attachments from "../Attachments";
 import Menuable, {MenuProps} from "../Menuable";
 import {parseUsername, undotName} from "../../utils/user";
 import Button from "../Button";
@@ -25,6 +26,8 @@ import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import {RichTextEditor} from "../ComposeView";
 import {markup} from "../../utils/rte";
 import LinkPreview from "../LinkPreview";
+import {PostType} from "../../types/posts";
+import {replaceLink} from "../../utils/posts";
 
 type Props = {
   type: 'card' | 'compact' | 'title';
@@ -53,6 +56,7 @@ type Props = {
   canReply?: boolean;
   selected?: boolean;
   pending?: boolean;
+  postType: PostType;
 };
 
 
@@ -82,7 +86,7 @@ function Card(props: Props): ReactElement {
     onSelectPost,
     onLikePost,
     onNameClick,
-    onTagClick,
+    title,
     meta,
     canReply,
     attachments,
@@ -92,6 +96,7 @@ function Card(props: Props): ReactElement {
     pending,
     content,
     onFileUpload,
+    postType,
   } = props;
 
   const { replyCount = 0, likeCount = 0 } = meta || {};
@@ -125,6 +130,12 @@ function Card(props: Props): ReactElement {
   const [previewUrl, setPreviewUrl] = useState('');
 
   useEffect(() => {
+    if (postType === PostType.LINK) {
+      const link = replaceLink(title);
+      setPreviewUrl(link);
+      return;
+    }
+
     const parser = new DOMParser();
     const html = markup(content);
     const doc = parser.parseFromString(html, 'text/html');
@@ -134,7 +145,7 @@ function Card(props: Props): ReactElement {
     if (link?.href !== previewUrl) {
       setPreviewUrl(link?.href);
     }
-  }, [content, previewUrl]);
+  }, [title, postType, content, previewUrl]);
 
   return (
     <div
@@ -460,7 +471,7 @@ export function renderQuickReplyEditor(
       content: content,
       parent: hash,
     }));
-  }, [isShowingReply, setShowingReply]);
+  }, [isShowingReply, setShowingReply, content]);
 
   const onAddUser = useCallback(() => {
     // postIPCMain({ type: IPCMessageRequestType.OPEN_NEW_USER_WINDOW });

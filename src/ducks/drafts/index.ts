@@ -294,8 +294,8 @@ export const useDraftPost = (): DraftPost => {
     if (!a && !b) return true;
     if (!a || !b) return false;
     return a.content === b.content
-      && a.attachments.join(',') === b.attachments.join(',')
-      && a.tags.join(',') === b.tags.join(',');
+      && a.title === b.title
+      && a.subtype === b.subtype;
   });
 };
 

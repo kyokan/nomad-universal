@@ -3,8 +3,10 @@ import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
 import {INDEXER_API} from "./api";
 import {DraftPost} from "../ducks/drafts/type";
-import {RelayerPostModel} from "../types/posts";
+import {PostType, RelayerPostModel} from "../types/posts";
 import {serializeUsername} from "./user";
+import {Post} from "../ducks/posts";
+import {markup} from "./rte";
 
 export function getCSSImageURLFromPostHash (hash: string): string {
   return `url(${INDEXER_API}/media/${hash})`;
@@ -41,6 +43,7 @@ export const mapDomainEnvelopeToPost = (env: DomainEnvelope<DomainPost>): Respon
     topic: env.message.topic || '',
     tags: env.message.tags || [],
     hash: env.refhash,
+    type: env.message.type,
     meta: {
       replyCount: env.message.replyCount,
       likeCount: env.message.likeCount,
@@ -58,6 +61,7 @@ export const mapDraftToPostPayload = (draft?: DraftPost): RelayerPostModel => {
       topic: '',
       tags: [],
       title: '',
+      subtype: '',
     };
   }
 
@@ -75,5 +79,57 @@ export const mapDraftToPostPayload = (draft?: DraftPost): RelayerPostModel => {
     topic: draft.topic,
     tags: draft.tags,
     title: draft.title,
+    subtype: draft.subtype || '',
   };
 };
+
+export function getLinkFromPost(post: Post): string {
+  const {
+    type: postType,
+    title,
+    content
+  } = post;
+
+  if (postType === PostType.LINK) {
+    let replacedHref = title;
+
+    try {
+      const {protocol} = new URL(title);
+
+      switch (protocol) {
+        case 'sia:':
+          replacedHref = title.replace('sia://', 'https://siasky.net/');
+          break;
+        default:
+          break;
+      }
+    } catch (e) {}
+
+    return replacedHref;
+  }
+
+  const parser = new DOMParser();
+  const html = markup(content);
+  const doc = parser.parseFromString(html, 'text/html');
+  const links = doc.querySelectorAll('a');
+  const link = links && links[0];
+  return link.href;
+}
+
+export function replaceLink(link: string): string {
+  let replacedHref = link;
+
+  try {
+    const {protocol} = new URL(link);
+
+    switch (protocol) {
+      case 'sia:':
+        replacedHref = link.replace('sia://', 'https://siasky.net/');
+        break;
+      default:
+        break;
+    }
+  } catch (e) {}
+
+  return replacedHref;
+}

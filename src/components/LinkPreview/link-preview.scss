@@ -83,7 +83,7 @@ video {
   }
 
   &__title {
-    @extend %lite-font;
+    @extend %small-font;
     @extend %bold;
     margin-bottom: .125rem;
     overflow: hidden;
@@ -92,7 +92,7 @@ video {
   }
 
   &__description {
-    @extend %lite-font;
+    @extend %small-font;
     flex: 1 1 auto;
     color: $light-primary-text;
     overflow: hidden;
@@ -102,7 +102,7 @@ video {
   }
 
   &__host {
-    @extend %small-font;
+    @extend %tiny-font;
     color: $gray-800;
   }
 }

@@ -29,6 +29,12 @@
     }
   }
 
+  &__title-input {
+    .input-container {
+      background-color: $white;
+    }
+  }
+
   &__selectors {
     @extend %row-nowrap;
     cursor: default;
@@ -53,10 +59,12 @@
 
     &:hover {
       color: $blue-500;
+      background-color: $blue-50;
     }
 
     &:active {
       color: $blue-800;
+      background-color: $blue-100;
     }
 
     .icon {
@@ -67,6 +75,7 @@
       cursor: default;
       color: $blue !important;
       box-shadow: 0 2px 0 0 #0084de;
+      background-color: $blue-100;
 
       .icon {
         color: $blue !important;
@@ -76,6 +85,10 @@
 
   &__selector + &__selector {
     border-left: 1px solid $gray-150;
+  }
+
+  &__title-input {
+    padding: 1rem 1rem 0 1rem;
   }
 
   &__group {
@@ -312,7 +325,7 @@
 }
 
 .rte {
-  margin: 1.5rem 1rem 1rem 1rem;
+  margin: 1rem;
 
   .public-DraftEditor-content {
     font-family: 'Open Sans', Roboto, Helvetica, Arial, sans-serif;

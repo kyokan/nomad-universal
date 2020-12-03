@@ -138,7 +138,7 @@ function ComposeView(props: Props): ReactElement {
   if (postType === 'LINK') {
     try {
       new URL(draft.title);
-      disabled = false;
+      disabled = !draft.content;
     } catch (e) {
       disabled = true;
     }
@@ -147,7 +147,7 @@ function ComposeView(props: Props): ReactElement {
   } else if (postType === 'MEDIA') {
     try {
       new URL(draft.title);
-      disabled = false;
+      disabled = !draft.content;
     } catch (e) {
       disabled = true;
     }

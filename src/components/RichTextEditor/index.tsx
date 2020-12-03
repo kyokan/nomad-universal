@@ -251,7 +251,7 @@ function RichTextEditor(props: Props): ReactElement {
         handleKeyCommand={handleKeyCommand}
         customStyleMap={customStyleMap}
         blockRenderMap={DefaultDraftBlockRenderMap.merge(TableUtils.DraftBlockRenderMap)}
-        placeholder="Write here..."
+        placeholder={readOnly ? '' : "Write here..."}
         plugins={[
           addLinkPlugin as any,
         ]}
@@ -427,20 +427,6 @@ function RTEControls(props: RETControlsProps): ReactElement {
         width={16}
         active={currentType === "blockquote"}
       />
-      <Menuable
-        items={[
-          {
-            text: 'Upload via Sia Skynet',
-            onClick: onFileUpload,
-          }
-        ]}
-      >
-        <RTEButton
-          onClick={() => null}
-          material="publish"
-          width={16}
-        />
-      </Menuable>
       {
         embedded && (
           <div className="rich-text-editor__controls__actions">

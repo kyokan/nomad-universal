@@ -22,6 +22,8 @@ import LinkPreview from "../LinkPreview";
 import Icon from "../Icon";
 import classNames from "classnames";
 import Input from "../Input";
+import {replaceLink} from "../../utils/posts";
+import Menuable from "../Menuable";
 
 type Props = {
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
@@ -105,24 +107,16 @@ function ComposeView(props: Props): ReactElement {
     if (postType !== 'LINK') {
       return;
     }
-    let replacedHref = draft.title;
-
-    try {
-      const {protocol} = new URL(replacedHref || '');
-
-      switch (protocol) {
-        case 'sia:':
-          replacedHref = draft.title.replace('sia://', 'https://siasky.net/');
-          break;
-        default:
-          break;
-      }
-    } catch (e) {
-
-    }
-
-    setPreviewUrl(replacedHref);
+    setPreviewUrl(replaceLink(draft.title));
   }, [postType, draft.title]);
+
+  useEffect(() => {
+    if (postType !== 'MEDIA') {
+      return;
+    }
+    setPreviewUrl(replaceLink(draft.title));
+  }, [postType, draft.title]);
+
 
   useEffect(() => {
     if (postType !== 'POST') {
@@ -151,7 +145,12 @@ function ComposeView(props: Props): ReactElement {
   } else if (postType === 'POST') {
     disabled = !draft.content;
   } else if (postType === 'MEDIA') {
-    disabled = !draft.title;
+    try {
+      new URL(draft.title);
+      disabled = false;
+    } catch (e) {
+      disabled = true;
+    }
   }
 
   return (
@@ -264,6 +263,84 @@ function renderTitle(props: Props, postType: 'POST'|'LINK'|'MEDIA'): ReactNode {
     draft.content,
     draft.subtype,
   ]);
+
+  const [file, setFile] = useState<File | null>(null);
+  const [uploading, setUploading] = useState(false);
+
+  const onFileUpload = useCallback(() => {
+    setUploading(true);
+    if (props.onFileUpload) {
+      props.onFileUpload(async (file, skylink, progress) => {
+        updateDraft({
+          ...draft,
+          title: skylink,
+        });
+        setFile(file);
+        setUploading(false);
+      });
+    }
+  }, [
+    draft.title,
+    draft.content,
+    draft.subtype,
+  ]);
+
+  const onClearFile = useCallback(() => {
+    updateDraft({
+      ...draft,
+      title: '',
+    });
+    setFile(file);
+  }, [
+    draft.title,
+    draft.content,
+    draft.subtype,
+  ]);
+
+  if (postType === 'MEDIA') {
+    return file
+      ? (
+        <div
+          className="compose__media compose__media--selected"
+        >
+          <div className="compose__media__label">
+            {file?.name}
+          </div>
+          <div
+            className="compose__media__button"
+          >
+            <Icon
+              material="cancel"
+              width={20}
+              onClick={onClearFile}
+            />
+          </div>
+        </div>
+      )
+      : (
+        <div
+          className="compose__media"
+        >
+          <div className="compose__media__label">
+            No File Selected
+          </div>
+          <Menuable
+            items={[
+              { text: "Upload via Sia Skynet", onClick: onFileUpload }
+            ]}
+          >
+            <Button
+              // onClick={onFileUpload}
+              loading={uploading}
+              disabled={uploading}
+            >
+              Choose Upload Option
+            </Button>
+          </Menuable>
+
+        </div>
+      );
+  }
 
   if (postType === 'LINK') {
     return (

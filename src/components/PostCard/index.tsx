@@ -285,7 +285,6 @@ function renderPostMenu(props: Props): ReactNode {
 
 function renderContent(props: Props): ReactNode {
   const {
-    attachments,
     content,
     parent,
     onSelectPost,

@@ -91,6 +91,30 @@
     padding: 1rem 1rem 0 1rem;
   }
 
+  &__media {
+    @extend %row-nowrap;
+    align-items: center;
+    margin: 1rem 1rem 0 1rem;
+    border: 1px solid $gray-150;
+    border-radius: .125em;
+    padding: .5em;
+
+    &--selected {
+      background-color: $gray-100;
+    }
+
+    &__label {
+      flex: 1 1 auto;
+      margin-left: .5rem;
+    }
+
+    &__button {
+      button {
+        color: $gray-500;
+      }
+    }
+  }
+
   &__group {
     @extend %col-nowrap;
     margin-bottom: 1rem;

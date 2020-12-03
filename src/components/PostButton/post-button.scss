@@ -13,59 +13,38 @@
   transition: background-color 100ms ease-in-out;
   height: 1.375rem;
   border-radius: .125rem;
+  color: $light-primary-text;
 
   .icon {
     transition: opacity 100ms ease-in-out;
-    opacity: .375;
+    opacity: 1;
+    font-size: 1.125rem !important;
+    width: 1rem !important;
+    height: 1rem !important;
   }
 
   &__text {
     font-weight: 700;
     font-size: .75rem;
     line-height: 1rem;
-    color: $light-primary-text;
-    padding-left: .375rem;
+    padding-left: .5rem;
     transition: color 100ms ease-in-out;
   }
 
   &:hover {
-    .post-button {
-      &__text {
-        color: darken($light-primary-text, 25);
-      }
-    }
-    .icon {
-      opacity: .8 !important;
-    }
+    color: $dark-primary-text;
   }
 
-  &--blue {
-    .icon {
-      opacity: .75 !important;
-    }
-    &:hover {
-      background-color: rgba($blue, .1) !important;
-      .icon {
-        opacity: 1 !important;
-      }
-    }
+  &:active {
+    color: $dark-primary-text;
   }
 
   &--active {
-    .post-button {
-      &__text {
-        color: darken($light-primary-text, 35);
-      }
-    }
-    .icon {
-      opacity: 1 !important;
-    }
+    color: $dark-primary-text;
     &:hover {
       background-color: transparent !important;
       cursor: default;
-      .icon {
-        opacity: 1 !important;
-      }
+      color: $dark-primary-text;
     }
   }
 }

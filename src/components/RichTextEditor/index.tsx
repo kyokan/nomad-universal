@@ -216,7 +216,7 @@ function RichTextEditor(props: Props): ReactElement {
       })}
     >
       {
-        !readOnly && (
+        !readOnly && !embedded && (
           <RTEControls
             editorState={editorState}
             onBoldClick={onBoldClick}
@@ -235,7 +235,7 @@ function RichTextEditor(props: Props): ReactElement {
             onPrimaryClick={onPrimaryClick}
             onSecondaryClick={onSecondaryClick}
             onFileUpload={onFileUpload}
-            embedded={embedded}
+            // embedded={embedded}
             primaryBtnProps={primaryBtnProps}
           />
         )

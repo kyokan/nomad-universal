@@ -1,12 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Open+Sans:ital,wght@0,300;0,400;0,600;0,700;0,800;1,300;1,400;1,600;1,700;1,800&display=swap');
 
 $white: #fff;
-
-$light-primary-text: #999999;
-$regular-primary-text: #111111;
-$dark-primary-text: #000;
-$rte-bg-gray: #272822;
-
 $black: #000;
 
 $gray-900: mix($white, $black, 10);
@@ -21,6 +15,12 @@ $gray-150: mix($white, $black, 85);
 $gray-100: mix($white, $black, 90);
 $gray-50: mix($white, $black, 95);
 $gray-25: mix($white, $black, 97.5);
+
+$light-secondary-text: #999999;
+$light-primary-text: $gray-400;
+$regular-primary-text: #1f1f23;
+$dark-primary-text: #000;
+$rte-bg-gray: #272822;
 
 $blue: #0084de;
 $blue-900: mix($white, $blue, 10);

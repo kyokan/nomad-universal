@@ -4,7 +4,8 @@ import Icon from '../Icon';
 import c from "classnames";
 
 type Props = {
-  iconUrl: string;
+  iconUrl?: string;
+  material?: string;
   text?: string;
   className?: string;
   title?: string;
@@ -25,6 +26,7 @@ export default class PostButton extends Component<Props> {
       title,
       active,
       disabled,
+      material,
     } = this.props;
 
     return (
@@ -38,7 +40,10 @@ export default class PostButton extends Component<Props> {
         title={title}
         disabled={disabled}
       >
-        <Icon url={iconUrl} width={16} />
+        <Icon
+          url={iconUrl}
+          material={material}
+        />
         {
           text && (
             <div className="post-button__text">

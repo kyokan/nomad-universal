@@ -171,6 +171,7 @@ type RichTextEditorProps = {
   onChange: (draftPost: DraftPost) => void;
   isShowingMarkdown?: boolean;
   disabled?: boolean;
+  embedded?: boolean;
 } & RouteComponentProps;
 
 export const RichTextEditor = withRouter(_RichTextEditor);
@@ -183,6 +184,7 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
     disabled,
     onChange,
     onFileUpload,
+    embedded,
   } = props;
   const rows = content.split('\n').length;
   const markdownString = content;
@@ -219,6 +221,7 @@ function _RichTextEditor(props: RichTextEditorProps): ReactElement {
               <RTE
                 onFileUpload={onFileUpload}
                 onChange={onDraftChange}
+                embedded={embedded}
               />
             </div>
           )

@@ -236,33 +236,7 @@
   }
 
   &--embedded {
-    background-color: darken($white, 2.5);
-    border: 1px solid $gray-300;
-    border-radius: .125rem;
-    box-sizing: border-box;
-
-    &:focus-within {
-      border: 1px solid darken($gray-300, 20);
-    }
-
-    .rich-text-editor {
-      &__header {
-        display: none;
-      }
-
-      &__controls {
-        margin: 0 !important;
-        border: none;
-        border-top: 1px solid #b2b2b2;
-        border-radius: 0;
-
-        &__actions {
-          @extend %row-nowrap;
-          flex: 1 0 auto;
-          justify-content: flex-end;
-        }
-      }
-    }
+    border-top: 1px solid $gray-150;
 
     .DraftEditor-root {
       padding: .5rem !important;

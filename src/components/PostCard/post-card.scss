@@ -82,6 +82,7 @@
 
     &__name-group {
       @extend %row-nowrap;
+      @extend %regular-font;
       align-items: center;
       flex: 0 0 auto;
 
@@ -93,7 +94,6 @@
     }
 
     &__creator {
-      @extend %regular-font;
       @extend %bold;
       flex: 0 0 auto;
       justify-content: flex-end;
@@ -103,7 +103,7 @@
     }
 
     &__username {
-      @extend %small-font;
+      @extend %strong;
       flex: 0 0 auto;
       justify-content: flex-end;
       color: $light-primary-text;
@@ -113,7 +113,7 @@
 
     &__timestamp {
       @extend %row-nowrap;
-      @extend %small-font;
+      @extend %strong;
       justify-content: flex-end;
       flex: 1 0 auto;
       color: $light-primary-text;
@@ -140,7 +140,6 @@
     }
 
     &__title {
-      @extend %small-font;
       @extend %row-nowrap;
       align-items: center;
       color: $light-primary-text;
@@ -204,7 +203,7 @@
         opacity: 1;
 
         .icon {
-          opacity: .375 !important;
+          color: $light-primary-text !important;
         }
 
         .post-button__text {
@@ -214,7 +213,7 @@
         &:active,
         &:hover {
           .icon {
-            opacity: .375 !important;
+            color: $light-primary-text !important;
           }
           .post-button__text {
             color: $light-primary-text !important;
@@ -230,17 +229,6 @@
     .menuable {
       margin-left: .5rem;
     }
-
-    &__reply-btn--opened {
-      .post-button {
-        &__text {
-          color: $gray-600;
-        }
-      }
-      .icon {
-        opacity: .7 !important;
-      }
-    }
   }
 
   &--avatarless {
@@ -255,16 +243,12 @@
 
   &--content-overflow {
     .post-card {
-      &__footer {
-        //box-shadow: 0 -.5rem .75rem .75rem rgba($pure-white, 1);
+      &__content {
       }
     }
   }
 
   &--selectable {
-    &:focus-within {
-      //background-color: rgba($pure-white, .8);
-    }
     .post-card {
       &__content {
 
@@ -418,12 +402,15 @@
 
   .post-card__footer {
     margin-left: 0;
+    padding-top: .75rem;
+    margin-top: .5rem;
+    border-top: 1px solid $gray-150;
   }
 }
 
 @media only screen and (max-width: 768px) {
   .post-card {
-    font-size: 1rem;
+    //font-size: 1rem;
   }
 
   .post-card--selected .post-card__content .marked,
@@ -432,7 +419,7 @@
   .post-card__header__username,
   .post-card__content .marked,
   .post-card__content__title {
-    font-size: .8125rem;
+    //font-size: .8125rem;
   }
 
   .post-card__header__creator {
@@ -451,5 +438,17 @@
 
   .post-button__text {
     font-size: .875rem !important;
+  }
+}
+
+button.post-button.post-card__footer__like-btn.post-button--active {
+  .icon {
+    color: $red;
+  }
+}
+
+button.post-button.post-card__footer__reply-btn.post-button--active {
+  .icon {
+    color: $blue;
   }
 }

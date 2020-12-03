@@ -167,50 +167,32 @@ function Card(props: Props): ReactElement {
           />
         )
       }
-      {
-        !!tags?.length && (
-          <div className="post-card__tags">
-            {Array.from(new Set(tags)).map(tag => !!tag && (
-              <div
-                key={tag}
-                className="post-card__tags__tag"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  if (onTagClick) onTagClick(tag)
-                }}
-              >
-                #{tag}
-              </div>
-            ))}
-          </div>
-        )
-      }
       <div className="post-card__footer">
-        {
-          !!onLikePost && (
-            <PostButton
-              iconUrl={HeartIcon}
-              text={`${likeCount}`}
-              onClick={likePost}
-              active={!!currentLikes[hash]}
-              disabled={!user?.confirmed || isSendingLike}
-            />
-          )
-        }
         {
           !!canReply && (
             <PostButton
-              className={classNames({
-                'post-card__footer__reply-btn--opened': isShowingReply,
-              })}
-              iconUrl={CommentBlackIcon}
+              className="post-card__footer__reply-btn"
+              material="reply"
               text={`${replyCount}`}
               onClick={(e: MouseEvent) => {
                 e.stopPropagation();
                 setShowingReply(!isShowingReply)
               }}
               title={`Reply`}
-              disabled={!user?.confirmed || isShowingReply}
+              active={isShowingReply}
+              disabled={!user?.confirmed}
+            />
+          )
+        }
+        {
+          !!onLikePost && (
+            <PostButton
+              className="post-card__footer__like-btn"
+              material={!!currentLikes[hash] ? "favorite" : "favorite_border"}
+              text={`${likeCount}`}
+              onClick={likePost}
+              active={!!currentLikes[hash]}
+              disabled={!user?.confirmed || isSendingLike}
             />
           )
         }
@@ -281,15 +263,11 @@ function renderPostMenu(props: Props): ReactNode {
   }
 
   return !!items.length && (
-    // @ts-ignore
     <Menuable items={items}>
-      {(
-        // @ts-ignore
-        <PostButton
-          iconUrl={MoreSmallIcon}
-          title="More"
-        />
-      )}
+      <PostButton
+        material="more_horiz"
+        title="More"
+      />
     </Menuable>
   );
 }
@@ -537,6 +515,7 @@ export function renderQuickReplyEditor(
               disabled={isSendingReplies}
               onFileUpload={onFileUpload}
               isShowingMarkdown={false}
+              embedded
             />
             <div className="post__reply-editor__actions">
               <Button

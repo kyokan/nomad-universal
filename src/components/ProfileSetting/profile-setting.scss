@@ -7,7 +7,6 @@
   .setting__group {
     flex: 1 1 auto;
     height: 0;
-    overflow-y: auto;
   }
 
   &__bio-row {
@@ -22,17 +21,13 @@
 
   &__preview-row {
     @extend %row-nowrap;
+    align-items: flex-start !important;
     justify-content: flex-end;
+
     .user-card {
       width: 30rem;
       border: 1px solid $gray-100;
     }
-  }
-
-  textarea {
-    @extend %small-font;
-    flex: 1 1 auto;
-    height: 5.5rem;
   }
 
   &__images {
@@ -50,9 +45,17 @@
       }
 
       &__actions {
-        @extend %row-nowrap;
+        @extend %col-nowrap;
         font-family: "Open Sans", sans-serif;
         justify-content: flex-end;
+        align-items: flex-end;
+
+        img.avatar {
+          width: 8rem;
+          height: 8rem;
+          border: 1px solid $gray-100;
+          margin-top: .25rem;
+        }
 
         button {
           @extend %tiny-font;
@@ -65,11 +68,12 @@
         }
 
         .menu {
-          left: -12.25rem;
-          top: calc(100% + .5rem);
+          left: -12.125rem;
+          top: calc(100% + -1.5rem);
 
           .menu--children {
-            left: calc(-100% + 5.625rem);
+            left: -100%;
+            width: 100%;
           }
         }
 

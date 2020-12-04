@@ -106,3 +106,14 @@ video {
     color: $gray-800;
   }
 }
+
+@media only screen and (max-width: 768px) {
+  iframe {
+    max-height: 50vw;
+  }
+
+  video {
+    max-height: 50vw;
+  }
+
+}

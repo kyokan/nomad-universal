@@ -33,6 +33,7 @@ const TableUtils = require('draft-js-table');
 type Props = {
   className?: string;
   content?: string;
+  defaultContent?: string;
   onChange: (post: DraftPost) => void;
   disabled?: boolean;
   embedded?: boolean;
@@ -69,6 +70,14 @@ function RichTextEditor(props: Props): ReactElement {
       }
     })();
   }, [props.content, readOnly]);
+
+  useEffect(() => {
+    (function() {
+      if (typeof props.defaultContent !== 'undefined') {
+        _setEditorState(mapDraftToEditorState(createNewDraft({ content: props.defaultContent })))
+      }
+    })();
+  }, [props.defaultContent]);
 
   const setEditorState = useCallback((newEditorState: EditorState) => {
     _setEditorState(newEditorState);
@@ -255,7 +264,7 @@ function RichTextEditor(props: Props): ReactElement {
         plugins={[
           addLinkPlugin as any,
         ]}
-        readOnly={readOnly}
+        readOnly={readOnly || disabled}
       />
     </div>
   );

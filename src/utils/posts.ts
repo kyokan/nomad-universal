@@ -8,8 +8,8 @@ import {serializeUsername} from "./user";
 import {Post} from "../ducks/posts";
 import {markup} from "./rte";
 
-export function getCSSImageURLFromPostHash (hash: string): string {
-  return `url(${INDEXER_API}/media/${hash})`;
+export function getCSSImageURLFromPostHash (link: string): string {
+  return `url(${replaceLink(link)})`;
 }
 
 export function getCSSImageURLFromAvatarType (_avatarType: string, username: string) {
@@ -20,8 +20,8 @@ export function getCSSImageURLFromAvatarType (_avatarType: string, username: str
   return `url(${INDEXER_API}/avatars/${avatarType}/${username}.svg)`
 }
 
-export function getImageURLFromPostHash (hash: string): string {
-  return `${INDEXER_API}/media/${hash}`;
+export function getImageURLFromPostHash (link: string): string {
+  return replaceLink(link);
 }
 
 export function getImageURLFromAvatarType (_avatarType: string, username: string): string {

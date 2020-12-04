@@ -31,7 +31,7 @@
   }
 
   &__group {
-    margin: .5rem .5rem 0 .5rem;
+    overflow: visible;
 
     &__title {
       @extend %lite-font;
@@ -45,8 +45,8 @@
       &__row {
         @extend %row-nowrap;
         max-width: 58rem;
-        align-items: center;
-        padding: .5rem 1.25rem .5rem .5rem;
+        align-items: flex-start;
+        padding: 1rem;
         color: $dark-primary-text;
 
         &__label {
@@ -56,6 +56,7 @@
           user-select: none;
           position: relative;
           flex: 1 0 13.5rem;
+          padding: .375rem 0;
 
           &__sub {
             @extend %small-font;
@@ -74,7 +75,6 @@
           width: 100%;
           @extend %regular-font;
           @extend %strong;
-          font-family: "Roboto Mono", monospace;
           user-select: text;
 
           input[type=text] {

@@ -1,6 +1,6 @@
 @import "../../styles/variable";
 
-.profile-setting {
+.domain-setting {
   @extend %col-nowrap;
   flex: 1 1 auto;
 
@@ -17,15 +17,6 @@
       .user-card {
         min-width: 24rem;
       }
-    }
-  }
-
-  &__preview-row {
-    @extend %row-nowrap;
-    justify-content: flex-end;
-    .user-card {
-      width: 30rem;
-      border: 1px solid $gray-100;
     }
   }
 

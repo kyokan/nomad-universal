@@ -8,12 +8,14 @@
   border-radius: .125rem;
   overflow: hidden;
   position: relative;
-  user-select: none;
+  cursor: default;
 
   &__cover-image {
-    height: 8rem;
+    height: 10rem;
     width: 100%;
     background-color: $gray-800;
+    background-size: cover;
+    background-repeat: no-repeat;
   }
 
   &__content {
@@ -27,6 +29,7 @@
     align-items: flex-start;
 
     .avatar {
+      flex: 0 0 auto;
       width: 3.125rem;
       height: 3.125rem;
       margin: .5rem;
@@ -65,21 +68,20 @@
         text-overflow: ellipsis;
         white-space: nowrap;
       }
-
-      .marked {
-        @extend %lite-font;
-        font-weight: 400;
-        padding-right: 1rem;
-        max-height: 9.75rem;
-      }
-
     }
 
     &__bio {
       @extend %lite-font;
-      color: $dark-primary-text;
+      color: $regular-primary-text;
       margin-top: .25rem;
       margin-bottom: .25rem;
+
+      .rich-text-editor .DraftEditor-root {
+        @extend %small-font;
+        font-weight: 400;
+        padding-right: 1rem;
+        max-height: 9.75rem;
+      }
     }
 
     .button {

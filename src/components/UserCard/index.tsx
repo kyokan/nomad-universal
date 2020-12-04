@@ -11,11 +11,13 @@ import "./user-card.scss";
 import {parseUsername, undotName} from "../../utils/user";
 import classNames from "classnames";
 import {
+  getCSSImageURLFromPostHash,
   getImageURLFromAvatarType,
   getImageURLFromPostHash
 } from "../../utils/posts";
 import Markup from "../Markup";
 import Avatar from "../Avatar";
+import RichTextEditor from "../RichTextEditor";
 
 type UserCardProps = {
   username: string;
@@ -66,7 +68,15 @@ function UserCard(props: UserCardProps): ReactElement {
             </div>
           </div>
           <div className="user-card__info__bio">
-            {user?.bio}
+            {
+              user?.bio && (
+                <RichTextEditor
+                  content={user?.bio}
+                  onChange={() => Promise.reject(null)}
+                  readOnly
+                />
+              )
+            }
           </div>
           <div className="user-card__info__footer">
             <div className="user-card__info__footer__number">
@@ -115,12 +125,16 @@ export const RawUserCard = (props: RawUserCardProps) => {
   } = props;
   return (
     <div className="user-card">
-      {/*<div*/}
-      {/*  className="user-card__cover-image"*/}
-      {/*  style={{*/}
-      {/*    backgroundImage: getCSSImageURLFromPostHash(coverImageUrl || ''),*/}
-      {/*  }}*/}
-      {/*/>*/}
+      {
+        coverImageUrl && (
+          <div
+            className="user-card__cover-image"
+            style={{
+              backgroundImage: getCSSImageURLFromPostHash(coverImageUrl || ''),
+            }}
+          />
+        )
+      }
       <div className="user-card__info">
         <img
           className="avatar"

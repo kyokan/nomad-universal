@@ -82,7 +82,8 @@ button.follow--btn {
     }
 
     &__username {
-      @extend %small-font;
+      @extend %regular-font;
+      margin-top: .125rem;
       color: $light-primary-text;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -90,9 +91,11 @@ button.follow--btn {
     }
 
     &__bio {
-      @extend %small-font;
-      color: $dark-primary-text;
-      margin-top: .5rem;
+      .rich-text-editor .DraftEditor-root {
+        @extend %small-font;
+        color: $regular-primary-text;
+        margin-top: .5rem;
+      }
     }
   }
 
@@ -140,6 +143,7 @@ button.follow--btn {
     justify-content: flex-end;
     height: 12.5rem;
     background-color: $gray-100;
+    display: none;
 
     .custom-view-header__cover-img__title {
       color: $white;
@@ -171,19 +175,18 @@ button.follow--btn {
 @media only screen and (max-width: 768px) {
   .user-view__title-row {
     display: flex;
-    flex-flow: column nowrap;
+    flex-flow: row nowrap;
   }
 
   .user-view__avatar {
-    height: 4rem;
-    width: 4rem;
+    height: 3rem;
+    width: 3rem;
     border-radius: 4px;
     margin: .8125rem .5rem 0rem 1rem;
+    border: 1px solid #e6e6e6;
   }
 
   .user-view__name {
-    padding-top: .6125rem;
-    margin-top: 1rem;
-    border-top: 1px solid $gray-100;
+    padding: .8125rem .5rem 1rem;
   }
 }

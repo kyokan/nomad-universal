@@ -29,6 +29,7 @@ import {INDEXER_API} from "../../utils/api";
 import {NapiResponse} from "../../utils/types";
 import Avatar from "../Avatar";
 import {Pageable} from "../../types/Pageable";
+import RichTextEditor from "../RichTextEditor";
 
 
 const postIPCMain = async (a: any, b?: any): Promise<NapiResponse<any>> => {
@@ -404,7 +405,11 @@ function UserView(props: Props): ReactElement {
             {
               !!user?.bio && (
                 <div className="user-view__name__bio">
-                  {user?.bio}
+                  <RichTextEditor
+                    onChange={() => Promise.reject(null)}
+                    content={user?.bio}
+                    readOnly
+                  />
                 </div>
               )
             }
@@ -413,7 +418,7 @@ function UserView(props: Props): ReactElement {
       )}
       headerItems={headerItems}
       headerActions={headerActions}
-      heroImageUrl={user?.coverImage}
+      heroImageUrl={user?.coverImage?.trim()}
       canUploadHero={isCurrentUser}
       canUploadAvatar={isCurrentUser}
       selectedHash={props.match.params?.postHash}
@@ -431,7 +436,6 @@ function UserView(props: Props): ReactElement {
       onUpdateCoverImage={onUpdateCoverImage}
       onCoverImageChange={onCoverImageChange}
       onTagClick={onTagClick}
-      // @ts-ignore
       panels={panelActions}
     />
   );

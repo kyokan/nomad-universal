@@ -9,6 +9,7 @@ import {RelayerNewPostResponse} from "../../utils/types";
 
 type Props = {
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
+  onFileUpload: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps;
 
 function Settings (props: Props): ReactElement {
@@ -52,6 +53,7 @@ function renderContent(props: Props): ReactNode {
         <Route path="/settings/profile">
           <ProfileSetting
             sendPost={props.onSendPost}
+            onFileUpload={props.onFileUpload}
           />
         </Route>
         <Route path="/settings/domain">

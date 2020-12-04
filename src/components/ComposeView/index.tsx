@@ -190,6 +190,7 @@ function ComposeView(props: Props): ReactElement {
                   content={draft.content}
                   onFileUpload={props.onFileUpload}
                   onChange={onDraftChange}
+                  disabled={isSending || success || truncate}
                 />
               </div>
             )

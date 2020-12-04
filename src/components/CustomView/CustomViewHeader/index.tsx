@@ -1,7 +1,7 @@
 import React, {MouseEventHandler, ReactElement, ReactNode, useCallback, MouseEvent, useState} from 'react';
 import './custom-view-header.scss';
 import c from 'classnames';
-import {getCSSImageURLFromPostHash} from "../../../utils/posts";
+import {getCSSImageURLFromPostHash, replaceLink} from "../../../utils/posts";
 import {isHex} from "../../../utils/hex";
 
 type Props = {
@@ -56,13 +56,13 @@ function CustomViewHeader(props: Props): ReactElement {
     <div className={c("custom-view-header", {
       'custom-view-header--no-avatar': !avatarUrl && !canUploadAvatar,
     })}>
-      {/*<CoverImage*/}
-      {/*  heroImageUrl={heroImageUrl}*/}
-      {/*  uploadable={canUploadHero}*/}
-      {/*  hideCoverImage={hideCoverImage}*/}
-      {/*  onTitleUpdate={onTitleUpdate}*/}
-      {/*  titleEditable={titleEditable}*/}
-      {/*/>*/}
+      <CoverImage
+        heroImageUrl={heroImageUrl}
+        uploadable={canUploadHero}
+        hideCoverImage={hideCoverImage}
+        onTitleUpdate={onTitleUpdate}
+        titleEditable={titleEditable}
+      />
       {titleFn && titleFn()}
       {
         actions && (
@@ -199,12 +199,10 @@ function CoverImage(props: CoverImageProps): ReactElement {
   return (
     <div
       className={c("custom-view-header__cover-img", {
-        'custom-view-header__cover-img--blank': !heroImageUrl && !uploadable,
+        'custom-view-header__cover-img--blank': !heroImageUrl,
       })}
       style={{
-        backgroundImage: isHex(heroImageUrl)
-          ? getCSSImageURLFromPostHash(heroImageUrl || '')
-          : `url(${heroImageUrl})`,
+        backgroundImage: `url(${replaceLink(heroImageUrl || '')})`,
       }}
     >
       <div className="custom-view-header__cover-img__title">

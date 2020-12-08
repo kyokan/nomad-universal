@@ -1,6 +1,4 @@
-// @ts-ignore
 import React, {Component, MouseEvent} from "react";
-// @ts-ignore
 import ReactDOM from "react-dom";
 import "./full-screen-modal-root.scss";
 

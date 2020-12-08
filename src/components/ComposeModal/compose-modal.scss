@@ -1,0 +1,92 @@
+@import "../../styles/variable";
+
+.compose-modal {
+  @extend %col-nowrap;
+  z-index: 200;
+  position: fixed;
+  top: 2rem;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  background-color: $white;
+  width: 30rem;
+  border-radius: .25rem;
+
+  div.DraftEditor-root {
+    max-height: 55vh;
+  }
+
+  .icon {
+    font-size: 1.5rem !important;
+    transition: color 150ms ease-in-out;
+
+    &:hover {
+      color: $gray-800;
+    }
+
+    &:active {
+      color: $black;
+    }
+  }
+
+  &__header {
+    @extend %row-nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    padding: .75rem 1.25rem;
+
+    &__label {
+      justify-content: flex-start;
+      flex: 1 1 auto;
+      font-weight: 600;
+    }
+
+    &__switch {
+      @extend %small-font;
+      color: $blue-800;
+      cursor: pointer;
+      margin-right: .5rem;
+    }
+
+    .icon {
+      color: $gray-300;
+    }
+  }
+
+  &__content {
+    padding: 0 1.25rem;
+  }
+
+  &__footer {
+    @extend %row-nowrap;
+    padding: 1rem 1.25rem;
+
+    .icon {
+      color: $gray-300;
+
+      &:hover {
+        color: $blue-800;
+      }
+
+      &:active {
+        color: $blue;
+      }
+    }
+
+    &__l {
+      @extend %row-nowrap;
+      flex: 1 1 auto;
+      width: 0;
+
+      .icon {
+        margin-right: .8125rem;
+      }
+    }
+
+    &__r {
+      @extend %row-nowrap;
+      justify-content: flex-end;
+      flex: 1 0 auto;
+    }
+  }
+}

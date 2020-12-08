@@ -1,0 +1,15 @@
+@import "../../styles/variable";
+
+.text-editor {
+  .markdown-editor {
+    margin: 0;
+  }
+
+  .markdown-editor__content {
+    margin: 0;
+  }
+
+  .markdown-editor__textarea {
+    margin: 0;
+  }
+}

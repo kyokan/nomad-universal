@@ -19,6 +19,7 @@ type Props = {
   onLogout?: () => void;
   onSetting?: () => void;
   onDownloadKeystore?: () => void;
+  onCompose?: () => void;
 } & RouteComponentProps;
 function AppHeader(props: Props): ReactElement {
   return (
@@ -171,7 +172,7 @@ function renderRight(props: Props): ReactNode {
       <Icon
         material="edit"
         width={28}
-        onClick={onCreate}
+        onClick={props.onCompose ? props.onCompose : onCreate}
         disabled={!user?.confirmed}
       />
       <Menuable

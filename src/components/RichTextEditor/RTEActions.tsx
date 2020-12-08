@@ -1,10 +1,12 @@
-import React, {ReactElement} from "react";
+import React, {MouseEventHandler, ReactElement} from "react";
 import {withRouter} from "react-router";
 import Icon from "../Icon";
 import "./rte-actions.scss";
+import Menuable from "../Menuable";
 
 type Props = {
   className?: string;
+  onInsertLinkClick: MouseEventHandler;
 };
 
 export default function RTEActions(props: Props): ReactElement {
@@ -12,10 +14,10 @@ export default function RTEActions(props: Props): ReactElement {
     <div className={`rte-actions ${props.className}`}>
       <Icon
         material="insert_link"
-        onClick={() => null}
+        onClick={props.onInsertLinkClick}
       />
       <Icon
-        material="storage"
+        material="insert_photo"
         onClick={() => null}
       />
       <Icon

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, MouseEventHandler, ReactElement, useCallback, useState} from "react";
+import React, {ChangeEvent, MouseEventHandler, ReactElement, ReactNode, useCallback, useState} from "react";
 import {withRouter, RouteComponentProps} from "react-router";
 import {FullScreenModal} from "../FullScreenModal";
 import "./compose-modal.scss";
@@ -8,9 +8,12 @@ import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
 import {RelayerNewPostResponse} from "../../utils/types";
 import TextEditor from "../TextEditor";
 import {useDraftPost, useUpdateDraft} from "../../ducks/drafts";
+import Input from "../Input";
+import LinkPreview from "../LinkPreview";
 
 type Props = {
   onClose: MouseEventHandler;
+  onOpenLink: (url: string) => void;
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
   onFileUpload: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps;
@@ -20,8 +23,6 @@ export default withRouter(ComposeModal);
 function ComposeModal(props: Props): ReactElement {
   const draft = useDraftPost();
   const updateDraft = useUpdateDraft();
-
-  const rows = draft.content.split('\n').length;
 
   const [isPreviewing, setPreviewing] = useState(false);
   const [isSending, setSending] = useState(false);
@@ -41,6 +42,18 @@ function ComposeModal(props: Props): ReactElement {
     });
     setErrorMessage('');
   }, [draft]);
+
+  const removePreview = useCallback((e) => {
+    updateDraft({
+      ...draft,
+      subtype: '',
+      title: '',
+    });
+  }, [
+    draft.title,
+    draft.content,
+    draft.subtype,
+  ]);
 
   const send = useCallback(async () => {
     if (isSending || success) return;
@@ -68,6 +81,17 @@ function ComposeModal(props: Props): ReactElement {
     draft.tags.join(','),
     truncate,
   ]);
+
+  const [showURLInput, setURLInput] = useState(false);
+
+  if (showURLInput) {
+    return (
+      <URLInputModal
+        {...props}
+        onBack={() => setURLInput(false)}
+      />
+    )
+  }
 
   return (
     <FullScreenModal
@@ -99,10 +123,28 @@ function ComposeModal(props: Props): ReactElement {
             defaultContent={draft.content}
           />
         </div>
+        {
+          draft.subtype === 'LINK' && draft.title && (
+            <div className="compose-modal__link-preview">
+              <LinkPreview
+                url={draft.title.trim()}
+                onOpenLink={props.onOpenLink}
+              />
+              <div
+                className="compose-modal__link-preview__close-btn"
+              >
+                <Icon
+                  material="delete_outline"
+                  onClick={removePreview}
+                />
+              </div>
+            </div>
+          )
+        }
         <div className="compose-modal__footer">
           <div className="compose-modal__footer__l">
             <RTEActions
-
+              onInsertLinkClick={() => setURLInput(!showURLInput)}
             />
           </div>
           <div className="compose-modal__footer__r">
@@ -110,6 +152,133 @@ function ComposeModal(props: Props): ReactElement {
               material="send"
               onClick={() => null}
             />
+          </div>
+        </div>
+      </div>
+    </FullScreenModal>
+  )
+}
+
+
+
+function URLInputModal(
+  props: Props & {
+    onBack: () => void;
+  },
+): ReactElement {
+  const draft = useDraftPost();
+  const updateDraft = useUpdateDraft();
+  const [inputVal, setInputVal] = useState(draft.title);
+  const [link, setLink] = useState(draft.title);
+
+  const onURLChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setInputVal(value);
+    try {
+      new URL(e.target.value);
+      setLink(value);
+    } catch (e) {
+      setLink('');
+    }
+  }, []);
+
+  const confirm = useCallback((e) => {
+    try {
+      new URL(link);
+      updateDraft({
+        ...draft,
+        subtype: 'LINK',
+        title: link
+      });
+    } catch (e) {
+      updateDraft({
+        ...draft,
+        subtype: '',
+        title: '',
+      });
+    } finally {
+      props.onBack();
+    }
+  }, [
+    draft.title,
+    draft.content,
+    draft.subtype,
+    link,
+  ]);
+
+  const cancel = useCallback((e) => {
+    updateDraft({
+      ...draft,
+      subtype: '',
+      title: '',
+    });
+    setLink('');
+    setInputVal('');
+  }, [
+    draft.title,
+    draft.content,
+    draft.subtype,
+  ]);
+
+  return (
+    <FullScreenModal onClose={props.onClose}>
+      <div
+        className="compose-modal"
+        onClick={e => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <div className="compose-modal__header">
+          <Icon
+            material="keyboard_backspace"
+            onClick={props.onBack}
+          />
+          <div className="compose-modal__header__label url-input-modal__header__label">
+            Insert Link
+          </div>
+          <Icon
+            material="close"
+            onClick={props.onClose}
+          />
+        </div>
+        <div className="compose-modal__content">
+          <Input
+            type="text"
+            onChange={onURLChange}
+            placeholder="Link"
+            value={inputVal}
+          />
+        </div>
+        {
+          link && (
+            <div className="compose-modal__link-preview">
+              <LinkPreview
+                url={link}
+                onOpenLink={props.onOpenLink}
+              />
+              <div
+                className="compose-modal__link-preview__close-btn"
+              >
+                <Icon
+                  material="delete_outline"
+                  onClick={cancel}
+                />
+              </div>
+            </div>
+          )
+        }
+        <div className="compose-modal__footer">
+          <div className="compose-modal__footer__l" />
+          <div className="compose-modal__footer__r">
+            {
+              link && (
+                <Icon
+                  material="check"
+                  onClick={confirm}
+                />
+              )
+            }
           </div>
         </div>
       </div>

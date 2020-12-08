@@ -39,6 +39,7 @@
       justify-content: flex-start;
       flex: 1 1 auto;
       font-weight: 600;
+      cursor: default;
     }
 
     &__switch {
@@ -55,6 +56,40 @@
 
   &__content {
     padding: 0 1.25rem;
+  }
+
+  &__link-preview {
+    position: relative;
+    display: block;
+
+    &__close-btn {
+      position: absolute;
+      top: 1.125rem;
+      right: 1.375rem;
+
+      .icon {
+        color: $gray-300;
+        opacity: 0;
+
+        &:hover {
+          color: $red-800;
+        }
+
+        &:active {
+          color: $red;
+        }
+      }
+    }
+
+    &:hover {
+      .compose-modal__link-preview__close-btn .icon {
+        opacity: 1;
+      }
+    }
+  }
+
+  .link-preview {
+    margin: 1rem 1.25rem 0 1.25rem;
   }
 
   &__footer {
@@ -87,6 +122,14 @@
       @extend %row-nowrap;
       justify-content: flex-end;
       flex: 1 0 auto;
+    }
+  }
+}
+
+.url-input-modal {
+  &__header {
+    &__label {
+      margin-left: .5rem;
     }
   }
 }

@@ -58,7 +58,7 @@ function RichTextEditor(props: Props): ReactElement {
 
   const [ref, setRef] = useState<Editor|null>(null);
   const [editorState, _setEditorState] = useState<EditorState>(props.content
-    ? EditorState.createWithContent(ContentState.createFromText(props.content))
+    ? mapDraftToEditorState(createNewDraft({ content: props.content }))
     : EditorState.createEmpty()
   );
   const [title, setTitle] = useState<string>('');

@@ -1,4 +1,4 @@
-import React, {ChangeEvent, MouseEventHandler, ReactElement, ReactNode, useCallback, useState} from "react";
+import React, {ChangeEvent, MouseEvent, ReactElement, useCallback, useEffect, useState} from "react";
 import {withRouter, RouteComponentProps} from "react-router";
 import {FullScreenModal} from "../FullScreenModal";
 import "./compose-modal.scss";
@@ -10,9 +10,10 @@ import TextEditor from "../TextEditor";
 import {useDraftPost, useUpdateDraft} from "../../ducks/drafts";
 import Input from "../Input";
 import LinkPreview from "../LinkPreview";
+import Button from "../Button";
 
 type Props = {
-  onClose: MouseEventHandler;
+  onClose: (e?: MouseEvent) => void;
   onOpenLink: (url: string) => void;
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
   onFileUpload: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
@@ -29,31 +30,37 @@ function ComposeModal(props: Props): ReactElement {
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [truncate, setTruncate] = useState(false);
-  const [previewUrl, setPreviewUrl] = useState('');
+
+  const [subtype, setSubtype] = useState<''|'LINK'>(draft.subtype);
+  const [title, setTitle] = useState(draft.title);
+  const [content, setContent] = useState(draft.content);
+
+  useEffect(() => {
+    return () => {
+      updateDraft(createNewDraft({ title, content, subtype }));
+    }
+  }, [title, content, subtype]);
 
   const togglePreview = useCallback(() => {
     setPreviewing(!isPreviewing);
-  }, [isPreviewing]);
-
-  const onDraftChange = useCallback(async (draftPost: DraftPost ) => {
-    updateDraft({
-      ...draft,
-      content: draftPost.content,
-    });
-    setErrorMessage('');
-  }, [draft]);
-
-  const removePreview = useCallback((e) => {
-    updateDraft({
-      ...draft,
-      subtype: '',
-      title: '',
-    });
   }, [
-    draft.title,
-    draft.content,
-    draft.subtype,
+    isPreviewing,
   ]);
+
+  const removePreview = useCallback(() => {
+    setTitle('');
+    setSubtype('');
+  }, []);
+
+  const onDraftChange = useCallback((draftPost: DraftPost ) => {
+    setContent(draftPost.content);
+    setErrorMessage('');
+  }, []);
+
+  const onAddLink = useCallback((url: string) => {
+    setTitle(url);
+    setSubtype('LINK');
+  }, []);
 
   const send = useCallback(async () => {
     if (isSending || success) return;
@@ -61,13 +68,16 @@ function ComposeModal(props: Props): ReactElement {
     setSending(true);
 
     try {
-      await props.onSendPost(draft, truncate);
+      await props.onSendPost(createNewDraft({
+        title, content, subtype,
+      }), truncate);
       setSuccess(true);
       setErrorMessage('');
       updateDraft(createNewDraft());
-      setTimeout(() => {
-        props.history.push('/');
-      }, 500);
+      setContent('');
+      setTitle('');
+      setSubtype('');
+      props.onClose();
     } catch (e) {
       setErrorMessage(e.message);
     } finally {
@@ -76,18 +86,27 @@ function ComposeModal(props: Props): ReactElement {
   }, [
     isSending,
     success,
-    draft.content,
-    draft.attachments.join(','),
-    draft.tags.join(','),
+    title,
+    subtype,
+    content,
     truncate,
   ]);
 
   const [showURLInput, setURLInput] = useState(false);
 
+  let disabled = false;
+
+  if (subtype === 'LINK') {
+    disabled = !content && !title;
+  } else {
+    disabled = !content;
+  }
+
   if (showURLInput) {
     return (
       <URLInputModal
         {...props}
+        onAddLink={onAddLink}
         onBack={() => setURLInput(false)}
       />
     )
@@ -120,14 +139,14 @@ function ComposeModal(props: Props): ReactElement {
           <TextEditor
             onChange={onDraftChange}
             mode={isPreviewing ? "markdown" : "editor"}
-            defaultContent={draft.content}
+            defaultContent={content}
           />
         </div>
         {
-          draft.subtype === 'LINK' && draft.title && (
+          subtype === 'LINK' && title && (
             <div className="compose-modal__link-preview">
               <LinkPreview
-                url={draft.title.trim()}
+                url={title.trim()}
                 onOpenLink={props.onOpenLink}
               />
               <div
@@ -148,10 +167,15 @@ function ComposeModal(props: Props): ReactElement {
             />
           </div>
           <div className="compose-modal__footer__r">
-            <Icon
-              material="send"
-              onClick={() => null}
-            />
+            <Button
+              onClick={send}
+              loading={isSending}
+              disabled={disabled}
+            >
+              <Icon
+                material="send"
+              />
+            </Button>
           </div>
         </div>
       </div>
@@ -164,12 +188,11 @@ function ComposeModal(props: Props): ReactElement {
 function URLInputModal(
   props: Props & {
     onBack: () => void;
+    onAddLink: (link: string) => void;
   },
 ): ReactElement {
-  const draft = useDraftPost();
-  const updateDraft = useUpdateDraft();
-  const [inputVal, setInputVal] = useState(draft.title);
-  const [link, setLink] = useState(draft.title);
+  const [inputVal, setInputVal] = useState('');
+  const [link, setLink] = useState('');
 
   const onURLChange = useCallback((e: ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -185,40 +208,21 @@ function URLInputModal(
   const confirm = useCallback((e) => {
     try {
       new URL(link);
-      updateDraft({
-        ...draft,
-        subtype: 'LINK',
-        title: link
-      });
+      props.onAddLink(link);
     } catch (e) {
-      updateDraft({
-        ...draft,
-        subtype: '',
-        title: '',
-      });
+      props.onAddLink('');
     } finally {
       props.onBack();
     }
   }, [
-    draft.title,
-    draft.content,
-    draft.subtype,
     link,
   ]);
 
   const cancel = useCallback((e) => {
-    updateDraft({
-      ...draft,
-      subtype: '',
-      title: '',
-    });
+    props.onAddLink('');
     setLink('');
     setInputVal('');
-  }, [
-    draft.title,
-    draft.content,
-    draft.subtype,
-  ]);
+  }, []);
 
   return (
     <FullScreenModal onClose={props.onClose}>
@@ -255,7 +259,7 @@ function URLInputModal(
             <div className="compose-modal__link-preview">
               <LinkPreview
                 url={link}
-                onOpenLink={props.onOpenLink}
+                onOpenLink={() => null}
               />
               <div
                 className="compose-modal__link-preview__close-btn"

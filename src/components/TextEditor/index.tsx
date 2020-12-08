@@ -24,7 +24,9 @@ type Props = {
 
 function TextEditor(props: Props): ReactElement {
   const {disabled, mode} = props;
-  const [draft, updateDraft] = useState<DraftPost>(createNewDraft({ content: props.defaultContent }));
+  const [draft, updateDraft] = useState<DraftPost>(createNewDraft({
+    content: props.defaultContent || '',
+  }));
   const rows = draft.content.split('\n').length;
   const [defaultRTEContent, setDefaultRTEContent] = useState(props.defaultContent);
   const [markdown, setMarkdown] = useState(props.defaultContent);
@@ -41,7 +43,11 @@ function TextEditor(props: Props): ReactElement {
         content: draftPost.content,
       });
     }
-  }, [draft]);
+  }, [
+    draft.title,
+    draft.content,
+    draft.subtype,
+  ]);
 
   const onMarkdownChangeChange = useCallback(async (e: ChangeEvent<HTMLTextAreaElement> ) => {
     const markdownString = e.target.value;
@@ -57,7 +63,11 @@ function TextEditor(props: Props): ReactElement {
         content: markdownString,
       });
     }
-  }, [draft]);
+  }, [
+    draft.title,
+    draft.content,
+    draft.subtype,
+  ]);
 
   useEffect(() => {
     if (mode === "markdown") {

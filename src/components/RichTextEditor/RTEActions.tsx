@@ -7,6 +7,7 @@ import Menuable from "../Menuable";
 type Props = {
   className?: string;
   onInsertLinkClick: MouseEventHandler;
+  onInsertFileClick: MouseEventHandler;
 };
 
 export default function RTEActions(props: Props): ReactElement {
@@ -18,7 +19,7 @@ export default function RTEActions(props: Props): ReactElement {
       />
       <Icon
         material="insert_photo"
-        onClick={() => null}
+        onClick={props.onInsertFileClick}
       />
       <Icon
         material="public"

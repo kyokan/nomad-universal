@@ -58,6 +58,43 @@
     padding: 0 1.25rem;
   }
 
+  &__file-upload-options {
+    @extend %col-nowrap;
+
+    &--disabled {
+      opacity: .5;
+      cursor: default;
+    }
+  }
+
+  &__file-upload-option {
+    @extend %row-nowrap;
+    align-items: center;
+    border: 1px solid $gray-150;
+    cursor: pointer;
+    border-radius: .125rem;
+
+    .icon {
+      width: 2rem !important;
+      height: 2rem !important;
+      margin: .5rem;
+    }
+
+    &__label {
+      margin-left: .5rem;
+      flex: 1 1 auto;
+      width: 0;
+    }
+
+    &:hover {
+      border: 1px solid $gray-200;
+    }
+
+    .loader {
+      margin-right: 1rem;
+    }
+  }
+
   &__link-preview {
     position: relative;
     display: block;

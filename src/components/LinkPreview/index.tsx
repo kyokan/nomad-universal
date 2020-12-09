@@ -2,6 +2,7 @@ import React, {ReactElement, useEffect, useState} from "react";
 import classNames from "classnames";
 import {INDEXER_API} from "../../utils/api";
 import "./link-preview.scss";
+import {replaceLink} from "../../utils/posts";
 
 type LinkPreviewProps = {
   className?: string;
@@ -50,13 +51,15 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
 
   useEffect(() => {
     (async function onLinkPreviewMount() {
+      const link = replaceLink(props.url);
+
       try {
-        const url = new URL(props.url);
+        const url = new URL(link);
 
         setHost(url.hostname);
 
         if (url.hostname === 'siasky.net') {
-          const resp = await fetch(props.url);
+          const resp = await fetch(link);
           const metadata = JSON.parse(resp.headers.get('skynet-file-metadata') || '');
           const subfiles = metadata?.subfiles || {};
           const filepath = metadata?.defaultpath
@@ -70,12 +73,12 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
             setHtmlProps(null);
             setYoutubeProps(null);
             setImageProps(null);
-            VID_CACHE[props.url] = {
-              videoUrl: props.url,
+            VID_CACHE[link] = {
+              videoUrl: link,
               title: file?.filename,
               description: '',
             };
-            setVideoProps(VID_CACHE[props.url]);
+            setVideoProps(VID_CACHE[link]);
             return;
           }
 
@@ -83,17 +86,17 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
             setHtmlProps(null);
             setYoutubeProps(null);
             setVideoProps(null);
-            IMG_CACHE[props.url] = {
+            IMG_CACHE[link] = {
               title: file?.filename,
               description: '',
-              imageUrl: props.url,
+              imageUrl: link,
             };
-            setImageProps(IMG_CACHE[props.url]);
+            setImageProps(IMG_CACHE[link]);
             return;
           }
 
-          HTML_CACHE[props.url] = {
-            url: props.url,
+          HTML_CACHE[link] = {
+            url: link,
             title: file?.filename,
             siteName: url.hostname,
             description: '',
@@ -103,53 +106,53 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
             videos: [],
             favicons: [],
           };
-          setHtmlProps(HTML_CACHE[props.url]);
+          setHtmlProps(HTML_CACHE[link]);
           setYoutubeProps(null);
           setImageProps(null);
           setVideoProps(null);
           return;
         }
 
-        if (URL_LOADING[props.url]) {
+        if (URL_LOADING[link]) {
           return;
         }
 
-        if (VID_CACHE[props.url]) {
-          return setVideoProps(VID_CACHE[props.url]);
+        if (VID_CACHE[link]) {
+          return setVideoProps(VID_CACHE[link]);
         }
 
-        if (IMG_CACHE[props.url]) {
-          return setImageProps(IMG_CACHE[props.url]);
+        if (IMG_CACHE[link]) {
+          return setImageProps(IMG_CACHE[link]);
         }
 
-        if (HTML_CACHE[props.url]) {
-          return setHtmlProps(HTML_CACHE[props.url]);
+        if (HTML_CACHE[link]) {
+          return setHtmlProps(HTML_CACHE[link]);
         }
 
-        if (YT_CACHE[props.url]) {
-          return setYoutubeProps(YT_CACHE[props.url]);
+        if (YT_CACHE[link]) {
+          return setYoutubeProps(YT_CACHE[link]);
         }
 
-        URL_LOADING[props.url] = true;
-        const resp = await fetch(`${INDEXER_API}/preview?url=${encodeURI(props.url)}`);
+        URL_LOADING[link] = true;
+        const resp = await fetch(`${INDEXER_API}/preview?url=${encodeURI(link)}`);
         const json = await resp.json();
 
         console.log(json);
 
         if (json.siteName === 'YouTube') {
           const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;
-          const match = props.url.match(regExp);
+          const match = link.match(regExp);
           if (match && match[2].length == 11) {
             setHtmlProps(null);
             setImageProps(null);
             setVideoProps(null);
-            YT_CACHE[props.url] = {
+            YT_CACHE[link] = {
               title: json.title,
               description: json.description,
               videoId: match[2],
               images: json.images,
             };
-            setYoutubeProps(YT_CACHE[props.url]);
+            setYoutubeProps(YT_CACHE[link]);
             return;
           }
         }
@@ -159,13 +162,13 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
           setYoutubeProps(null);
           setImageProps(null);
 
-          VID_CACHE[props.url] = {
+          VID_CACHE[link] = {
             videoUrl: json.videos[0]?.url,
             title: json.title,
             description: json.description,
             images: json.images,
           };
-          setVideoProps(VID_CACHE[props.url]);
+          setVideoProps(VID_CACHE[link]);
           return;
         }
 
@@ -174,13 +177,13 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
           setYoutubeProps(null);
           setImageProps(null);
 
-          VID_CACHE[props.url] = {
+          VID_CACHE[link] = {
             videoUrl: json.url,
             title: json.contentType,
             siteName: url.host,
             images: [],
           };
-          setVideoProps(VID_CACHE[props.url]);
+          setVideoProps(VID_CACHE[link]);
           return;
         }
 
@@ -188,12 +191,12 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
           setHtmlProps(null);
           setYoutubeProps(null);
           setVideoProps(null);
-          IMG_CACHE[props.url] = {
+          IMG_CACHE[link] = {
             title: json.title,
             description: json.description,
             imageUrl: json.url,
           };
-          setImageProps(IMG_CACHE[props.url]);
+          setImageProps(IMG_CACHE[link]);
           return;
         }
 
@@ -208,7 +211,7 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
           setYoutubeProps(null);
           setImageProps(null);
           setVideoProps(null);
-          HTML_CACHE[props.url] = {
+          HTML_CACHE[link] = {
             ...json,
             url: json.url,
             title: json.contentType,
@@ -223,7 +226,7 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
           setYoutubeProps(null);
           setImageProps(null);
           setVideoProps(null);
-          HTML_CACHE[props.url] = json;
+          HTML_CACHE[link] = json;
           return;
         }
 
@@ -231,7 +234,7 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
         console.error(e);
       } finally {
         setLoading(false);
-        URL_LOADING[props.url] = false;
+        URL_LOADING[link] = false;
       }
     })();
   }, [props.url]);

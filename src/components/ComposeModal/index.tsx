@@ -11,6 +11,8 @@ import {useDraftPost, useUpdateDraft} from "../../ducks/drafts";
 import Input from "../Input";
 import LinkPreview from "../LinkPreview";
 import Button from "../Button";
+import SkynetLogo from '../../static/assets/icons/skynet-logo.svg';
+import classNames from "classnames";
 
 type Props = {
   onClose: (e?: MouseEvent) => void;
@@ -93,6 +95,7 @@ function ComposeModal(props: Props): ReactElement {
   ]);
 
   const [showURLInput, setURLInput] = useState(false);
+  const [showImageUpload, setImageUpload] = useState(false);
 
   let disabled = false;
 
@@ -108,6 +111,16 @@ function ComposeModal(props: Props): ReactElement {
         {...props}
         onAddLink={onAddLink}
         onBack={() => setURLInput(false)}
+      />
+    )
+  }
+
+  if (showImageUpload) {
+    return (
+      <ImageUploadModal
+        {...props}
+        onAddLink={onAddLink}
+        onBack={() => setImageUpload(false)}
       />
     )
   }
@@ -164,6 +177,7 @@ function ComposeModal(props: Props): ReactElement {
           <div className="compose-modal__footer__l">
             <RTEActions
               onInsertLinkClick={() => setURLInput(!showURLInput)}
+              onInsertFileClick={() => setImageUpload(!showURLInput)}
             />
           </div>
           <div className="compose-modal__footer__r">
@@ -182,8 +196,6 @@ function ComposeModal(props: Props): ReactElement {
     </FullScreenModal>
   )
 }
-
-
 
 function URLInputModal(
   props: Props & {
@@ -253,6 +265,128 @@ function URLInputModal(
             placeholder="Link"
             value={inputVal}
           />
+        </div>
+        {
+          link && (
+            <div className="compose-modal__link-preview">
+              <LinkPreview
+                url={link}
+                onOpenLink={() => null}
+              />
+              <div
+                className="compose-modal__link-preview__close-btn"
+              >
+                <Icon
+                  material="delete_outline"
+                  onClick={cancel}
+                />
+              </div>
+            </div>
+          )
+        }
+        <div className="compose-modal__footer">
+          <div className="compose-modal__footer__l" />
+          <div className="compose-modal__footer__r">
+            {
+              link && (
+                <Icon
+                  material="check"
+                  onClick={confirm}
+                />
+              )
+            }
+          </div>
+        </div>
+      </div>
+    </FullScreenModal>
+  )
+}
+
+function ImageUploadModal(
+  props: Props & {
+    onBack: () => void;
+    onAddLink: (link: string) => void;
+  },
+): ReactElement {
+  const [inputVal, setInputVal] = useState('');
+  const [link, setLink] = useState('');
+  const [uploading, setUploading] = useState(false);
+
+  const onFileUpload = useCallback(async () => {
+    if (!props.onFileUpload) return;
+    setUploading(true);
+    await props.onFileUpload(async (file, skylink, progress) => {
+      setLink(skylink);
+      setUploading(false);
+    });
+  }, [props.onFileUpload]);
+
+  const confirm = useCallback((e) => {
+    try {
+      new URL(link);
+      props.onAddLink(link);
+    } catch (e) {
+      props.onAddLink('');
+    } finally {
+      props.onBack();
+    }
+  }, [
+    link,
+  ]);
+
+  const cancel = useCallback((e) => {
+    props.onAddLink('');
+    setLink('');
+    setInputVal('');
+  }, []);
+
+  return (
+    <FullScreenModal onClose={props.onClose}>
+      <div
+        className="compose-modal"
+        onClick={e => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <div className="compose-modal__header">
+          <Icon
+            material="keyboard_backspace"
+            onClick={props.onBack}
+          />
+          <div className="compose-modal__header__label url-input-modal__header__label">
+            Upload via...
+          </div>
+          <Icon
+            material="close"
+            onClick={props.onClose}
+          />
+        </div>
+        <div className="compose-modal__content">
+          <div
+            className={classNames("compose-modal__file-upload-options", {
+              'compose-modal__file-upload-options--disabled': uploading,
+            })}
+          >
+            <div
+              className="compose-modal__file-upload-option"
+              onClick={onFileUpload}
+            >
+              <Icon
+                url={SkynetLogo}
+              />
+              <div
+                className="compose-modal__file-upload-option__label"
+              >
+                Sia Skynet
+              </div>
+              {
+                uploading && (
+                  <div className="loader" />
+                )
+              }
+            </div>
+          </div>
         </div>
         {
           link && (

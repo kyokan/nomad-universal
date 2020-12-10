@@ -153,6 +153,7 @@ export function RegularPost(props: RegularPostProps): ReactElement {
         canReply={(post.pending || !user?.confirmed) ? undefined : props.canReply}
         onTagClick={props.onTagClick}
         selected={props.selected}
+        moderationSetting={post.moderationSetting}
       />
     );
 }
@@ -202,6 +203,7 @@ export function RawPost(props: RawPostProps): ReactElement {
     onOpenLink,
     onFileUpload,
     type: postType,
+    moderationSetting,
   } = props;
 
   return (
@@ -233,6 +235,7 @@ export function RawPost(props: RawPostProps): ReactElement {
       selected={selected}
       pending={pending}
       postType={postType}
+      moderationSetting={moderationSetting}
     />
   );
 }

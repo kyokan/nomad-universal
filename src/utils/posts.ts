@@ -44,6 +44,7 @@ export const mapDomainEnvelopeToPost = (env: DomainEnvelope<DomainPost>): Respon
     tags: env.message.tags || [],
     hash: env.refhash,
     type: env.message.type,
+    moderationSetting: env.message.moderationSetting || null,
     meta: {
       replyCount: env.message.replyCount,
       likeCount: env.message.likeCount,
@@ -132,4 +133,19 @@ export function replaceLink(link: string): string {
   } catch (e) {}
 
   return replacedHref;
+}
+
+export function getModIcon(moderationType?: string|null): string {
+  let modIcon = 'public';
+
+  switch (moderationType) {
+    case "SETTINGS__FOLLOWS_ONLY":
+      modIcon = 'lock';
+      break;
+    case "SETTINGS__NO_BLOCKS":
+      modIcon = 'admin_panel_settings';
+      break;
+  }
+
+  return modIcon;
 }

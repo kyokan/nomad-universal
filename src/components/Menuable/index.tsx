@@ -11,7 +11,9 @@ export enum MenuTypes {
 
 export type MenuProps = {
   iconUrl?: string;
+  material?: string;
   text?: ReactNode;
+  subtext?: string;
   items?: (MenuProps | null)[];
   onClick?: (e: MouseEvent, closeMenu?: () => void) => void;
   forceRender?: (cb?: () => void) => ReactNode;
@@ -156,9 +158,11 @@ export function Menu(props: MenuProps): ReactElement {
               <Icon
                 className="menu__row__icon"
                 url={menu.iconUrl || ''}
+                material={menu.material || ''}
                 width={12}
               />
-              <span>{ menu.text }</span>
+              <span className="menu__row__text">{ menu.text }</span>
+              { menu.subtext && <span className="menu__row__subtext">{ menu.subtext }</span>}
               <Menu
                 items={menu.items}
                 closeMenu={closeMenu}

@@ -27,7 +27,7 @@ import {RichTextEditor} from "../ComposeView";
 import {markup} from "../../utils/rte";
 import LinkPreview from "../LinkPreview";
 import {PostType} from "../../types/posts";
-import {replaceLink} from "../../utils/posts";
+import {getModIcon, replaceLink} from "../../utils/posts";
 
 type Props = {
   type: 'card' | 'compact' | 'title';
@@ -57,6 +57,7 @@ type Props = {
   selected?: boolean;
   pending?: boolean;
   postType: PostType;
+  moderationSetting?: 'SETTINGS__FOLLOWS_ONLY'|'SETTINGS__NO_BLOCKS'|null;
 };
 
 
@@ -178,7 +179,7 @@ function Card(props: Props): ReactElement {
           />
         )
       }
-      <div className="post-card__footer">
+      <div className="post-card__footer" onClick={e => e.stopPropagation()}>
         {
           !!canReply && (
             <PostButton
@@ -207,6 +208,10 @@ function Card(props: Props): ReactElement {
             />
           )
         }
+        <PostButton
+          className="post-card__footer__mod-btn"
+          material={getModIcon(props.moderationSetting)}
+        />
         { renderPostMenu(props) }
       </div>
       {renderQuickReplyEditor(hash, isShowingReply, setShowingReply, onSendReply, onFileUpload)}

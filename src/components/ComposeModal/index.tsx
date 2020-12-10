@@ -13,6 +13,7 @@ import LinkPreview from "../LinkPreview";
 import Button from "../Button";
 import SkynetLogo from '../../static/assets/icons/skynet-logo.svg';
 import classNames from "classnames";
+import {ModerationType} from "fn-client/lib/application/Moderation";
 
 type Props = {
   onClose: (e?: MouseEvent) => void;
@@ -36,6 +37,7 @@ function ComposeModal(props: Props): ReactElement {
   const [subtype, setSubtype] = useState<''|'LINK'>(draft.subtype);
   const [title, setTitle] = useState(draft.title);
   const [content, setContent] = useState(draft.content);
+  const [modType, setModType] = useState<ModerationType|null>(null);
 
   useEffect(() => {
     return () => {
@@ -71,7 +73,10 @@ function ComposeModal(props: Props): ReactElement {
 
     try {
       await props.onSendPost(createNewDraft({
-        title, content, subtype,
+        title,
+        content,
+        subtype,
+        moderationType: modType,
       }), truncate);
       setSuccess(true);
       setErrorMessage('');
@@ -92,10 +97,12 @@ function ComposeModal(props: Props): ReactElement {
     subtype,
     content,
     truncate,
+    modType,
   ]);
 
   const [showURLInput, setURLInput] = useState(false);
   const [showImageUpload, setImageUpload] = useState(false);
+  const [showModeration, setModeration] = useState(false);
 
   let disabled = false;
 
@@ -123,6 +130,17 @@ function ComposeModal(props: Props): ReactElement {
         onBack={() => setImageUpload(false)}
       />
     )
+  }
+
+  if (showModeration) {
+    return (
+      <ModerationSettingModal
+        {...props}
+        onBack={() => setModeration(false)}
+        onSelectModerationType={setModType}
+        currentModerationType={modType}
+      />
+    );
   }
 
   return (
@@ -178,6 +196,8 @@ function ComposeModal(props: Props): ReactElement {
             <RTEActions
               onInsertLinkClick={() => setURLInput(!showURLInput)}
               onInsertFileClick={() => setImageUpload(!showURLInput)}
+              onModerationClick={() => setModeration(!showModeration)}
+              moderationType={modType}
             />
           </div>
           <div className="compose-modal__footer__r">
@@ -422,4 +442,116 @@ function ImageUploadModal(
       </div>
     </FullScreenModal>
   )
+}
+
+function ModerationSettingModal(
+  props: Props & {
+    onBack: () => void;
+    onSelectModerationType: (type: ModerationType|null) => void;
+    currentModerationType: ModerationType|null;
+  },
+): ReactElement {
+  const onSelectModerationType = useCallback((type: ModerationType|null) => {
+    props.onSelectModerationType(type);
+    props.onBack();
+  }, [
+    props.onSelectModerationType,
+    props.onBack,
+  ]);
+
+  return (
+    <FullScreenModal onClose={props.onClose}>
+      <div
+        className="compose-modal"
+        onClick={e => {
+          e.preventDefault();
+          e.stopPropagation();
+        }}
+      >
+        <div className="compose-modal__header">
+          <Icon
+            material="keyboard_backspace"
+            onClick={props.onBack}
+          />
+          <div className="compose-modal__header__label url-input-modal__header__label">
+            Moderation Settings
+          </div>
+          <Icon
+            material="close"
+            onClick={props.onClose}
+          />
+        </div>
+        <div className="compose-modal__content">
+          <div className="compose-modal__content__title">
+            Choose whose replies will show up on your post by default
+          </div>
+          <div className="compose-modal__selectors">
+            {
+              renderSelector(
+                'public',
+                'Everyone',
+                'Show replies from everyone',
+                () => onSelectModerationType(null),
+                !props.currentModerationType,
+              )
+            }
+            {
+              renderSelector(
+                'admin_panel_settings',
+                'No Blocks',
+                'Hide replies from people you block',
+                () => onSelectModerationType('SETTINGS__NO_BLOCKS'),
+                props.currentModerationType === 'SETTINGS__NO_BLOCKS',
+              )
+            }
+            {
+              renderSelector(
+                'lock',
+                'Follows Only',
+                'Only show replies from people you follow',
+                () => onSelectModerationType('SETTINGS__FOLLOWS_ONLY'),
+                props.currentModerationType === 'SETTINGS__FOLLOWS_ONLY',
+              )
+            }
+          </div>
+        </div>
+        <div className="compose-modal__footer">
+          <div className="compose-modal__footer__l" />
+          <div className="compose-modal__footer__r">
+          </div>
+        </div>
+      </div>
+    </FullScreenModal>
+  )
+}
+
+function renderSelector(
+  material: string,
+  text: string,
+  subtext: string,
+  onClick: () => void,
+  selected: boolean,
+) {
+  return (
+    <div
+      className={classNames("compose-modal__selector", {
+        'compose-modal__selector--selected': selected,
+      })}
+      onClick={onClick}
+    >
+      <Icon
+        className="compose-modal__selector__icon"
+        material={material}
+      />
+      <div className="compose-modal__selector__content">
+        <div className="compose-modal__selector__content__text">
+          {text}
+        </div>
+        <div className="compose-modal__selector__content__subtext">
+          {subtext}
+        </div>
+      </div>
+      { selected && <Icon className="compose-modal__selector__icon" material="check" /> }
+    </div>
+  );
 }

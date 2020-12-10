@@ -66,6 +66,7 @@ export type Post = {
   attachments: string[];
   next?: number | null;
   pending?: boolean;
+  moderationSetting: 'SETTINGS__FOLLOWS_ONLY'|'SETTINGS__NO_BLOCKS'|null;
 }
 
 export type PostOpts = {
@@ -84,6 +85,7 @@ export type PostOpts = {
   parent?: string;
   attachments?: string[];
   pending?: boolean;
+  moderationSetting?: 'SETTINGS__FOLLOWS_ONLY'|'SETTINGS__NO_BLOCKS'|null;
 }
 
 export type GlobalMeta = {
@@ -157,6 +159,7 @@ export const createNewPost = (post?: PostOpts): Post => {
     tags: [],
     parent: '',
     attachments: [],
+    moderationSetting: null,
     meta: {
       replyCount: 0,
       likeCount: 0,
@@ -258,6 +261,7 @@ export const mapRawToPost = (rawPost: ResponsePost): Post => {
     comments: [],
     attachments: [],
     meta: rawPost.meta,
+    moderationSetting: rawPost.moderationSetting,
   });
 };
 

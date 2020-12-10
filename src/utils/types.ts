@@ -25,6 +25,7 @@ export type ResponsePost = {
   meta: PostMeta;
   title: string;
   type: PostType;
+  moderationSetting: 'SETTINGS__FOLLOWS_ONLY' | 'SETTINGS__NO_BLOCKS' | null;
 };
 
 /**

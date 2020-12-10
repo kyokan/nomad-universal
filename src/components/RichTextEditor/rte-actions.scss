@@ -2,4 +2,11 @@
 
 .rte-actions {
   @extend %row-nowrap;
+
+  .icon-menu {
+    @extend %row-nowrap;
+    align-items: center;
+  }
 }
+
+

@@ -229,6 +229,10 @@
     .menuable {
       margin-left: .5rem;
     }
+
+    &__mod-btn {
+      cursor: default !important;
+    }
   }
 
   &--avatarless {
@@ -447,8 +451,21 @@ button.post-button.post-card__footer__like-btn.post-button--active {
   }
 }
 
-button.post-button.post-card__footer__reply-btn.post-button--active {
+button.post-button.post-card__footer__reply-btn.post-button--active,
+button.post-button.post-card__footer__mod-btn.post-button--active {
   .icon {
     color: $blue;
+  }
+}
+
+button.post-button.post-card__footer__mod-btn {
+  &:active,
+  &:hover {
+    .icon {
+      color: $light-primary-text !important;
+    }
+    .post-button__text {
+      color: $light-primary-text !important;
+    }
   }
 }

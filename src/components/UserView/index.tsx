@@ -21,7 +21,6 @@ import {
 } from "../../ducks/drafts";
 import {useDispatch} from "react-redux";
 import uniq from "lodash.uniq";
-import {useMuteUser, useUnmuteUser} from "../../ducks/blocklist";
 import './user-view.scss';
 import Menuable from "../Menuable";
 import {mapDomainEnvelopeToPost} from "../../utils/posts";
@@ -214,8 +213,6 @@ function UserView(props: Props): ReactElement {
     }
   }, [_viewType]);
 
-  const onMuteUser = useMuteUser();
-  const onUnmuteUser = useUnmuteUser();
   // const onCreateNewView = useCreateNewView();
    const currentFollowings = useCurrentFollowings();
   const currentBlockedMap = useCurrentBlocks();

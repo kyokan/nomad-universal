@@ -18,6 +18,7 @@
     margin: 0 auto;
     flex: 1 1 auto;
     max-width: 60rem;
+    padding: 0 .5rem;
 
     &__l {
       @extend %row-nowrap;

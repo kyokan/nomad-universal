@@ -61,9 +61,18 @@
           &__sub {
             @extend %small-font;
             @extend %strong;
-            //top: 1.25rem;
-            //position: absolute;
+            margin-top: .375rem;
             color: $gray-400;
+          }
+        }
+
+        &__list {
+          flex: 1 1 20rem;
+          padding: .1875rem;
+          border: 1px solid $gray-150;
+
+          .user-panel__row {
+            border: 1px solid $gray-150;
           }
         }
 
@@ -203,9 +212,11 @@
     flex: 0 0 auto;
   }
 
-  .setting__group__content__row__value {
+  .setting__group__content__row__value,
+  .setting__group__content__row__list {
     justify-content: flex-start;
     flex: 0 0 auto;
+    width: 100%;
   }
 }
 

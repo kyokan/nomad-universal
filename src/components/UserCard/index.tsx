@@ -1,9 +1,9 @@
-import React, {ReactElement, useCallback} from "react";
+import React, {ReactElement, useCallback, useEffect} from "react";
 import { withRouter, RouteComponentProps } from "react-router";
 import {
   addUserFollowings,
   useCurrentFollowings,
-  useCurrentUsername,
+  useCurrentUsername, useFetchUser,
   useUser,
 } from "../../ducks/users";
 import {useDispatch} from "react-redux";
@@ -31,10 +31,17 @@ function UserCard(props: UserCardProps): ReactElement {
   const currentUsername = useCurrentUsername();
   const currentFollowings = useCurrentFollowings();
   const { tld, subdomain } = parseUsername(username);
+  const fetchUser = useFetchUser();
 
   const goToUserProfile = useCallback(() => {
     props.history.push(`/users/${username}/timeline`);
   }, [props.history]);
+
+  useEffect(() => {
+    if (!user) {
+      fetchUser(username);
+    }
+  }, [user, username]);
 
   const followUser = useCallback(async (e: any) => {
     e.stopPropagation();
@@ -45,6 +52,7 @@ function UserCard(props: UserCardProps): ReactElement {
       }));
       return;
     }
+
 
     await onFollowUser(username);
   }, [username, currentUsername]);

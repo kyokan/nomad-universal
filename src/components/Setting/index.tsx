@@ -6,6 +6,7 @@ import "./settings.scss";
 import classNames from "classnames";
 import {DraftPost} from "../../ducks/drafts/type";
 import {RelayerNewPostResponse} from "../../utils/types";
+import ModerationSetting from "../ModerationSetting";
 
 type Props = {
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
@@ -42,6 +43,14 @@ function renderNav(props: RouteComponentProps): ReactNode {
       >
         Profile
       </div>
+      <div
+        className={classNames("settings__nav__row", {
+          "settings__nav__row--active": "/settings/moderation" === props.location.pathname,
+        })}
+        onClick={() => props.history.push('/settings/moderation')}
+      >
+        Moderation
+      </div>
     </div>
   )
 }
@@ -58,6 +67,9 @@ function renderContent(props: Props): ReactNode {
         </Route>
         <Route path="/settings/domain">
           <DomainSetting />
+        </Route>
+        <Route path="/settings/moderation">
+          <ModerationSetting />
         </Route>
         <Route>
           <Redirect to="/settings/domain" />

@@ -198,7 +198,7 @@ function _UserFollowingRow(props: {username: string} & RouteComponentProps): Rea
           <div className="user-panel__row__info__stats__number">
             {stats?.followings || 0}
           </div>
-          <div className="user-panel__row__info__stats__unit">Following</div>
+          <div className="user-panel__row__info__stats__unit">Followings</div>
           <div className="user-panel__row__info__stats__divider" />
           <div className="user-panel__row__info__stats__number">
             {stats?.followers || 0}

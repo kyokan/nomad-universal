@@ -1,14 +1,15 @@
 import {Dispatch} from "redux";
-import {useDispatch, useSelector} from "react-redux";
+import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {useCallback} from "react";
 import {ThunkDispatch} from "redux-thunk";
-import {NapiResponse} from "../utils/types";
+
+type Blocklist = {
+  connectorTLD: string;
+}
 
 enum BlocklistActionType {
-  SET_MUTELIST = 'app/blocklist/setMutelist',
-  SET_MUTE_USER = 'app/blocklist/setMuteUser',
-  MUTE_USER = 'app/blocklist/muteUser',
-  UNMUTE_USER = 'app/blocklist/unmuteUser',
+  ADD_BLOCKLIST = 'app/blocklist/addBlocklist',
+  REMOVE_BLOCKLIST = 'app/blocklist/removeBlocklist',
 }
 
 type BlocklistAction<payload> = {
@@ -19,91 +20,61 @@ type BlocklistAction<payload> = {
 }
 
 type BlocklistState = {
-  users: {
-    [username: string]: true;
-  };
+  list: Blocklist[];
 }
 
 const initialState: BlocklistState = {
-  users: {},
+  list: [],
 };
 
+export const addBlocklist = (payload: Blocklist): BlocklistAction<Blocklist> => ({
+  type: BlocklistActionType.ADD_BLOCKLIST,
+  payload,
+});
 
-export const fetchMutelist = () => async (dispatch: Dispatch) => {
-  dispatch({
-    type: BlocklistActionType.SET_MUTELIST,
-    payload: [],
+export const removeBlocklist = (payload: Blocklist): BlocklistAction<Blocklist> => ({
+  type: BlocklistActionType.ADD_BLOCKLIST,
+  payload,
+});
+
+export const useBlocklist = () => {
+  return useSelector((state: {blocklist: BlocklistState}) => {
+    return state.blocklist.list;
+  }, (a, b) => {
+    return a.map(({ connectorTLD }) => connectorTLD).join(',')
+      === b.map(({ connectorTLD }) => connectorTLD).join(',');
   });
 };
 
-export const setMuteUser = (username: string) => ({
-  type: BlocklistActionType.MUTE_USER,
-  payload: username,
-});
-
-export const setUnmuteUser = (username: string) => ({
-  type: BlocklistActionType.UNMUTE_USER,
-  payload: username,
-});
-
-export const muteUser = (username: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
-  // dispatch(fetchCurrentUserData());
-};
-
-export const unmuteUser = (username: string) => async (dispatch: ThunkDispatch<any, any, any>) => {
-  // dispatch(fetchCurrentUserData());
-};
-
-export default function mutelistReducer(state: BlocklistState = initialState, action: BlocklistAction<any>): BlocklistState {
+export default function blocklistReducer(state: BlocklistState = initialState, action: BlocklistAction<any>): BlocklistState {
   switch (action.type) {
-    case BlocklistActionType.MUTE_USER:
-      return {
-        ...state,
-        users: {
-          ...state.users || {},
-          [action.payload]: true,
-        },
-      };
-    case BlocklistActionType.UNMUTE_USER:
-      return {
-        ...state,
-        users: {
-          ...state.users || {},
-          [action.payload]: false,
-        },
-      };
-    case BlocklistActionType.SET_MUTELIST:
-      return {
-        ...state,
-        users: action.payload.users.reduce((acc: {[u: string]: boolean}, username: string) => {
-          acc[username] = true;
-          return acc;
-        }, {}),
-      };
+    case BlocklistActionType.ADD_BLOCKLIST:
+      return reduceAddBlocklist(state, action);
+    case BlocklistActionType.REMOVE_BLOCKLIST:
+      return reduceRemoveBlocklist(state, action);
     default:
       return state;
   }
 }
 
-export const useMutedUser = () => {
-  return useSelector((state: { blocklist: BlocklistState }) => {
-    return state.blocklist.users;
-  }, (a, b) => {
-    return Object.entries(a).map(([ name, isBlocked ]) => `${name}:${isBlocked}`).join(',')
-      === Object.entries(b).map(([ name, isBlocked ]) => `${name}:${isBlocked}`).join(',');
-  });
-};
+function reduceAddBlocklist(state: BlocklistState, action: BlocklistAction<Blocklist>): BlocklistState {
+  const blocklist = action.payload;
+  const exist = state.list.find(({ connectorTLD }) => connectorTLD !== blocklist.connectorTLD);
 
-export const useMuteUser = (): (name: string) => void => {
-  const dispatch = useDispatch();
-  return useCallback((name: string) => {
-    dispatch(muteUser(name));
-  }, [dispatch])
-};
+  return exist
+    ? state
+    : {
+      list: [...state.list, blocklist],
+    };
+}
 
-export const useUnmuteUser = (): (name: string) => void => {
-  const dispatch = useDispatch();
-  return useCallback((name: string) => {
-    dispatch(unmuteUser(name));
-  }, [dispatch])
-};
+function reduceRemoveBlocklist(state: BlocklistState, action: BlocklistAction<Blocklist>): BlocklistState {
+  const blocklist = action.payload;
+  const exist = state.list.find(({ connectorTLD }) => connectorTLD !== blocklist.connectorTLD);
+
+  return !exist
+    ? state
+    : {
+      list: state.list.filter(({ connectorTLD }) => connectorTLD !== blocklist.connectorTLD),
+    };
+}

@@ -6,6 +6,7 @@ cp ./src/components/RichTextEditor/rte-actions.scss ./lib/components/RichTextEdi
 cp ./src/components/ComposeModal/compose-modal.scss ./lib/components/ComposeModal/compose-modal.scss
 cp ./src/components/ComposeView/drafts.scss ./lib/components/ComposeView/drafts.scss
 cp ./src/components/Setting/settings.scss ./lib/components/Setting/settings.scss
+cp ./src/components/ModerationSetting/moderation-setting.scss ./lib/components/ModerationSetting/moderation-setting.scss
 cp ./src/components/DomainSetting/domain-setting.scss ./lib/components/DomainSetting/domain-setting.scss
 cp ./src/components/UserDirectoryView/user-dir.scss ./lib/components/UserDirectoryView/user-dir.scss
 cp ./src/components/ComposeViewPanels/index.scss ./lib/components/ComposeViewPanels/index.scss

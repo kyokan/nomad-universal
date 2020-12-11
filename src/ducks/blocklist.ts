@@ -2,6 +2,7 @@ import {Dispatch} from "redux";
 import {shallowEqual, useDispatch, useSelector} from "react-redux";
 import {useCallback} from "react";
 import {ThunkDispatch} from "redux-thunk";
+import {useCurrentUsername} from "./users";
 
 type Blocklist = {
   connectorTLD: string;
@@ -38,11 +39,15 @@ export const removeBlocklist = (payload: Blocklist): BlocklistAction<Blocklist> 
 });
 
 export const useBlocklist = () => {
+  const currentUser = useCurrentUsername();
   return useSelector((state: {blocklist: BlocklistState}) => {
-    return state.blocklist.list;
+    const list = state.blocklist.list;
+    let mods: string[] = (!currentUser || list.find(({ connectorTLD }) => connectorTLD === currentUser))
+      ? list.map(({ connectorTLD }) => connectorTLD)
+      : [currentUser].concat(list.map(({ connectorTLD }) => connectorTLD));
+    return mods;
   }, (a, b) => {
-    return a.map(({ connectorTLD }) => connectorTLD).join(',')
-      === b.map(({ connectorTLD }) => connectorTLD).join(',');
+    return a.join(',') === b.join(',');
   });
 };
 

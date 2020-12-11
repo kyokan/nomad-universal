@@ -20,6 +20,7 @@ import {
   ResponsePost,
 } from "../utils/types";
 import {Pageable} from "../types/Pageable";
+import {useBlocklist} from "./blocklist";
 
 type TopicMeta = {
   postOrder: {
@@ -140,7 +141,7 @@ const initState: PostsState = {
 type UpdatePostAction = PostsAction<Post>;
 type UpdateCommentsAction = PostsAction<{
   hash: string;
-  next: number | null;
+  next?: number | null;
   items: string[];
 }>
 
@@ -190,7 +191,7 @@ export const appendNewComment = (parentHash: string, commentId: string, shouldIn
   meta: { shouldIncrement },
 });
 
-const _updateComments = (hash: string, next: number | null, items: string[]): UpdateCommentsAction => ({
+export const _updateComments = (hash: string, next?: number | null, items: string[] = []): UpdateCommentsAction => ({
   type: PostsActionType.UPDATE_COMMENTS,
   payload: {
     hash,
@@ -199,7 +200,7 @@ const _updateComments = (hash: string, next: number | null, items: string[]): Up
   },
 });
 
-export const updateComments = (hash: string, next: number | null, items: string[]) => (dispatch: Dispatch) => {
+export const updateComments = (hash: string, next?: number | null, items: string[] = []) => (dispatch: Dispatch) => {
   setTimeout(() => {
     dispatch(_updateComments(hash, next, items));
   }, 0);
@@ -317,9 +318,11 @@ export const fetchPostByHash = (hash: string) => async (dispatch: ThunkDispatch<
 
 export const fetchComments = (
   parent: string, order: 'ASC' | 'DESC' = 'DESC',
-  start?: number
+  start?: number,
+  blocklist: string[] = [],
 ) => async (dispatch: ThunkDispatch<{}, {}, PostsAction<any>>) => {
-  const resp = await fetch(`${INDEXER_API}/posts/${parent}/comments?order=${order}${start ? '&offset=' + start : ''}`);
+  const extendBlockQuery = blocklist.map(tld => `&extendBlockSrc=${tld}`).join('');
+  const resp = await fetch(`${INDEXER_API}/posts/${parent}/comments?order=${order}${start ? '&offset=' + start : ''}${extendBlockQuery}`);
   const json: NapiResponse<Pageable<DomainEnvelope<DomainPost>, number>> = await resp.json();
   const comments: string[] = [];
   json.payload.items.forEach((postWithMeta: DomainEnvelope<DomainPost>) => {
@@ -693,13 +696,15 @@ export const useBlockUser = () => {
 
 export const useFetchMoreComments = (parentHash: string) => {
   const { next } = usePostId(parentHash);
+  const blocklist = useBlocklist();
   const dispatch = useDispatch();
+
   return useCallback(async () => {
     if (next === null) {
       return;
     }
 
-    return dispatch(fetchComments(parentHash, 'DESC', next));
-  }, [next, dispatch, parentHash]);
+    return dispatch(fetchComments(parentHash, 'DESC', next, blocklist));
+  }, [next, dispatch, parentHash, blocklist.join()]);
 };
 

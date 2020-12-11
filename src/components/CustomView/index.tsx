@@ -100,6 +100,33 @@ function CustomView(props: Props): ReactElement {
 
   const onScroll = debounce(_onScroll, 50, { leading: true });
 
+  if (selectedHash) {
+    return (
+      <div className={`custom-view custom-view--selected ${className}`}>
+        <div className="custom-view__content">
+          <>
+            <div className="custom-view__content__selected-post">
+              <CustomViewHeader
+                title=""
+                titleFn={titleFn}
+                heroImageUrl={heroImageUrl}
+              />
+              <DetailPane
+                postHash={selectedHash}
+                onLikePost={onLikePost}
+                onSendReply={onSendReply}
+                onBlockUser={onBlockUser}
+                onFollowUser={onFollowUser}
+                onOpenLink={props.onOpenLink}
+                onFileUpload={props.onFileUpload}
+              />
+            </div>
+          </>
+        </div>
+      </div>
+    )
+  }
+
   const list = (
     <div
       // @ts-ignore
@@ -143,33 +170,6 @@ function CustomView(props: Props): ReactElement {
       </CustomViewPosts>
     </div>
   );
-
-  if (selectedHash) {
-    return (
-      <div className={`custom-view custom-view--selected ${className}`}>
-        <div className="custom-view__content">
-          <>
-            <div className="custom-view__content__selected-post">
-              <CustomViewHeader
-                title=""
-                titleFn={titleFn}
-                heroImageUrl={heroImageUrl}
-              />
-              <DetailPane
-                postHash={selectedHash}
-                onLikePost={onLikePost}
-                onSendReply={onSendReply}
-                onBlockUser={onBlockUser}
-                onFollowUser={onFollowUser}
-                onOpenLink={props.onOpenLink}
-                onFileUpload={props.onFileUpload}
-              />
-            </div>
-          </>
-        </div>
-      </div>
-    )
-  }
 
   return (
     <div className={`custom-view ${className}`}>

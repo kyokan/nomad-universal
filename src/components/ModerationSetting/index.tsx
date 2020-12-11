@@ -32,11 +32,6 @@ export default withRouter(ModerationSetting);
 
 function renderBlocklist(props: Props): ReactNode {
   const list = useBlocklist();
-  const currentUser = useCurrentUsername();
-
-  let mods: string[] = (!currentUser || list.find(({ connectorTLD }) => connectorTLD === currentUser))
-    ? list.map(({ connectorTLD }) => connectorTLD)
-    : [currentUser].concat(list.map(({ connectorTLD }) => connectorTLD));
 
   return (
     <div className="setting__group__content__row">
@@ -49,8 +44,9 @@ function renderBlocklist(props: Props): ReactNode {
       <div
         className="setting__group__content__row__list"
       >
-        {mods.map(tld => (
+        {list.map(tld => (
           <UserBlockRow
+            key={tld}
             username={tld}
           />
         ))}
@@ -75,10 +71,7 @@ function _UserBlockRow(props: {username: string} & RouteComponentProps): ReactEl
       <div className="user-panel__row__info">
         <div className="user-panel__row__info__name">
           <div className="user-panel__row__info__display-name">
-            {displayName || subdomain || tld}'s Blocklist
-          </div>
-          <div className="user-panel__row__info__username">
-            {`@${username}`}
+            Blocked by @{tld}
           </div>
         </div>
         <div className="user-panel__row__info__stats">
@@ -86,7 +79,7 @@ function _UserBlockRow(props: {username: string} & RouteComponentProps): ReactEl
             {stats?.blockings || 0}
           </div>
           <div className="user-panel__row__info__stats__unit">
-            blocked domain(s)
+            domain(s)
           </div>
         </div>
       </div>

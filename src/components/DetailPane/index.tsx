@@ -4,6 +4,7 @@ import {RouteComponentProps, withRouter} from "react-router";
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
 import {
+  _updateComments, updateComments,
   useCommentsFromParentId,
   useFetchMoreComments,
 } from "../../ducks/posts";
@@ -12,6 +13,8 @@ import {mapDomainEnvelopeToPost} from "../../utils/posts";
 import Thread from "../Thread";
 import {INDEXER_API} from "../../utils/api";
 import {NapiResponse} from "../../utils/types";
+import {useBlocklist} from "../../ducks/blocklist";
+import {useDispatch} from "react-redux";
 
 type Props = {
   postHash?: string;
@@ -29,6 +32,7 @@ function DetailPane (props: Props): ReactElement {
   const [isLoading, setLoading] = useState(false);
   const [parents, setParents] = useState<string[]>([]);
   const comments = useCommentsFromParentId(postHash);
+  const blocklist = useBlocklist();
   // const post = usePostId(postHash);
   // const postsMap = usePostsMap();
   // const dispatch = useDispatch();
@@ -38,12 +42,26 @@ function DetailPane (props: Props): ReactElement {
     (async function onDetailPaneUpdate() {
       setLoading(true);
       const results = await queryParents(postHash);
-      loadMore();
+      await loadMore();
       setParents(results);
       setLoading(false);
     }())
   }, [postHash]);
 
+  const dispatch = useDispatch();
+  const [lastBlocklist, setLastBlocklast] = useState<string[]>([]);
+
+  // useEffect(() => {
+  //   (async function onBlocklistUpdated() {
+  //     if (lastBlocklist.join() !== blocklist.join()) {
+  //       setLoading(true);
+  //       setLastBlocklast(blocklist);
+  //       dispatch(_updateComments(postHash, undefined, []));
+  //       await loadMore();
+  //       setLoading(false);
+  //     }
+  //   })();
+  // }, [blocklist, lastBlocklist, dispatch, postHash]);
 
   const onSelectPost = (hash: string) => {
     props.history.push(`/posts/${hash}`);

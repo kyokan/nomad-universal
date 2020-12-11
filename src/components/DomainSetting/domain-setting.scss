@@ -107,3 +107,85 @@
     color: $orange;
   }
 }
+
+.clear-modal {
+  @extend %col-nowrap;
+  z-index: 200;
+  position: fixed;
+  top: 2rem;
+  margin: 0 auto;
+  left: 0;
+  right: 0;
+  background-color: $white;
+  width: 30rem;
+  border-radius: .25rem;
+
+  &__header {
+    @extend %row-nowrap;
+    justify-content: flex-end;
+    align-items: center;
+    padding: .75rem 1.25rem;
+    border-bottom: 1px solid $gray-150;
+    margin-bottom: 1rem;
+
+    &__label {
+      justify-content: flex-start;
+      flex: 1 1 auto;
+      font-weight: 600;
+      cursor: default;
+    }
+
+    &__switch {
+      @extend %small-font;
+      color: $blue-800;
+      cursor: pointer;
+      margin-right: .5rem;
+    }
+
+    .icon {
+      color: $gray-300;
+    }
+  }
+
+  &__content {
+    padding: 0 1.25rem;
+
+    &__title {
+      font-weight: 500;
+      @extend %lite-font;
+    }
+  }
+
+  &__footer {
+    @extend %row-nowrap;
+    padding: 1rem 1.25rem;
+
+    .icon {
+      color: $gray-300;
+
+      &:hover {
+        color: $blue-800;
+      }
+
+      &:active {
+        color: $blue;
+      }
+    }
+
+    &__l {
+      @extend %row-nowrap;
+      flex: 1 1 auto;
+      width: 0;
+
+      .icon {
+        margin-right: .8125rem;
+      }
+    }
+
+    &__r {
+      @extend %row-nowrap;
+      justify-content: flex-end;
+      flex: 1 0 auto;
+    }
+  }
+}

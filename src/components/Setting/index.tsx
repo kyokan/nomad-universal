@@ -66,7 +66,9 @@ function renderContent(props: Props): ReactNode {
           />
         </Route>
         <Route path="/settings/domain">
-          <DomainSetting />
+          <DomainSetting
+            sendPost={props.onSendPost}
+          />
         </Route>
         <Route path="/settings/moderation">
           <ModerationSetting />

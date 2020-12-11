@@ -14,7 +14,7 @@ import Avatar from "../Avatar";
 import {getImageURLFromAvatarType, getImageURLFromPostHash} from "../../utils/posts";
 
 type Props = {
-  sendPost?: (post: DraftPost) => Promise<RelayerNewPostResponse>
+  sendPost?: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
   onFileUpload: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps;
 

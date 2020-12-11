@@ -142,7 +142,7 @@ type UpdatePostAction = PostsAction<Post>;
 type UpdateCommentsAction = PostsAction<{
   hash: string;
   next?: number | null;
-  items: string[];
+  items?: string[];
 }>
 
 export const createNewPost = (post?: PostOpts): Post => {
@@ -191,7 +191,7 @@ export const appendNewComment = (parentHash: string, commentId: string, shouldIn
   meta: { shouldIncrement },
 });
 
-export const _updateComments = (hash: string, next?: number | null, items: string[] = []): UpdateCommentsAction => ({
+export const _updateComments = (hash: string, next?: number | null, items?: string[]): UpdateCommentsAction => ({
   type: PostsActionType.UPDATE_COMMENTS,
   payload: {
     hash,
@@ -200,7 +200,7 @@ export const _updateComments = (hash: string, next?: number | null, items: strin
   },
 });
 
-export const updateComments = (hash: string, next?: number | null, items: string[] = []) => (dispatch: Dispatch) => {
+export const updateComments = (hash: string, next?: number | null, items?: string[]) => (dispatch: Dispatch) => {
   setTimeout(() => {
     dispatch(_updateComments(hash, next, items));
   }, 0);
@@ -293,7 +293,9 @@ const reduceUpdateComments = (state: PostsState, action: UpdateCommentsAction): 
       ...state.map,
       [action.payload.hash]: {
         ...old,
-        comments: uniq((old?.comments || []).concat(action.payload.items)),
+        comments: action.payload.items
+          ? uniq((old?.comments || []).concat(action.payload.items))
+          : [],
         next: action.payload.next,
       },
     },
@@ -315,12 +317,18 @@ export const fetchPostByHash = (hash: string) => async (dispatch: ThunkDispatch<
 
 
 export const fetchComments = (
-  parent: string, order: 'ASC' | 'DESC' = 'DESC',
+  parent: string,
+  order: 'ASC' | 'DESC' = 'DESC',
   start?: number,
-  blocklist: string[] = [],
+  blocklist: string[]|null = [],
 ) => async (dispatch: ThunkDispatch<{}, {}, PostsAction<any>>) => {
-  const extendBlockQuery = blocklist.map(tld => `&extendBlockSrc=${tld}`).join('');
-  const resp = await fetch(`${INDEXER_API}/posts/${parent}/comments?order=${order}${start ? '&offset=' + start : ''}${extendBlockQuery}`);
+  const extendBlockQuery = blocklist
+      ? blocklist.map(tld => `&extendBlockSrc=${tld}`).join('')
+      : [];
+  const overrideBlockQuery = blocklist === null
+    ? `&overrideBlockSrc=*&overrideFollowSrc=*`
+    : '';
+  const resp = await fetch(`${INDEXER_API}/posts/${parent}/comments?order=${order}${start ? '&offset=' + start : ''}${extendBlockQuery}${overrideBlockQuery}`);
   const json: NapiResponse<Pageable<DomainEnvelope<DomainPost>, number>> = await resp.json();
   const comments: string[] = [];
   json.payload.items.forEach((postWithMeta: DomainEnvelope<DomainPost>) => {
@@ -507,7 +515,19 @@ function reduceAppendNewComment(
 export const usePostId = (id: string): Post => {
   return useSelector((state: { posts: PostsState }): Post => {
     return createNewPost(state.posts.map[id]);
-  }, shallowEqual);
+  }, (a: Post|undefined, b: Post|undefined) => {
+    return a?.comments.join() === b?.comments.join()
+      && a?.content === b?.content
+      && a?.creator === b?.creator
+      && a?.hash === b?.hash
+      && a?.moderationSetting === b?.moderationSetting
+      && a?.parent === b?.parent
+      && a?.timestamp === b?.timestamp
+      && a?.title === b?.title
+      && a?.type === b?.type
+      && a?.next === b?.next
+      && a?.pending === b?.pending
+  });
 };
 
 export const usePostsMap = (): PostsState["map"] => {
@@ -692,17 +712,38 @@ export const useBlockUser = () => {
   }, [dispatch, currentUser.name])
 }
 
-export const useFetchMoreComments = (parentHash: string) => {
-  const { next } = usePostId(parentHash);
+const FETCH_STATE: {
+  [k: string]: boolean
+} = {};
+export const useFetchMoreComments = (
+  parentHash: string,
+  clearBlocklist = false,
+) => {
   const blocklist = useBlocklist();
   const dispatch = useDispatch();
 
-  return useCallback(async () => {
+  return useCallback(async (next?: number | null) => {
+    if (FETCH_STATE[parentHash]) return;
+
     if (next === null) {
       return;
     }
 
-    return dispatch(fetchComments(parentHash, 'DESC', next, blocklist));
-  }, [next, dispatch, parentHash, blocklist.join()]);
+    FETCH_STATE[parentHash] = true;
+    await dispatch(fetchComments(
+      parentHash,
+      'DESC',
+      next,
+      clearBlocklist
+        ? null
+        : blocklist
+    ));
+    FETCH_STATE[parentHash] = false;
+  }, [
+    dispatch,
+    parentHash,
+    blocklist.join(),
+    clearBlocklist,
+  ]);
 };
 

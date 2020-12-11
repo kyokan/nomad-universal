@@ -106,6 +106,8 @@ type RegularPostProps = {
   onNameClick?: (name: string) => void;
   onTagClick?: (tagName: string) => void;
   onOpenLink: (url: string) => void;
+  onRemoveModeration?: () => void;
+  shouldRemoveModeration?: boolean;
   onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
   selected?: boolean;
 }
@@ -115,7 +117,7 @@ export function RegularPost(props: RegularPostProps): ReactElement {
   const fetchUser = useFetchUser();
   const post = usePostId(props.hash);
   const user = useUser(post.creator);
-  const loadMoreComments = useFetchMoreComments(props.hash);
+  const loadMoreComments = useFetchMoreComments(props.hash, props.shouldRemoveModeration);
 
   useEffect(() => {
     if (!user) {
@@ -158,6 +160,8 @@ export function RegularPost(props: RegularPostProps): ReactElement {
         onFollowUser={(post.pending || !user?.confirmed) ? undefined : props.onFollowUser}
         onFileUpload={(post.pending || !user?.confirmed) ? undefined : props.onFileUpload}
         onNameClick={props.onNameClick}
+        onRemoveModeration={props.onRemoveModeration}
+        shouldRemoveModeration={props.shouldRemoveModeration}
         canReply={(post.pending || !user?.confirmed) ? undefined : props.canReply}
         onTagClick={props.onTagClick}
         selected={props.selected}
@@ -176,10 +180,12 @@ type RawPostProps = {
   onNameClick?: (name: string) => void;
   onTagClick?: (tagName: string) => void;
   onOpenLink: (url: string) => void;
+  onRemoveModeration?: () => void;
   avatar: string;
   canReply?: boolean;
   className?: string;
   selected?: boolean;
+  shouldRemoveModeration?: boolean;
   pending?: boolean;
 } & Post;
 
@@ -198,6 +204,7 @@ export function RawPost(props: RawPostProps): ReactElement {
     onSendReply,
     onNameClick,
     onTagClick,
+    onRemoveModeration,
     hash,
     id,
     avatar,
@@ -212,6 +219,7 @@ export function RawPost(props: RawPostProps): ReactElement {
     onFileUpload,
     type: postType,
     moderationSetting,
+    shouldRemoveModeration,
   } = props;
 
   return (
@@ -237,6 +245,8 @@ export function RawPost(props: RawPostProps): ReactElement {
       onTagClick={onTagClick}
       onOpenLink={onOpenLink}
       onFileUpload={onFileUpload}
+      onRemoveModeration={onRemoveModeration}
+      shouldRemoveModeration={shouldRemoveModeration}
       canReply={canReply}
       attachments={attachments}
       tags={tags}

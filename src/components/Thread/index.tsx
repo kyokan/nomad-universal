@@ -4,18 +4,14 @@ import MinusIcon from '../../static/assets/icons/minus.svg';
 import c from 'classnames';
 import './thread.scss';
 import {
+  updateComments,
   useCommentsFromParentId,
   useFetchMoreComments,
   usePostId,
-  updatePost,
-  updateComments,
-  _updateComments
 } from "../../ducks/posts";
 import { withRouter, RouteComponentProps } from "react-router";
 import {RegularPost} from "../CustomView/CustomViewPosts";
 import Icon from "../Icon";
-import {useCurrentBlocks} from "../../ducks/users";
-import blocklist, {useBlocklist} from "../../ducks/blocklist";
 import {useDispatch} from "react-redux";
 
 type OwnProps = {
@@ -28,6 +24,8 @@ type OwnProps = {
   onOpenLink: (url: string) => void;
   onSelectPost?: (hash: string, creator: string, id: string) => void;
   onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
+  onRemoveModeration?: () => void;
+  shouldRemoveModeration?: boolean;
 }
 
 type Props = OwnProps & RouteComponentProps;
@@ -36,9 +34,7 @@ function _Thread(props: Props): ReactElement {
   const { hash, level = 0 } = props;
   const [ opened, setOpened ] = useState<boolean>(level < 4);
 
-  const post = usePostId(hash);
   const comments = useCommentsFromParentId(hash);
-  const blockMap = useCurrentBlocks();
 
   const toggleReply = useCallback(() => {
     setOpened(!opened);
@@ -50,8 +46,6 @@ function _Thread(props: Props): ReactElement {
     props.history.push(`/users/${username}/timeline`);
   }, [creator]);
 
-  const likePage = props.onLikePost;
-
   const onSelectPost = props.onSelectPost || useCallback((hash) => {
     props.history.push(`/posts/${hash}`);
   }, []);
@@ -60,11 +54,23 @@ function _Thread(props: Props): ReactElement {
     props.history.push(`/tags/${tag}`);
   }, []);
 
-  const loadMore = useFetchMoreComments(hash);
+  const post = usePostId(hash);
+  const _loadMore = useFetchMoreComments(hash);
+  const loadMore = useCallback(() => {
+    return _loadMore(post?.next);
+  }, [post?.next, _loadMore]);
 
-  if (blockMap[post.creator]) {
-    return <></>;
-  }
+  const [lastMod, setLastMod] = useState(!!props.shouldRemoveModeration);
+  const dispatch = useDispatch();
+  useEffect(() => {
+    (async function() {
+      if (lastMod !== props.shouldRemoveModeration) {
+        dispatch(updateComments(hash));
+        setLastMod(!!props.shouldRemoveModeration);
+        await _loadMore();
+      }
+    })();
+  }, [props.shouldRemoveModeration, _loadMore, lastMod, dispatch, hash]);
 
   return (
     <div className={c('thread', {
@@ -89,6 +95,8 @@ function _Thread(props: Props): ReactElement {
         onSelectPost={onSelectPost}
         onNameClick={onNameClick}
         onTagClick={onTagClick}
+        shouldRemoveModeration={props.shouldRemoveModeration}
+        onRemoveModeration={props.onRemoveModeration}
         canReply
         shouldFetchCommentsOnMount
       />
@@ -106,6 +114,8 @@ function _Thread(props: Props): ReactElement {
               onFollowUser={props.onFollowUser}
               onFileUpload={props.onFileUpload}
               onSelectPost={onSelectPost}
+              shouldRemoveModeration={props.shouldRemoveModeration}
+              onRemoveModeration={props.onRemoveModeration}
             />
           );
         })

@@ -54,6 +54,14 @@
       }
     }
 
+    &--self {
+      background-color: $orange-50;
+
+      &:hover {
+        background-color: $orange-25;
+      }
+    }
+
     .avatar {
       flex: 0 0 auto;
       height: 2.125em;

@@ -1,19 +1,18 @@
-import React, {ReactElement, useEffect, useState} from 'react';
+import React, {ReactElement, useCallback, useEffect, useState} from 'react';
 import './detail.scss';
 import {RouteComponentProps, withRouter} from "react-router";
 import {Envelope as DomainEnvelope} from 'fn-client/lib/application/Envelope';
 import {Post as DomainPost} from 'fn-client/lib/application/Post';
 import {
-  _updateComments, updateComments,
+  updateComments,
   useCommentsFromParentId,
-  useFetchMoreComments,
+  useFetchMoreComments, usePostId,
 } from "../../ducks/posts";
 import {RegularPost} from "../CustomView/CustomViewPosts";
 import {mapDomainEnvelopeToPost} from "../../utils/posts";
 import Thread from "../Thread";
 import {INDEXER_API} from "../../utils/api";
 import {NapiResponse} from "../../utils/types";
-import {useBlocklist} from "../../ducks/blocklist";
 import {useDispatch} from "react-redux";
 
 type Props = {
@@ -32,11 +31,7 @@ function DetailPane (props: Props): ReactElement {
   const [isLoading, setLoading] = useState(false);
   const [parents, setParents] = useState<string[]>([]);
   const comments = useCommentsFromParentId(postHash);
-  const blocklist = useBlocklist();
-  // const post = usePostId(postHash);
-  // const postsMap = usePostsMap();
-  // const dispatch = useDispatch();
-  const loadMore = useFetchMoreComments(postHash);
+  const post = usePostId(postHash);
 
   useEffect(() => {
     (async function onDetailPaneUpdate() {
@@ -47,21 +42,6 @@ function DetailPane (props: Props): ReactElement {
       setLoading(false);
     }())
   }, [postHash]);
-
-  const dispatch = useDispatch();
-  const [lastBlocklist, setLastBlocklast] = useState<string[]>([]);
-
-  // useEffect(() => {
-  //   (async function onBlocklistUpdated() {
-  //     if (lastBlocklist.join() !== blocklist.join()) {
-  //       setLoading(true);
-  //       setLastBlocklast(blocklist);
-  //       dispatch(_updateComments(postHash, undefined, []));
-  //       await loadMore();
-  //       setLoading(false);
-  //     }
-  //   })();
-  // }, [blocklist, lastBlocklist, dispatch, postHash]);
 
   const onSelectPost = (hash: string) => {
     props.history.push(`/posts/${hash}`);
@@ -74,6 +54,35 @@ function DetailPane (props: Props): ReactElement {
   const onTagClick = (tag: string) => {
     props.history.push(`/tags/${tag}`);
   };
+
+  const [removeModeration, setRemoveModeration] = useState(false);
+  const _loadMore = useFetchMoreComments(
+    postHash,
+    removeModeration,
+  );
+  const loadMore = useCallback(() => {
+    return _loadMore(post?.next);
+  }, [post?.next, _loadMore]);
+  const dispatch = useDispatch();
+
+  const toggle = useCallback(() => {
+    (async function() {
+      dispatch(updateComments(postHash));
+      setRemoveModeration(!removeModeration);
+    })();
+  }, [removeModeration, dispatch]);
+
+  const [lastMod, setLastMod] = useState(false);
+  useEffect(() => {
+    (async function() {
+      if (lastMod !== removeModeration) {
+        setLoading(true);
+        setLastMod(removeModeration);
+        await _loadMore();
+        setLoading(false);
+      }
+    })();
+  }, [removeModeration, _loadMore, lastMod]);
 
   return !postHash ? <noscript /> : (
     <div className="detail">
@@ -115,7 +124,9 @@ function DetailPane (props: Props): ReactElement {
               onTagClick={onTagClick}
               onOpenLink={props.onOpenLink}
               onFileUpload={props.onFileUpload}
-              shouldFetchCommentsOnMount
+              onRemoveModeration={toggle}
+              shouldRemoveModeration={removeModeration}
+              // shouldFetchCommentsOnMount
               canReply
               selected
             />
@@ -134,6 +145,8 @@ function DetailPane (props: Props): ReactElement {
                 onBlockUser={props.onBlockUser}
                 onFollowUser={props.onFollowUser}
                 onFileUpload={props.onFileUpload}
+                onRemoveModeration={toggle}
+                shouldRemoveModeration={removeModeration}
               />
             ))
           }

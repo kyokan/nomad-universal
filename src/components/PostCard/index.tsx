@@ -15,20 +15,15 @@ import {
   useUser,
   useUsersMap
 } from "../../ducks/users";
-import {updateReplies, useReplies, useReplyId} from "../../ducks/drafts/replies";
-import {useDispatch} from "react-redux";
+import {useReplies, useReplyId} from "../../ducks/drafts/replies";
 import Icon from "../Icon";
 import PostCardHeader from "./PostCardHeader";
 import Menuable, {MenuProps} from "../Menuable";
 import {parseUsername, undotName} from "../../utils/user";
-import Button from "../Button";
-import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
-import {RichTextEditor} from "../ComposeView";
 import {markup} from "../../utils/rte";
 import LinkPreview from "../LinkPreview";
 import {PostType} from "../../types/posts";
 import {getModIcon, replaceLink} from "../../utils/posts";
-import ComposeModal from "../ComposeModal";
 import ReplyModal from "../ReplyModal";
 
 type Props = {
@@ -54,10 +49,12 @@ type Props = {
   onNameClick?: (name: string) => void;
   onTagClick?: (tagName: string) => void;
   onOpenLink: (url: string) => void;
+  onRemoveModeration?: () => void;
   meta?: PostMeta;
   canReply?: boolean;
   selected?: boolean;
   pending?: boolean;
+  shouldRemoveModeration?: boolean;
   postType: PostType;
   moderationSetting?: 'SETTINGS__FOLLOWS_ONLY'|'SETTINGS__NO_BLOCKS'|null;
 };
@@ -107,18 +104,8 @@ function Card(props: Props): ReactElement {
   const [isShowingReply, setShowingReply] = useState<boolean>(false);
   const [isSendingLike, setSeningLike] = useState(false);
   const currentLikes = useCurrentLikes();
-  // const onMuteUser = useMuteUser();
-  // const onUnmuteUser = useUnmuteUser();
-  // const blockedMap = useCurrentBlocks();
-  const mutedNames = userCurrentMutedNames();
   const currentUser = useCurrentUsername();
   const user = useUser(currentUser);
-  // const isCurrentUser = creator === currentUser;
-
-  // const mutedMap = (mutedNames || []).reduce((acc: {[n: string]: string}, name) => {
-  //   acc[name] = name;
-  //   return acc;
-  // }, {});
 
   const likePost = useCallback(async (e: MouseEvent) => {
     e.stopPropagation();
@@ -211,8 +198,12 @@ function Card(props: Props): ReactElement {
           )
         }
         <PostButton
-          className="post-card__footer__mod-btn"
-          material={getModIcon(props.moderationSetting)}
+          className={classNames("post-card__footer__mod-btn", {
+            'post-card__footer__mod-btn--removed': props.shouldRemoveModeration,
+          })}
+          material={getModIcon(props.shouldRemoveModeration ? '' : props.moderationSetting)}
+          onClick={props.onRemoveModeration}
+          disabled={!props.onRemoveModeration}
         />
         { renderPostMenu(props) }
       </div>
@@ -454,32 +445,6 @@ export function renderQuickReplyEditor(
   const { identities, currentUser } = useIdentity();
   const hasIdentity = !!Object.keys(identities).length;
 
-  const dispatch = useDispatch();
-
-  const onChange = useCallback((draftPost: DraftPost) => {
-    dispatch(updateReplies({
-      ...draftPost,
-      parent: hash,
-    }));
-  }, [dispatch, hash]);
-
-  const onPrimaryClick = useCallback(async () => {
-    if (isSendingReplies || !onSendReply) return;
-    await onSendReply(hash);
-    dispatch(updateReplies(createNewDraft({
-      parent: hash,
-    })));
-    setShowingReply(false);
-  }, [hash, isSendingReplies, onSendReply]);
-
-  const onSecondaryClick = useCallback(() => {
-    setShowingReply(false);
-    dispatch(updateReplies({
-      ...replyDraft,
-      content: content,
-      parent: hash,
-    }));
-  }, [isShowingReply, setShowingReply, content]);
 
   const onAddUser = useCallback(() => {
     // postIPCMain({ type: IPCMessageRequestType.OPEN_NEW_USER_WINDOW });

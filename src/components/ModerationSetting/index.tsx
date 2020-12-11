@@ -1,16 +1,13 @@
 import React, {ReactElement, ReactNode} from "react";
 import {RouteComponentProps, withRouter} from "react-router-dom";
-import copy from "copy-to-clipboard";
 import "./moderation-setting.scss";
-import Button from "../Button";
 import {DraftPost} from "../../ducks/drafts/type";
 import {RelayerNewPostResponse} from "../../utils/types";
-import {useCurrentUser, useCurrentUsername, useUser} from "../../ducks/users";
-import c = require("classnames");
-import {useBlocklist} from "../../ducks/blocklist";
+import {useCurrentUsername, useUser} from "../../ducks/users";
+import {useBlocklist, useCustomBlocklist, useDefaultBlocklist} from "../../ducks/blocklist";
 import Avatar from "../Avatar";
-import UserCard from "../UserCard";
 import {parseUsername} from "../../utils/user";
+import classNames from "classnames";
 
 type Props = {
   sendPost?: (post: DraftPost) => Promise<RelayerNewPostResponse>
@@ -22,6 +19,7 @@ function ModerationSetting(props: Props): ReactElement {
       <div className="setting__group">
         <div className="setting__group__content">
           {renderBlocklist(props)}
+          {renderDefaultBlocklist(props)}
         </div>
       </div>
     </div>
@@ -30,13 +28,39 @@ function ModerationSetting(props: Props): ReactElement {
 
 export default withRouter(ModerationSetting);
 
-function renderBlocklist(props: Props): ReactNode {
-  const list = useBlocklist();
+function renderDefaultBlocklist(props: Props): ReactNode {
+  const list = useDefaultBlocklist();
 
   return (
     <div className="setting__group__content__row">
       <div className="setting__group__content__row__label">
-        <div>Global Blocklist:</div>
+        <div>Default Blocklists:</div>
+        <div className="setting__group__content__row__label__sub">
+          Default blocklists for this site.
+        </div>
+      </div>
+      <div
+        className="setting__group__content__row__list"
+      >
+        { !list.length && 'Empty'}
+        {list.map(tld => (
+          <UserBlockRow
+            key={tld}
+            username={tld}
+          />
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function renderBlocklist(props: Props): ReactNode {
+  const list = useCustomBlocklist();
+
+  return (
+    <div className="setting__group__content__row">
+      <div className="setting__group__content__row__label">
+        <div>Your Blocklists:</div>
         <div className="setting__group__content__row__label__sub">
           Posts and replies from blocked domains will not show up on your feeds.
         </div>
@@ -59,19 +83,23 @@ export const UserBlockRow = withRouter(_UserBlockRow);
 function _UserBlockRow(props: {username: string} & RouteComponentProps): ReactElement {
   const username = props.username;
   const user = useUser(username);
-  const {tld, subdomain} = parseUsername(username);
-  const { displayName, stats } = user || {};
+  const {tld} = parseUsername(username);
+  const { stats } = user || {};
+  const currentUsername = useCurrentUsername();
+  const isSelf = currentUsername === username;
 
   return (
     <div
-      className="user-panel__row"
+      className={classNames("user-panel__row", {
+        'user-panel__row--self': isSelf,
+      })}
       onClick={() => props.history.push(`/users/${username}/blocks`)}
     >
       <Avatar username={username} />
       <div className="user-panel__row__info">
         <div className="user-panel__row__info__name">
           <div className="user-panel__row__info__display-name">
-            Blocked by @{tld}
+            {isSelf ? `Blocked by you` : `Blocked by @${tld}`}
           </div>
         </div>
         <div className="user-panel__row__info__stats">

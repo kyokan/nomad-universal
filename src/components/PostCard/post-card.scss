@@ -230,9 +230,9 @@
       margin-left: .5rem;
     }
 
-    &__mod-btn {
-      cursor: default !important;
-    }
+    //&__mod-btn {
+    //  cursor: default !important;
+    //}
   }
 
   &--avatarless {
@@ -263,22 +263,6 @@
   .attachments {
     margin: 0;
     margin-top: .5rem;
-  }
-
-  .post__reply-editor-container.post__reply-editor-container--replying {
-    height: 17rem;
-    margin-top: .75rem;
-    margin-left: 1rem;
-
-    .rte {
-      margin: 0;
-    }
-
-    .post-card__header__avatar {
-      height: 2em;
-      width: 2em;
-    }
-
   }
 
   .post {
@@ -394,15 +378,15 @@
     margin-left: 0;
   }
 
-  .post__reply-editor-container--replying {
-    margin-left: .375rem !important;
-
-    .post__reply-editor {
-      .rte {
-        margin: 0;
-      }
-    }
-  }
+  //.post__reply-editor-container--replying {
+  //  margin-left: .375rem !important;
+  //
+  //  .post__reply-editor {
+  //    .rte {
+  //      margin: 0;
+  //    }
+  //  }
+  //}
 
   .post-card__footer {
     margin-left: 0;
@@ -458,14 +442,17 @@ button.post-button.post-card__footer__mod-btn.post-button--active {
   }
 }
 
+
 button.post-button.post-card__footer__mod-btn {
-  &:active,
-  &:hover {
-    .icon {
-      color: $light-primary-text !important;
+  .icon {
+    &:hover {
+      color: $red;
     }
-    .post-button__text {
-      color: $light-primary-text !important;
-    }
+  }
+}
+
+button.post-button.post-card__footer__mod-btn--removed {
+  .icon {
+    color: $blue;
   }
 }

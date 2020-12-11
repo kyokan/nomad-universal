@@ -12,6 +12,7 @@ import {serializeUsername} from "../../utils/user";
 import {INDEXER_API} from "../../utils/api";
 import {addTag, addUser} from "../../ducks/search";
 import {Pageable} from "../../types/Pageable";
+import {useBlocklist} from "../../ducks/blocklist";
 
 type DiscoverViewProps = {
   onLikePost: (postHash: string) => void;
@@ -30,13 +31,7 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
 
   const dispatch = useDispatch();
 
-  const userData = userCurrentUserData();
-
-  const blockedMap = useCurrentBlocks();
-  const muted = (userData?.mutedNames || []).reduce((acc: {[n: string]: string}, name: string) => {
-    acc[name] = name;
-    return acc;
-  }, blockedMap);
+  const blocklist = useBlocklist();
 
   const query = useCallback(async (reset?: boolean) => {
     setLoading(true);
@@ -46,7 +41,7 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
       return;
     }
 
-    const payload = await queryNext(reset ? null : next ,[], muted);
+    const payload = await queryNext(reset ? null : next ,[], blocklist);
     setLoading(false);
 
     const hashes: string[] = [];
@@ -65,7 +60,6 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
   }, [
     list,
     next,
-    Object.keys(muted).join(','),
   ]);
 
   const onSelectPost = useCallback((hash: string) => {
@@ -82,7 +76,7 @@ function DiscoverView(props: DiscoverViewProps): ReactElement {
     (function onDiscoveryViewMount() {
       setTimeout(() => query(true), 0);
     }())
-  }, [Object.keys(muted).join(',')]);
+  }, [blocklist.join(',')]);
 
   return (
     <CustomView
@@ -112,7 +106,7 @@ export default withRouter(DiscoverView);
 async function queryNext(
   next: number | null,
   list: DomainEnvelope<DomainPost>[] = [],
-  muted: {[u: string]: string} = {},
+  blocklist: string[] = [],
 ): Promise<Pageable<DomainEnvelope<DomainPost>, number>> {
   if (next !== null &&  next < 0) {
     return {
@@ -120,8 +114,8 @@ async function queryNext(
       next: -1,
     };
   }
-
-  const resp = await fetch(`${INDEXER_API}/posts?order=DESC&limit=10${next ? '&offset=' + next : ''}`);
+  const extendBlockQuery = blocklist.map(tld => `&extendBlockSrc=${tld}`).join('');
+  const resp = await fetch(`${INDEXER_API}/posts?order=DESC&limit=10${next ? '&offset=' + next : ''}${extendBlockQuery}`);
   const json = await resp.json();
 
   if (json.error) {
@@ -132,14 +126,13 @@ async function queryNext(
   list = list.concat(payload.items)
     .filter(env => {
       return (
-        !muted[serializeUsername(env.subdomain, env.tld)] &&
         !env.message.reference &&
         (!env.message.topic || env.message.topic[0] !== '.')
       );
     });
 
   if (list.length < 10 && payload.next && payload.next > -1) {
-    return await queryNext(payload.next, list, muted);
+    return await queryNext(payload.next, list);
   } else {
     return {
       items: list,

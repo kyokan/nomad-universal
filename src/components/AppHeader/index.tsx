@@ -351,14 +351,8 @@ function renderNoKnownUsers(props: Props) {
 }
 
 function renderUnauthenticatedKnownUsers(props: Props, identities: string[]) {
-  const currentUsername = identities[0];
   return (
     <div className="app-header__content__r">
-      {/*<Icon*/}
-      {/*  material="home"*/}
-      {/*  width={28}*/}
-      {/*  onClick={() => props.history.push('/home')}*/}
-      {/*/>*/}
       <Icon
         material="public"
         width={28}
@@ -371,23 +365,12 @@ function renderUnauthenticatedKnownUsers(props: Props, identities: string[]) {
         disabled
       />
       <Menuable
-        className="app-header__content__r__account-circle"
+        className="app-header__content__r__account-circle app-header__content__r__account-circle--unauth"
         items={[
-          {
-            forceRender: (closeModal) => {
-              return renderMainAccount(
-                props,
-                currentUsername,
-                false,
-                closeModal,
-                () => undefined,
-              );
-            },
-          },
-          {divider: true,},
-          ...identities.slice(1).map(username => ({
+          ...identities.map(username => ({
             forceRender: () => renderSwitchAccount(props, username),
           })),
+          {divider: true,},
           props.multiAccount ? {forceRender: () => renderAddAnother(props)} : null,
           props.multiAccount ? {divider: true} : null,
           props.onDownloadKeystore
@@ -404,7 +387,7 @@ function renderUnauthenticatedKnownUsers(props: Props, identities: string[]) {
             : null,
         ]}
       >
-        <Avatar username={currentUsername} />
+        <Icon material="login" width={28} />
       </Menuable>
     </div>
   );

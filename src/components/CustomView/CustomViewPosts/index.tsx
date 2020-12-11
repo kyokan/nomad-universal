@@ -25,6 +25,7 @@ type CustomViewPostsProps = {
   onOpenLink: (url: string) => void;
   loading: boolean;
   children: ReactNode;
+  placeholderContent?: ReactNode;
 } & RouteComponentProps;
 
 export default withRouter(CustomViewPosts);
@@ -40,6 +41,7 @@ function CustomViewPosts(props: CustomViewPostsProps): ReactElement {
     history,
     loading: loadingPosts,
     children,
+    placeholderContent,
   } = props;
 
   const onNameClick = useCallback((name: string) => {
@@ -55,11 +57,15 @@ function CustomViewPosts(props: CustomViewPostsProps): ReactElement {
       >
         {children}
         {
-          !hashes.length && (
-            <span className="custom-view__content__posts__empty-text">
-              No Posts
-            </span>
-          )
+          !hashes.length
+            ? placeholderContent
+              ? placeholderContent
+              : (
+                <span className="custom-view__content__posts__empty-text">
+                  No Posts
+                </span>
+              )
+            : null
         }
         {
           hashes.map((hash: string): ReactNode => {

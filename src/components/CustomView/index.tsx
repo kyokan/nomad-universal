@@ -42,6 +42,7 @@ type Props = {
   onScrolledToBottom?: () => void;
   onTagClick?: (tagName: string) => void;
   loading: boolean;
+  placeholderContent?: ReactNode;
 
   // Panels
   panels: CustomViewPanelProps[];
@@ -165,6 +166,7 @@ function CustomView(props: Props): ReactElement {
         onScrolledToBottom={onScrolledToBottom}
         onTagClick={onTagClick}
         onOpenLink={props.onOpenLink}
+        placeholderContent={props.placeholderContent}
       >
         {children}
       </CustomViewPosts>

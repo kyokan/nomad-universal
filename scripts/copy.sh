@@ -1,6 +1,7 @@
 #!/bin/bash
 
 cp ./src/components/LinkPreview/link-preview.scss ./lib/components/LinkPreview/link-preview.scss
+cp ./src/components/HomePanels/index.scss ./lib/components/HomePanels/index.scss
 cp ./src/components/TextEditor/text-editor.scss ./lib/components/TextEditor/text-editor.scss
 cp ./src/components/RichTextEditor/rte-actions.scss ./lib/components/RichTextEditor/rte-actions.scss
 cp ./src/components/ComposeModal/compose-modal.scss ./lib/components/ComposeModal/compose-modal.scss

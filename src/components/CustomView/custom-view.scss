@@ -63,16 +63,33 @@
       }
 
       &__empty-text {
-        @extend %row-nowrap;
+        @extend %col-nowrap;
         align-items: center;
         justify-content: center;
         border-radius: .25rem;
-        font-size: .8125rem;
+        font-size: .875rem;
         line-height: 1.3125;
         color: $gray-200;
         user-select: none;
         padding: 1rem;
         font-weight: 500;
+        margin: 1rem 0;
+
+        &__title {
+          @extend %regular-font;
+          @extend %bold;
+          color: $dark-primary-text;
+        }
+
+        &__subtitle {
+          @extend %lite-font;
+          text-align: center;
+          color: $light-primary-text;
+        }
+
+        .button {
+          margin: 1rem 0;
+        }
       }
 
       &--loading {

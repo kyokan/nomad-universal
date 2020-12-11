@@ -20,6 +20,7 @@ type Props = {
   onOpenLink: (url: string) => void;
   onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
   onFileUpload: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
+  modal?: boolean;
 } & RouteComponentProps;
 
 export default withRouter(ComposeModal);

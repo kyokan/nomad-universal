@@ -115,7 +115,7 @@ async function queryNext(
     };
   }
   const extendBlockQuery = blocklist.map(tld => `&extendBlockSrc=${tld}`).join('');
-  const resp = await fetch(`${INDEXER_API}/posts?order=DESC&limit=10${next ? '&offset=' + next : ''}${extendBlockQuery}`);
+  const resp = await fetch(`${INDEXER_API}/posts?order=DESC&limit=20${next ? '&offset=' + next : ''}${extendBlockQuery}`);
   const json = await resp.json();
 
   if (json.error) {
@@ -131,8 +131,8 @@ async function queryNext(
       );
     });
 
-  if (list.length < 10 && payload.next && payload.next > -1) {
-    return await queryNext(payload.next, list);
+  if (list.length < 20 && payload.next && payload.next > -1) {
+    return await queryNext(payload.next, list, blocklist);
   } else {
     return {
       items: list,

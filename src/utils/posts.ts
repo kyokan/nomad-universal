@@ -29,6 +29,10 @@ export function getImageURLFromAvatarType (_avatarType: string, username: string
   if (avatarType === '_') {
     return 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAVAAAAEYAQMAAAAwLTybAAAAA1BMVEXy8vJkA4prAAAACXBIWXMAAA7EAAAOxAGVKw4bAAAAI0lEQVRoge3BAQ0AAADCoPdPbQ43oAAAAAAAAAAAAAAA4McALwgAAQoNfCUAAAAASUVORK5CYII=';
   }
+
+  if (!username) {
+    return '';
+  }
   return `${INDEXER_API}/avatars/${avatarType}/${username}.svg`;
 }
 

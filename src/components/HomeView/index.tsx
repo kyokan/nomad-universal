@@ -5,7 +5,7 @@ import {Post as DomainPost} from 'fn-client/lib/application/Post';
 import CustomView from "../CustomView";
 import {
   useCurrentFollowings,
-  useCurrentUser, userCurrentMutedNames,
+  useCurrentUser, useCurrentUsername, userCurrentMutedNames,
 } from "../../ducks/users";
 import {updateRawPost, usePostsMap} from "../../ducks/posts";
 import {useDispatch} from "react-redux";
@@ -17,6 +17,8 @@ import {Filter} from "../../utils/filter";
 import {serializeUsername} from "../../utils/user";
 import {addTag} from "../../ducks/search";
 import {Pageable} from "../../types/Pageable";
+import {useBlocklist} from "../../ducks/blocklist";
+import Button from "../Button";
 type Props = {
   onLikePost: (hash: string) => void;
   onSendReply: (hash: string) => void;
@@ -27,12 +29,7 @@ type Props = {
 } & RouteComponentProps;
 
 function HomeView(props: Props): ReactElement {
-  const { name: currentUser } = useCurrentUser();
-  const mutedNames = userCurrentMutedNames();
-  const muted = (mutedNames || []).reduce((acc: {[n: string]: boolean}, name: string) => {
-    acc[name] = !!name;
-    return acc;
-  }, {});
+  const currentUsername = useCurrentUsername();
   const dispatch = useDispatch();
 
   const onSelectPost = useCallback((postHash: string) => {
@@ -46,10 +43,12 @@ function HomeView(props: Props): ReactElement {
   const [showLikes, setShowLikes] = useState(true);
   const [showReplies, setShowReplies] = useState(true);
   const postMap = usePostsMap();
-
+  const blocklist = useBlocklist();
   const followings = useCurrentFollowings();
 
   const query = useCallback(async (reset?: boolean) => {
+    if (loading && !reset) return;
+
     setLoading(true);
     if (typeof next !== "number" && !reset) {
       setLoading(false);
@@ -61,20 +60,27 @@ function HomeView(props: Props): ReactElement {
       setLoading(false);
       return ;
     }
+
     if (!showReplies && !showLikes && !showPosts)  {
       setLoading(false);
       setList([]);
       return
     }
 
-    const payload = await queryNext({
-      postedBy: showPosts ? Object.keys(followings) : [],
-      likedBy: [],
-      repliedBy: [],
-      postHashes: [],
-      parentHashes: [],
-      allowedTags: [],
-    }, next, [], muted);
+    const payload = await queryNext(
+      {
+        postedBy: showPosts ? Object.keys(followings) : [],
+        likedBy: [],
+        repliedBy: [],
+        postHashes: [],
+        parentHashes: [],
+        allowedTags: [],
+      },
+      next,
+      [],
+      blocklist,
+      [currentUsername],
+    );
     setLoading(false);
     const hashes: string[] = [];
 
@@ -92,29 +98,39 @@ function HomeView(props: Props): ReactElement {
       setList(uniq(list.concat(hashes)));
     }
     setNext(payload.next);
-  }, [list, currentUser, next, muted, followings, showPosts, showLikes, showReplies]);
+  }, [
+    loading,
+    list,
+    currentUsername,
+    next,
+    followings,
+    showPosts,
+    showLikes,
+    showReplies,
+    blocklist.join(),
+  ]);
+
+  // useEffect(() => {
+  //   (async function onHomeViewMount() {
+  //     // dispatch(fetchUserFollowings(currentUser));
+  //     // dispatch(fetchCurrentUserLikes());
+  //   }())
+  // }, [currentUsername]);
+  //
+  // useEffect(() => {
+  //   (async function onFollowingsUpdateMount() {
+  //     Object.keys(followings)
+  //       .forEach(name => {
+  //         // dispatch(fetchUserLikes(name));
+  //       })
+  //   }())
+  // }, [followings, showPosts, showLikes, showReplies]);
 
   useEffect(() => {
-    (async function onHomeViewMount() {
-      // dispatch(fetchUserFollowings(currentUser));
-      // dispatch(fetchCurrentUserLikes());
+    (function onListRefresh() {
+      setTimeout(() => query(true), 0);
     }())
-  }, [currentUser]);
-
-  useEffect(() => {
-    (async function onFollowingsUpdateMount() {
-      Object.keys(followings)
-        .forEach(name => {
-          // dispatch(fetchUserLikes(name));
-        })
-    }())
-  }, [followings, showPosts, showLikes, showReplies]);
-
-  useEffect(() => {
-    (async function onListRefresh() {
-      await query(true);
-    }())
-  }, [currentUser, showPosts, showLikes, showReplies, followings]);
+  }, [currentUsername, showPosts, showLikes, showReplies, followings, blocklist.join(',')]);
 
   const onTagClick = useCallback((tagName: string) => {
     dispatch(addTag(tagName));
@@ -124,6 +140,19 @@ function HomeView(props: Props): ReactElement {
   return (
     <CustomView
       title="Home"
+      placeholderContent={(
+        <span className="custom-view__content__posts__empty-text">
+          <div className="custom-view__content__posts__empty-text__title">
+            Welcome to Nomad!
+          </div>
+          <div className="custom-view__content__posts__empty-text__subtitle">
+            Get started by following others. You will see posts from people you follow.
+          </div>
+          <Button onClick={() => props.history.push('/discover')}>
+            Browse Posts
+          </Button>
+        </span>
+      )}
       hashes={list}
       onLikePost={props.onLikePost}
       onSendReply={props.onSendReply}
@@ -164,14 +193,16 @@ function HomeView(props: Props): ReactElement {
 
 export default withRouter(HomeView);
 
-async function queryNext(filter: Filter, next: number | null, list: DomainEnvelope<DomainPost>[] = [], muted: {[u: string]: boolean} = {}): Promise<Pageable<DomainEnvelope<DomainPost>, number>> {
-  const resp = await fetch(`${INDEXER_API}/filter?order=DESC&limit=20${next ? '&offset=' + next : ''}`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({filter}),
-  });
+async function queryNext(
+  filter: Filter,
+  next: number | null,
+  list: DomainEnvelope<DomainPost>[] = [],
+  blocklist: string[] = [],
+  followlist: string[] = [],
+): Promise<Pageable<DomainEnvelope<DomainPost>, number>> {
+  const extendBlockQuery = blocklist.map(tld => `&extendBlockSrc=${tld}`).join('');
+  const extendFollowSrcQuery = followlist.map(tld => `&extendFollowSrc=${tld}`).join('');
+  const resp = await fetch(`${INDEXER_API}/posts?order=DESC&limit=20${next ? '&offset=' + next : ''}${extendFollowSrcQuery}${extendBlockQuery}`);
   const json = await resp.json();
 
   if (json.error) {
@@ -182,14 +213,13 @@ async function queryNext(filter: Filter, next: number | null, list: DomainEnvelo
   list = list.concat(payload.items)
     .filter((env) => {
       return (
-        !muted[serializeUsername(env.subdomain, env.tld)] &&
         !env.message.reference &&
         (!env.message.topic || env.message.topic[0] !== '.')
       );
     });
 
   if (list.length < 20 && payload.next && payload.next > -1) {
-    return await queryNext(filter, payload.next, list);
+    return await queryNext(filter, payload.next, list, blocklist, followlist);
   } else {
     return {
       items: list,

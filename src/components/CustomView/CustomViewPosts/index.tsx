@@ -118,7 +118,9 @@ export function RegularPost(props: RegularPostProps): ReactElement {
   const loadMoreComments = useFetchMoreComments(props.hash);
 
   useEffect(() => {
-    fetchUser(post.creator);
+    if (!user) {
+      fetchUser(post.creator);
+    }
   }, [fetchUser, user]);
 
   useEffect(() => {

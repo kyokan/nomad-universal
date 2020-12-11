@@ -67,8 +67,6 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
             : metadata?.filename;
           const file = subfiles[filepath] || {};
 
-          console.log(metadata)
-
           if (/video/.test(file.contenttype)) {
             setHtmlProps(null);
             setYoutubeProps(null);
@@ -136,8 +134,6 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
         URL_LOADING[link] = true;
         const resp = await fetch(`${INDEXER_API}/preview?url=${encodeURI(link)}`);
         const json = await resp.json();
-
-        console.log(json);
 
         if (json.siteName === 'YouTube') {
           const regExp = /^.*(youtu\.be\/|v\/|u\/\w\/|embed\/|watch\?v=|\&v=)([^#\&\?]*).*/;

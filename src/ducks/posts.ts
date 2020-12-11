@@ -246,9 +246,7 @@ export const mapRawToPost = (rawPost: ResponsePost): Post => {
 
   return createNewPost({
     hash: rawPost.hash,
-    type: rawPost.parent
-      ? PostType.COMMENT
-      : rawPost.type === "LINK"
+    type: rawPost.type === "LINK"
         ? PostType.LINK
         : PostType.ORIGINAL,
     creator: rawPost.name,

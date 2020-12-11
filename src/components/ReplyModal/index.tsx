@@ -1,38 +1,44 @@
 import React, {ChangeEvent, MouseEvent, ReactElement, useCallback, useEffect, useState} from "react";
 import {withRouter, RouteComponentProps} from "react-router";
 import {FullScreenModal} from "../FullScreenModal";
-import "./compose-modal.scss";
 import Icon from "../Icon";
 import RTEActions from "../RichTextEditor/RTEActions";
 import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
-import {RelayerNewPostResponse} from "../../utils/types";
 import TextEditor from "../TextEditor";
-import {useDraftPost, useUpdateDraft} from "../../ducks/drafts";
 import Input from "../Input";
 import LinkPreview from "../LinkPreview";
 import Button from "../Button";
 import SkynetLogo from '../../static/assets/icons/skynet-logo.svg';
 import classNames from "classnames";
 import {ModerationType} from "fn-client/lib/application/Moderation";
+import {updateReplies, useReplyId} from "../../ducks/drafts/replies";
+import {useDispatch} from "react-redux";
+import {usePostId} from "../../ducks/posts";
+import {useUser} from "../../ducks/users";
 
 type Props = {
+  hash: string;
   onClose: (e?: MouseEvent) => void;
   onOpenLink: (url: string) => void;
-  onSendPost: (draft: DraftPost, truncate?: boolean) => Promise<RelayerNewPostResponse>;
-  onFileUpload: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
+  onSendReply?: (hash: string) => void;
+  onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
 } & RouteComponentProps;
 
-export default withRouter(ComposeModal);
+export default withRouter(ReplyModal);
 
-function ComposeModal(props: Props): ReactElement {
-  const draft = useDraftPost();
-  const updateDraft = useUpdateDraft();
+function ReplyModal(props: Props): ReactElement {
+  const {hash} = props;
+  const post = usePostId(hash);
+  const user = useUser(post.creator);
+
+  const draft = useReplyId(hash);
+  const dispatch = useDispatch();
+
 
   const [isPreviewing, setPreviewing] = useState(false);
   const [isSending, setSending] = useState(false);
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  const [truncate, setTruncate] = useState(false);
 
   const [subtype, setSubtype] = useState<''|'LINK'>(draft.subtype);
   const [title, setTitle] = useState(draft.title);
@@ -40,8 +46,13 @@ function ComposeModal(props: Props): ReactElement {
   const [modType, setModType] = useState<ModerationType|null>(null);
 
   useEffect(() => {
-    updateDraft(createNewDraft({ title, content, subtype }));
-  }, [title, content, subtype]);
+    dispatch(updateReplies(createNewDraft({
+      title,
+      content,
+      subtype,
+      parent: hash,
+    })));
+  }, [title, content, subtype, hash]);
 
   const togglePreview = useCallback(() => {
     setPreviewing(!isPreviewing);
@@ -70,15 +81,12 @@ function ComposeModal(props: Props): ReactElement {
     setSending(true);
 
     try {
-      await props.onSendPost(createNewDraft({
-        title,
-        content,
-        subtype,
-        moderationType: modType,
-      }), truncate);
+      await props.onSendReply!(hash);
       setSuccess(true);
       setErrorMessage('');
-      updateDraft(createNewDraft());
+      dispatch(updateReplies(createNewDraft({
+        parent: hash,
+      })));
       setContent('');
       setTitle('');
       setSubtype('');
@@ -94,8 +102,8 @@ function ComposeModal(props: Props): ReactElement {
     title,
     subtype,
     content,
-    truncate,
     modType,
+    hash,
   ]);
 
   const [showURLInput, setURLInput] = useState(false);
@@ -154,7 +162,7 @@ function ComposeModal(props: Props): ReactElement {
       >
         <div className="compose-modal__header">
           <div className="compose-modal__header__label">
-            Write a post
+            Reply to {user?.displayName || post.creator}'s post
           </div>
           <div className="compose-modal__header__switch" onClick={togglePreview}>
             { isPreviewing ? "Editor Mode" : "Markdown Mode" }

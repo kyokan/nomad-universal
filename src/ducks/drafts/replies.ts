@@ -130,17 +130,7 @@ export default function repliesReducer(state: RepliesState = initialState, actio
 export const useReplyId = (parentId: string): DraftPost => {
   return useSelector((state: { replies: RepliesState }): DraftPost => {
     return createNewDraft(state.replies.map[parentId]);
-  }, (a: any, b: any) => {
-    return a.parent === b.parent &&
-      a.context === b.context &&
-      a.content === b.content &&
-      a.topic === b.topic &&
-      a.attachments.join(',') === b.attachments.join(',') &&
-      a.type === b.type &&
-      a.title === b.title &&
-      a.tags.join(',') === b.tags.join(',') &&
-      a.timestamp === b.timestamp;
-  });
+  }, shallowEqual);
 };
 
 export const useIsReplying = (): boolean => {

@@ -28,6 +28,8 @@ import {markup} from "../../utils/rte";
 import LinkPreview from "../LinkPreview";
 import {PostType} from "../../types/posts";
 import {getModIcon, replaceLink} from "../../utils/posts";
+import ComposeModal from "../ComposeModal";
+import ReplyModal from "../ReplyModal";
 
 type Props = {
   type: 'card' | 'compact' | 'title';
@@ -214,7 +216,7 @@ function Card(props: Props): ReactElement {
         />
         { renderPostMenu(props) }
       </div>
-      {renderQuickReplyEditor(hash, isShowingReply, setShowingReply, onSendReply, onFileUpload)}
+      {renderQuickReplyEditor(hash, isShowingReply, setShowingReply, onSendReply, onFileUpload, props)}
     </div>
   );
 }
@@ -443,6 +445,8 @@ export function renderQuickReplyEditor(
   setShowingReply: (isShowing: boolean) => void,
   onSendReply?: (hash: string) => void,
   onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>,
+  // @ts-ignore
+  props: Props,
 ): ReactNode {
   const { isSendingReplies } = useReplies();
   const replyDraft = useReplyId(hash);
@@ -522,31 +526,13 @@ export function renderQuickReplyEditor(
     >
       {
         isShowingReply && (
-          <>
-            <RichTextEditor
-              className="post__reply-editor"
-              onChange={onChange}
-              content={content}
-              disabled={isSendingReplies}
-              onFileUpload={onFileUpload}
-              isShowingMarkdown={false}
-              embedded
-            />
-            <div className="post__reply-editor__actions">
-              <Button
-                onClick={onSecondaryClick}
-              >
-                Cancel
-              </Button>
-              <Button
-                disabled={isSendingReplies || !content}
-                onClick={onPrimaryClick}
-                loading={isSendingReplies}
-              >
-                Send
-              </Button>
-            </div>
-          </>
+          <ReplyModal
+            hash={hash}
+            onClose={() => setShowingReply(false)}
+            onOpenLink={props.onOpenLink}
+            onSendReply={props?.onSendReply}
+            onFileUpload={props?.onFileUpload}
+          />
         )
       }
     </div>

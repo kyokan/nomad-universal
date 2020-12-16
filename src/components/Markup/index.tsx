@@ -11,7 +11,7 @@ type Props = {
   html?: string;
   handleOpenDiscuss?: () => void;
   customRenderer?: marked.Renderer;
-  onClick?: MouseEventHandler;
+  onClick?: (href: string) => void;
 } & RouteComponentProps;
 
 function Markup(props: Props): ReactElement {

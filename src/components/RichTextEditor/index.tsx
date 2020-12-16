@@ -19,13 +19,11 @@ import c from "classnames";
 import Icon from "../Icon";
 import './rich-text-editor.scss';
 import {createNewDraft, DraftPost} from "../../ducks/drafts/type";
-import {useDraftPost} from "../../ducks/drafts";
 import {PostType} from "../../types/posts";
 import {customStyleMap, mapDraftToEditorState, markdownConvertOptions} from "../../utils/rte";
 import {addLinkPlugin} from "./plugins/addLinkPlugin";
 import Input from "../Input";
 import {draftToMarkdown} from "markdown-draft-js";
-import Menuable from "../Menuable";
 
 const hljs = require('highlight.js');
 const TableUtils = require('draft-js-table');

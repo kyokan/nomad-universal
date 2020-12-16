@@ -129,7 +129,7 @@ export function RegularPost(props: RegularPostProps): ReactElement {
     (async function onRegularPostMount() {
       if (post.pending) return;
 
-      if (!post.id) {
+      if (!post.timestamp) {
         setTimeout(() => {
           dispatch(fetchPostByHash(props.hash));
         }, 0)

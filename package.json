@@ -1,6 +1,6 @@
 {
   "name": "nomad-universal",
-  "version": "1.4.2",
+  "version": "1.4.3",
   "description": "universal ui components for Nomad",
   "main": "index.js",
   "scripts": {

@@ -319,7 +319,7 @@ function renderContent(props: Props): ReactNode {
           {replyTitle}
         </div>
       )}
-      <Markup content={content} />
+      <Markup content={content} onClick={props.onOpenLink} />
     </div>
   );
 }

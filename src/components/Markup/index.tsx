@@ -79,7 +79,7 @@ function Markup(props: Props): ReactElement {
         // onContextMenu={onContextMenuClick}
       >
         {
-          !!props.content.trim() && (
+          (!props.content || !!props.content.trim()) && (
             <RichTextEditor
               content={props.content}
               onChange={() => null}

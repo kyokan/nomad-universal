@@ -14,6 +14,7 @@ const HTML_CACHE: any = {};
 const YT_CACHE: any = {};
 const VID_CACHE: any = {};
 const IMG_CACHE: any = {};
+const SKYNET_CACHE: any = {};
 const URL_LOADING: any = {};
 
 export default function LinkPreview(props: LinkPreviewProps): ReactElement {
@@ -57,6 +58,28 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
         const url = new URL(link);
 
         setHost(url.hostname);
+
+        if (URL_LOADING[link]) {
+          return;
+        }
+
+        if (VID_CACHE[link]) {
+          return setVideoProps(VID_CACHE[link]);
+        }
+
+        if (IMG_CACHE[link]) {
+          return setImageProps(IMG_CACHE[link]);
+        }
+
+        if (HTML_CACHE[link]) {
+          return setHtmlProps(HTML_CACHE[link]);
+        }
+
+        if (YT_CACHE[link]) {
+          return setYoutubeProps(YT_CACHE[link]);
+        }
+
+        URL_LOADING[link] = true;
 
         if (url.hostname === 'siasky.net') {
           const resp = await fetch(link);
@@ -111,27 +134,6 @@ export default function LinkPreview(props: LinkPreviewProps): ReactElement {
           return;
         }
 
-        if (URL_LOADING[link]) {
-          return;
-        }
-
-        if (VID_CACHE[link]) {
-          return setVideoProps(VID_CACHE[link]);
-        }
-
-        if (IMG_CACHE[link]) {
-          return setImageProps(IMG_CACHE[link]);
-        }
-
-        if (HTML_CACHE[link]) {
-          return setHtmlProps(HTML_CACHE[link]);
-        }
-
-        if (YT_CACHE[link]) {
-          return setYoutubeProps(YT_CACHE[link]);
-        }
-
-        URL_LOADING[link] = true;
         const resp = await fetch(`${INDEXER_API}/preview?url=${encodeURI(link)}`);
         const json = await resp.json();
 

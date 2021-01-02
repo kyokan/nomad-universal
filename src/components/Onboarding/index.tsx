@@ -36,6 +36,8 @@ type Props = {
   onAddTLD: (tld: string, password: string, privateKey: string) => Promise<void>;
   onSubdomainSignup: (tld: string, subdomain: string, email: string, password: string) => Promise<void>;
   onSearch: (username: string) => Promise<string[]>;
+  welcome?: ReactNode;
+  terms?: ReactNode;
 } & RouteComponentProps<{username?: string}>;
 
 function Onboarding(props: Props): ReactElement {
@@ -64,13 +66,17 @@ function Onboarding(props: Props): ReactElement {
       return (
         <Welcome
           onNext={() => setViewType(OnboardingViewType.TERMS)}
-        />
+        >
+          {props.welcome}
+        </Welcome>
       );
     case OnboardingViewType.TERMS:
       return (
         <Terms
           onNext={() => setViewType(OnboardingViewType.LOGIN)}
-        />
+        >
+          {props.terms}
+        </Terms>
       );
     case OnboardingViewType.LOGIN:
       return (

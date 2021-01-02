@@ -40,7 +40,7 @@ function ReplyModal(props: Props): ReactElement {
   const [success, setSuccess] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
 
-  const [subtype, setSubtype] = useState<''|'LINK'>(draft.subtype);
+  const [subtype, setSubtype] = useState<''|'LINK'|'VIDEO'>(draft.subtype);
   const [title, setTitle] = useState(draft.title);
   const [content, setContent] = useState(draft.content);
   const [modType, setModType] = useState<ModerationType|null>(null);

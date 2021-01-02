@@ -13,7 +13,9 @@ export type DraftPost = {
   tags: string[];
   context: string;
   parent: string;
-  attachments: string[];
+  videoUrl?: string;
+  thumbnailUrl?: string;
+  nsfw?: boolean;
 }
 
 export type DraftPostOpts = {
@@ -25,9 +27,11 @@ export type DraftPostOpts = {
   content?: string;
   topic?: string;
   tags?: string[];
-  attachments?: string[];
+  videoUrl?: string;
+  thumbnailUrl?: string;
   context?: string;
   parent?: string;
+  nsfw?: boolean;
 }
 
 export const createNewDraft = (draft?: DraftPostOpts): DraftPost => {
@@ -42,7 +46,6 @@ export const createNewDraft = (draft?: DraftPostOpts): DraftPost => {
     tags: [],
     context: '',
     parent: '',
-    attachments: [],
     ...draft || {},
   };
 };

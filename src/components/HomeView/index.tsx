@@ -14,7 +14,6 @@ import {CustomViewPanelType} from "../CustomView/CustomViewPanel";
 import {mapDomainEnvelopeToPost} from "../../utils/posts";
 import {INDEXER_API} from "../../utils/api";
 import {Filter} from "../../utils/filter";
-import {serializeUsername} from "../../utils/user";
 import {addTag} from "../../ducks/search";
 import {Pageable} from "../../types/Pageable";
 import {useBlocklist} from "../../ducks/blocklist";

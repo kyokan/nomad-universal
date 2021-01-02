@@ -25,6 +25,7 @@ cp ./src/components/CustomFilterView/custom-filter-view.scss ./lib/components/Cu
 cp ./src/components/ProfileSetting/profile-setting.scss ./lib/components/ProfileSetting/profile-setting.scss
 cp ./src/components/UserPanels/user-panels.scss ./lib/components/UserPanels/user-panels.scss
 cp ./src/components/AppHeader/app-header.scss ./lib/components/AppHeader/app-header.scss
+cp ./src/components/AppHeader/user-menu.scss ./lib/components/AppHeader/user-menu.scss
 cp ./src/components/HeaderButton/header-button.scss ./lib/components/HeaderButton/header-button.scss
 cp ./src/components/Topic/topic.scss ./lib/components/Topic/topic.scss
 cp ./src/components/SavedViewPanels/index.scss ./lib/components/SavedViewPanels/index.scss

@@ -38,7 +38,6 @@ type Props = {
   content: string;
   parent: string;
   timestamp: number;
-  attachments: string[];
   tags: string[];
   onSelectPost?: (hash: string, creator: string, id: string) => void;
   onFileUpload?: (cb: (file: File, skylink: string, prog: number) => Promise<void>) => Promise<void>;
@@ -89,7 +88,6 @@ function Card(props: Props): ReactElement {
     title,
     meta,
     canReply,
-    attachments,
     tags,
     selected,
     onSendReply,
@@ -145,7 +143,6 @@ function Card(props: Props): ReactElement {
         'post-card--selectable': onSelectPost,
         'post-card--avatarless': !avatar,
         'post-card--content-overflow': isContentOverflow,
-        'post-card--has-attachment': attachments.length,
         'post-card--selected': selected,
         'post-card--pending': pending,
       })}

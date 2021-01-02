@@ -295,6 +295,9 @@ export const useDraftPost = (): DraftPost => {
     if (!a || !b) return false;
     return a.content === b.content
       && a.title === b.title
+      && a.videoUrl === b.videoUrl
+      && a.thumbnailUrl === b.thumbnailUrl
+      && a.topic === b.topic
       && a.subtype === b.subtype;
   });
 };

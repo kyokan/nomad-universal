@@ -1,9 +1,10 @@
-import React, {ReactElement, useCallback, useState} from "react";
+import React, {ReactElement, ReactNode, useCallback, useState} from "react";
 import {withRouter, RouteComponentProps} from "react-router";
 import Button from "../Button";
 
 type PasswordLoginProps = {
   onNext: () => void;
+  children?: ReactNode;
 } & RouteComponentProps;
 
 function Terms(props: PasswordLoginProps): ReactElement {
@@ -17,17 +18,25 @@ function Terms(props: PasswordLoginProps): ReactElement {
   return (
     <div className="onboarding">
       <div className="onboarding__panel">
-        <div className="onboarding__panel__title">
-          {`Terms of Service 🧐️`}
-        </div>
-        <div className="onboarding__panel__content">
-          <div className="onboarding__panel__paragraph">
-            <div className="onboarding__panel__paragraph__list">1. Nomad is a peer-to-peer network without an owner.</div>
-            <div className="onboarding__panel__paragraph__list">2. You own all the content you create.</div>
-            <div className="onboarding__panel__paragraph__list">3. Please don't be malicious, abusive, or do anything illegal.</div>
-            <div className="onboarding__panel__paragraph__list">4. Have fun! 😃</div>
-          </div>
-        </div>
+        {
+          props.children
+            ? props.children
+            : (
+              <>
+                <div className="onboarding__panel__title">
+                  {`Terms of Service 🧐️`}
+                </div>
+                <div className="onboarding__panel__content">
+                  <div className="onboarding__panel__paragraph">
+                    <div className="onboarding__panel__paragraph__list">1. Nomad is a peer-to-peer network without an owner.</div>
+                    <div className="onboarding__panel__paragraph__list">2. You own all the content you create.</div>
+                    <div className="onboarding__panel__paragraph__list">3. Please don't be malicious, abusive, or do anything illegal.</div>
+                    <div className="onboarding__panel__paragraph__list">4. Have fun! 😃</div>
+                  </div>
+                </div>
+              </>
+            )
+        }
         <div className="onboarding__panel__row">
           <input
             className="onboarding__panel__checkbox" type="checkbox"

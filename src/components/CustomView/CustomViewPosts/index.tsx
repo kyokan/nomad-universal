@@ -196,7 +196,6 @@ export function RawPost(props: RawPostProps): ReactElement {
     timestamp,
     creator,
     topic,
-    attachments,
     onSelectPost,
     onLikePost,
     onBlockUser,
@@ -248,7 +247,6 @@ export function RawPost(props: RawPostProps): ReactElement {
       onRemoveModeration={onRemoveModeration}
       shouldRemoveModeration={shouldRemoveModeration}
       canReply={canReply}
-      attachments={attachments}
       tags={tags}
       selected={selected}
       pending={pending}

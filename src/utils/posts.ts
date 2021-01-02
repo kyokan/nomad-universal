@@ -49,6 +49,8 @@ export const mapDomainEnvelopeToPost = (env: DomainEnvelope<DomainPost>): Respon
     hash: env.refhash,
     type: env.message.type,
     moderationSetting: env.message.moderationSetting || null,
+    videoUrl: env.message.videoUrl,
+    thumbnailUrl: env.message.thumbnailUrl,
     meta: {
       replyCount: env.message.replyCount,
       likeCount: env.message.likeCount,
@@ -72,11 +74,6 @@ export const mapDraftToPostPayload = (draft?: DraftPost): RelayerPostModel => {
 
   let content = draft.content;
 
-  if (draft.attachments) {
-    content = content + '\n';
-    content = content + draft.attachments.map(h => `<div data-image-file-hash="${h}"></div>`).join('');
-  }
-
   return {
     parent: draft.parent,
     context: draft.context,
@@ -85,6 +82,8 @@ export const mapDraftToPostPayload = (draft?: DraftPost): RelayerPostModel => {
     tags: draft.tags,
     title: draft.title,
     subtype: draft.subtype || '',
+    videoUrl: draft.videoUrl,
+    thumbnailUrl: draft.thumbnailUrl,
   };
 };
 

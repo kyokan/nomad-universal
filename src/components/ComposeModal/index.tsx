@@ -34,7 +34,7 @@ function ComposeModal(props: Props): ReactElement {
   const [errorMessage, setErrorMessage] = useState('');
   const [truncate, setTruncate] = useState(false);
 
-  const [subtype, setSubtype] = useState<''|'LINK'>(draft.subtype);
+  const [subtype, setSubtype] = useState<''|'LINK'|'VIDEO'>(draft.subtype);
   const [title, setTitle] = useState(draft.title);
   const [content, setContent] = useState(draft.content);
   const [modType, setModType] = useState<ModerationType|null>(null);

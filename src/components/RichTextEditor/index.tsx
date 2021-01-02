@@ -93,7 +93,6 @@ function RichTextEditor(props: Props): ReactElement {
       context: '',
       parent: '',
       tags: [],
-      attachments: [],
     });
   }, [onChange, editorState]);
 

@@ -64,7 +64,8 @@ export type Post = {
   meta: PostMeta;
   comments: string[];
   parent: string;
-  attachments: string[];
+  videoUrl?: string;
+  thumbnailUrl?: string;
   next?: number | null;
   pending?: boolean;
   moderationSetting: 'SETTINGS__FOLLOWS_ONLY'|'SETTINGS__NO_BLOCKS'|null;
@@ -84,7 +85,8 @@ export type PostOpts = {
   meta?: PostMeta;
   comments?: string[];
   parent?: string;
-  attachments?: string[];
+  videoUrl?: string;
+  thumbnailUrl?: string;
   pending?: boolean;
   moderationSetting?: 'SETTINGS__FOLLOWS_ONLY'|'SETTINGS__NO_BLOCKS'|null;
 }
@@ -159,7 +161,6 @@ export const createNewPost = (post?: PostOpts): Post => {
     comments: [],
     tags: [],
     parent: '',
-    attachments: [],
     moderationSetting: null,
     meta: {
       replyCount: 0,
@@ -248,7 +249,9 @@ export const mapRawToPost = (rawPost: ResponsePost): Post => {
     hash: rawPost.hash,
     type: rawPost.type === "LINK"
         ? PostType.LINK
-        : PostType.ORIGINAL,
+        : rawPost.type === "VIDEO"
+          ? PostType.VIDEO
+          : PostType.ORIGINAL,
     creator: rawPost.name,
     timestamp: new Date(rawPost.timestamp).getTime(),
     title: rawPost.title,
@@ -258,9 +261,10 @@ export const mapRawToPost = (rawPost: ResponsePost): Post => {
     context: rawPost.context,
     parent: rawPost.parent,
     comments: [],
-    attachments: [],
     meta: rawPost.meta,
     moderationSetting: rawPost.moderationSetting,
+    videoUrl: rawPost.videoUrl,
+    thumbnailUrl: rawPost.thumbnailUrl,
   });
 };
 
@@ -306,10 +310,8 @@ export const fetchPostByHash = (hash: string) => async (dispatch: ThunkDispatch<
   if (!hash) {
     return;
   }
-
   const resp = await fetch(`${INDEXER_API}/posts/${hash}`);
   const json: NapiResponse<DomainEnvelope<DomainPost> | null> = await resp.json();
-
   if (!json.error && json.payload) {
     dispatch(updateRawPost(mapDomainEnvelopeToPost(json.payload)));
   }
@@ -520,6 +522,8 @@ export const usePostId = (id: string): Post => {
       && a?.content === b?.content
       && a?.creator === b?.creator
       && a?.hash === b?.hash
+      && a?.videoUrl === b?.videoUrl
+      && a?.thumbnailUrl === b?.thumbnailUrl
       && a?.moderationSetting === b?.moderationSetting
       && a?.parent === b?.parent
       && a?.timestamp === b?.timestamp

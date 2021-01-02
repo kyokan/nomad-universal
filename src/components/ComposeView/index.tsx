@@ -88,7 +88,6 @@ function ComposeView(props: Props): ReactElement {
     isSending,
     success,
     draft.content,
-    draft.attachments.join(','),
     draft.tags.join(','),
     truncate,
   ]);

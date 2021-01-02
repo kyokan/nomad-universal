@@ -4,6 +4,7 @@ export enum PostType {
   ORIGINAL = 'original',
   COMMENT = 'comment',
   LINK = 'link',
+  VIDEO = 'video',
 }
 
 export type RelayerPostModel = {
@@ -14,4 +15,6 @@ export type RelayerPostModel = {
   topic: string;
   tags: string[];
   subtype: SubTypes;
+  videoUrl?: string;
+  thumbnailUrl?: string;
 }
